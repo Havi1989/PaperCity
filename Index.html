@@ -1,0 +1,2778 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>PaperCity // NEON GRID - HIGH-SPEED TEST PHASE</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#00f3ff" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --cyber-cyan: #00f3ff;
+      --cyber-crimson: #ff0055;
+      --cyber-volt: #ffee00;
+      --cyber-gold: #ffaa00;
+      --cyber-green: #00ff66;
+      --cyber-purple: #bd00ff;
+      --cyber-dark: rgba(6, 10, 18, 0.88);
+      --cyber-border: rgba(0, 243, 255, 0.45);
+      --cyber-glow: 0 0 15px rgba(0, 243, 255, 0.55);
+      --font-tech: 'Orbitron', monospace, sans-serif;
+      --font-hud: 'Rajdhani', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #03060a;
+      font-family: var(--font-hud);
+      color: #fff;
+    }
+
+    .cyber-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none !important;
+      z-index: 400;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                  linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.03));
+      background-size: 100% 3px, 6px 100%;
+      opacity: 0.5;
+    }
+
+    #map {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      background: #05080e;
+    }
+
+    #fxCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 450;
+    }
+
+    .leaflet-pane > svg path.player-laser {
+      stroke: var(--cyber-cyan);
+      filter: drop-shadow(0 0 8px #00f3ff) drop-shadow(0 0 14px rgba(0, 243, 255, 0.7));
+    }
+    .leaflet-pane > svg path.crimson-laser {
+      stroke: var(--cyber-crimson);
+      filter: drop-shadow(0 0 8px #ff0055) drop-shadow(0 0 14px rgba(255, 0, 85, 0.7));
+    }
+    .leaflet-pane > svg path.volt-laser {
+      stroke: var(--cyber-volt);
+      filter: drop-shadow(0 0 8px #ffee00) drop-shadow(0 0 14px rgba(255, 238, 0, 0.7));
+    }
+
+    .hud-top {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .cyber-panel {
+      background: var(--cyber-dark);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--cyber-border);
+      padding: 9px 14px;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+      box-shadow: var(--cyber-glow), inset 0 0 15px rgba(0, 243, 255, 0.12);
+      pointer-events: auto;
+      position: relative;
+    }
+
+    .cyber-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 6px;
+      height: 6px;
+      background: var(--cyber-cyan);
+    }
+
+    .hud-profile-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+      cursor: pointer;
+    }
+
+    .hud-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--cyber-cyan);
+      box-shadow: 0 0 10px var(--cyber-cyan);
+      object-fit: cover;
+      background: #09121f;
+    }
+
+    .agent-name-label {
+      font-family: var(--font-tech);
+      font-size: 0.75rem;
+      font-weight: 900;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .cloud-status-badge {
+      font-size: 0.58rem;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(255, 170, 0, 0.2);
+      color: var(--cyber-gold);
+      border: 1px solid rgba(255, 170, 0, 0.4);
+      margin-left: 5px;
+      font-family: var(--font-tech);
+    }
+    .cloud-status-badge.synced {
+      background: rgba(0, 255, 102, 0.2);
+      color: var(--cyber-green);
+      border-color: rgba(0, 255, 102, 0.4);
+    }
+
+    .stat-title {
+      font-family: var(--font-tech);
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #799bbb;
+    }
+
+    .stat-value {
+      font-family: var(--font-tech);
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--cyber-cyan);
+      text-shadow: 0 0 12px var(--cyber-cyan);
+      letter-spacing: 1px;
+    }
+
+    .credits-display {
+      font-family: var(--font-tech);
+      color: var(--cyber-gold);
+      font-size: 0.8rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 2px;
+      text-shadow: 0 0 8px rgba(255, 170, 0, 0.6);
+    }
+
+    .level-container {
+      margin-top: 4px;
+      width: 145px;
+    }
+
+    .level-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: var(--font-tech);
+      margin-bottom: 3px;
+    }
+
+    .xp-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px));
+      overflow: hidden;
+      border: 1px solid rgba(0, 243, 255, 0.3);
+    }
+
+    .xp-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-green));
+      box-shadow: 0 0 10px var(--cyber-cyan);
+      transition: width 0.3s ease;
+    }
+
+    .status-badge {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 3px 8px;
+      font-family: var(--font-tech);
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      background: rgba(0, 243, 255, 0.12);
+      color: var(--cyber-cyan);
+      border: 1px solid var(--cyber-cyan);
+      clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+    }
+
+    .status-badge.danger {
+      background: rgba(255, 0, 85, 0.2);
+      color: var(--cyber-crimson);
+      border-color: var(--cyber-crimson);
+      text-shadow: 0 0 8px var(--cyber-crimson);
+    }
+
+    .status-badge.banned {
+      background: rgba(255, 0, 0, 0.35);
+      color: #ff3333;
+      border-color: #ff3333;
+    }
+
+    .bounty-wrapper {
+      position: absolute;
+      top: 155px;
+      left: 10px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      pointer-events: auto;
+      touch-action: none;
+    }
+
+    .bounty-toggle-btn {
+      background: var(--cyber-dark);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--cyber-border);
+      color: var(--cyber-cyan);
+      padding: 6px 12px;
+      clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+      font-family: var(--font-tech);
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      cursor: grab;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    }
+
+    .bounty-toggle-btn:active { cursor: grabbing; }
+
+    .drag-grip {
+      color: #799bbb;
+      font-size: 0.75rem;
+      letter-spacing: -2px;
+    }
+
+    .bounty-card {
+      width: 220px;
+      padding: 8px 12px;
+      display: none;
+      animation: fadeInDown 0.2s ease forwards;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .bounty-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-top: 6px;
+      font-size: 0.72rem;
+      border-bottom: 1px dashed rgba(0, 243, 255, 0.2);
+      padding-bottom: 4px;
+    }
+
+    .bounty-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .bounty-title { font-weight: 700; color: #bad3eb; }
+
+    .bounty-progress {
+      font-family: var(--font-tech);
+      font-size: 0.62rem;
+      color: var(--cyber-cyan);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .bounty-done { color: var(--cyber-green) !important; font-weight: 900; }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(3, 5, 10, 0.92);
+      backdrop-filter: blur(16px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .cyber-modal-card {
+      background: rgba(8, 14, 24, 0.98);
+      border: 1px solid var(--cyber-cyan);
+      clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+      max-width: 460px;
+      width: 100%;
+      padding: 24px;
+      box-shadow: 0 0 45px rgba(0, 243, 255, 0.4);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      font-family: var(--font-tech);
+      font-size: 1.15rem;
+      color: var(--cyber-cyan);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .close-modal-btn {
+      background: none;
+      border: none;
+      color: var(--cyber-crimson);
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+
+    .profile-edit-avatar-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .profile-preview-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--cyber-cyan);
+      box-shadow: 0 0 20px var(--cyber-cyan);
+      object-fit: cover;
+      background: #09121f;
+    }
+
+    .file-upload-btn {
+      background: var(--cyber-dark);
+      border: 1px solid var(--cyber-cyan);
+      color: var(--cyber-cyan);
+      padding: 6px 14px;
+      font-family: var(--font-tech);
+      font-size: 0.7rem;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .profile-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 14px;
+    }
+
+    .profile-input-group label {
+      font-family: var(--font-tech);
+      font-size: 0.65rem;
+      color: #799bbb;
+    }
+
+    .cyber-input {
+      background: rgba(5, 8, 15, 0.85);
+      border: 1px solid var(--cyber-border);
+      color: #fff;
+      font-family: var(--font-tech);
+      font-size: 0.85rem;
+      padding: 8px 12px;
+      outline: none;
+      border-radius: 4px;
+    }
+
+    .cyber-input:focus {
+      border-color: var(--cyber-cyan);
+      box-shadow: 0 0 10px var(--cyber-cyan);
+    }
+
+    .account-sync-card {
+      background: rgba(12, 20, 34, 0.7);
+      border: 1px dashed var(--cyber-gold);
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .save-profile-btn {
+      width: 100%;
+      background: var(--cyber-cyan);
+      color: #03060a;
+      border: none;
+      padding: 12px;
+      font-family: var(--font-tech);
+      font-size: 0.85rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      cursor: pointer;
+      margin-top: 10px;
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    }
+
+    .top-right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-end;
+      pointer-events: auto;
+    }
+
+    .quick-toolbar {
+      display: flex;
+      gap: 6px;
+    }
+
+    .tool-btn {
+      background: var(--cyber-dark);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--cyber-border);
+      color: #fff;
+      padding: 0 10px;
+      height: 36px;
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      font-family: var(--font-tech);
+      font-size: 0.72rem;
+      font-weight: 700;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s ease;
+    }
+
+    .tool-btn:hover, .tool-btn.active {
+      border-color: var(--cyber-cyan);
+      color: var(--cyber-cyan);
+      box-shadow: 0 0 14px var(--cyber-cyan);
+    }
+
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 5px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-family: var(--font-tech);
+      font-size: 0.68rem;
+    }
+
+    .floating-text {
+      position: absolute;
+      color: #fff;
+      font-family: var(--font-tech);
+      font-weight: 900;
+      font-size: 1.15rem;
+      letter-spacing: 1px;
+      text-shadow: 0 0 12px var(--cyber-cyan), 0 2px 4px #000;
+      pointer-events: none;
+      z-index: 3000;
+      animation: floatUpFade 1.6s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+    }
+
+    @keyframes floatUpFade {
+      0% { opacity: 0; transform: translate(-50%, 0) scale(0.6); }
+      20% { opacity: 1; transform: translate(-50%, -15px) scale(1.15); }
+      100% { opacity: 0; transform: translate(-50%, -55px) scale(0.95); }
+    }
+
+    .player-avatar-container {
+      position: relative;
+      width: 54px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .player-rotator {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.12s ease-out;
+      pointer-events: none;
+    }
+
+    .player-cone {
+      position: absolute;
+      top: -22px;
+      width: 0;
+      height: 0;
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-top: 42px solid rgba(0, 243, 255, 0.35);
+      filter: drop-shadow(0 0 10px var(--cyber-cyan));
+      pointer-events: none;
+    }
+
+    .player-custom-pin {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--cyber-cyan);
+      box-shadow: 0 0 15px var(--cyber-cyan);
+      object-fit: cover;
+      position: relative;
+      z-index: 2;
+      background: #000;
+    }
+
+    .crimson-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid var(--cyber-crimson);
+      box-shadow: 0 0 16px var(--cyber-crimson);
+    }
+
+    .volt-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid var(--cyber-volt);
+      box-shadow: 0 0 16px var(--cyber-volt);
+    }
+
+    .monument-pin-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform: translateY(-50%);
+    }
+
+    .monument-icon-badge {
+      width: 36px;
+      height: 36px;
+      background: rgba(6, 12, 22, 0.95);
+      border: 2px solid var(--cyber-gold);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      box-shadow: 0 0 20px var(--cyber-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      color: var(--cyber-gold);
+    }
+
+    .monument-label {
+      background: rgba(6, 12, 22, 0.9);
+      border: 1px solid rgba(255, 170, 0, 0.5);
+      color: #fff;
+      font-family: var(--font-tech);
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-top: 5px;
+      white-space: nowrap;
+    }
+
+    .radar-container {
+      position: absolute;
+      bottom: 20px;
+      left: 15px;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 243, 255, 0.15) 0%, rgba(6, 10, 18, 0.95) 85%);
+      border: 2px solid var(--cyber-cyan);
+      box-shadow: 0 0 25px rgba(0, 243, 255, 0.45);
+      z-index: 1000;
+      overflow: hidden;
+      pointer-events: auto;
+    }
+
+    .radar-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .radar-sweep {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, rgba(0, 243, 255, 0.4) 0deg, transparent 65deg, transparent 360deg);
+      animation: radarScan 2.4s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes radarScan {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .hud-bottom {
+      position: absolute;
+      bottom: 20px;
+      left: 130px;
+      right: 15px;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      pointer-events: none;
+    }
+
+    .control-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: auto;
+    }
+
+    .neon-btn {
+      background: var(--cyber-dark);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--cyber-border);
+      color: #fff;
+      padding: 10px 14px;
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+      font-family: var(--font-tech);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.6);
+      transition: all 0.2s ease;
+    }
+
+    .neon-btn.active {
+      background: var(--cyber-cyan);
+      color: #03060a;
+      box-shadow: 0 0 20px var(--cyber-cyan);
+    }
+
+    .joystick-panel {
+      pointer-events: auto;
+      width: 110px;
+      height: 110px;
+      background: rgba(6, 10, 18, 0.75);
+      backdrop-filter: blur(14px);
+      border: 2px dashed var(--cyber-border);
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: none;
+    }
+
+    .joystick-stick {
+      width: 44px;
+      height: 44px;
+      background: radial-gradient(circle at 35% 35%, #ffffff, var(--cyber-cyan));
+      border-radius: 50%;
+      position: absolute;
+      box-shadow: 0 0 22px var(--cyber-cyan);
+      pointer-events: none;
+      transform: translate(0px, 0px);
+    }
+
+    .banner-notification {
+      position: absolute;
+      top: 85px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(6, 10, 18, 0.95);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--cyber-cyan);
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+      padding: 10px 24px;
+      font-family: var(--font-tech);
+      font-size: 0.85rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #fff;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      box-shadow: 0 0 30px rgba(0, 243, 255, 0.5);
+      white-space: nowrap;
+    }
+
+    .banner-notification.danger {
+      border-color: var(--cyber-crimson);
+      box-shadow: 0 0 30px rgba(255, 0, 85, 0.7);
+      color: #ff99bb;
+    }
+
+    .banner-notification.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .safety-alert-banner {
+      position: absolute;
+      top: 75px;
+      left: 10px;
+      right: 10px;
+      background: rgba(220, 20, 40, 0.95);
+      backdrop-filter: blur(16px);
+      border: 2px solid #ffffff;
+      color: #ffffff;
+      padding: 11px 14px;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+      font-family: var(--font-tech);
+      font-size: 0.8rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      z-index: 2500;
+      box-shadow: 0 0 35px rgba(255, 0, 0, 0.9);
+      animation: alertPulse 1s infinite alternate;
+    }
+
+    @keyframes alertPulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.02); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cyber-overlay"></div>
+  <canvas id="fxCanvas"></canvas>
+
+  <div class="modal-overlay" id="safetyModal" style="display:flex;">
+    <div class="cyber-modal-card">
+      <div class="modal-header">
+        <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
+      </div>
+      <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Test-Phase (50 m/s & Cloud-Ready)</b>.
+      </div>
+      <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem;">
+        <li><i class="fa-solid fa-person-walking" style="color:var(--cyber-volt);"></i> Nutze nur öffentliche Straßen, Gehwege & Parks.</li>
+        <li><i class="fa-solid fa-ban" style="color:var(--cyber-crimson);"></i> <b>Privatgelände, Firmengelände & Bahngleise sind TABUZONEN!</b></li>
+        <li><i class="fa-solid fa-cloud" style="color:var(--cyber-cyan);"></i> <b>LAZY-AUTH AKTIV:</b> Du spielst sofort als Gast. Cloud-Sync ist jederzeit im Profil möglich.</li>
+        <li><i class="fa-solid fa-compass" style="color:var(--cyber-cyan);"></i> <b>Gyro-Sensoren:</b> Drehe dein Gerät für 360°-Targeting.</li>
+        <li><i class="fa-solid fa-lock" style="color:var(--cyber-cyan);"></i> <b>Anti-Cheat:</b> Fake-GPS führt im Echtbetrieb zum Lock.</li>
+        <li><i class="fa-solid fa-user-shield" style="color:var(--cyber-green);"></i> <b>DSGVO-Shield:</b> Deine exakte Privatadresse bleibt verschleiert.</li>
+      </ul>
+      <button class="save-profile-btn" id="acceptSafetyBtn">PROTOKOLL BESTÄTIGEN & STARTEN</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="legalModal">
+    <div class="cyber-modal-card">
+      <div class="modal-header">
+        <span><i class="fa-solid fa-scale-balanced"></i> LEGAL // COMPLIANCE</span>
+        <button class="close-modal-btn" id="closeLegalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:14px; font-size:0.82rem; line-height:1.6; color:#bad3eb;">
+        <div>
+          <div style="font-family:var(--font-tech); color:var(--cyber-cyan); font-weight:700;">1. KARTENDATEN & LIZENZEN</div>
+          Kartendaten stammen von <b>OpenStreetMap</b> (ODbL) & <b>CartoDB</b>.<br>
+          Monument- & Straßeninformationen werden über die <b>Overpass API</b> geladen.<br>
+          <span style="color:#888;">© OpenStreetMap contributors, © CARTO</span>
+        </div>
+        <div>
+          <div style="font-family:var(--font-tech); color:var(--cyber-gold); font-weight:700;">2. MARKEN- & URHEBERRECHT</div>
+          Dies ist eine eigenständige, experimentelle Geolocation-Software. Es besteht keinerlei Verbindung zu eingetragenen Marken Dritter.
+        </div>
+        <div>
+          <div style="font-family:var(--font-tech); color:var(--cyber-green); font-weight:700;">3. DATENSCHUTZ (DSGVO / PRIVACY)</div>
+          Gast-Profile verbleiben lokal auf deinem Gerät (`localStorage`). Bei Cloud-Sync werden Login-Daten sicher über Supabase Authentifizierung verschlüsselt verarbeitet.
+        </div>
+      </div>
+      <button class="save-profile-btn" id="confirmLegalBtn" style="margin-top:20px;">VERSTANDEN</button>
+    </div>
+  </div>
+
+  <!-- Profil & Cloud-Sync Terminal Modal -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="cyber-modal-card">
+      <div class="modal-header">
+        <span><i class="fa-solid fa-id-card"></i> AGENTEN-AKTE // ID</span>
+        <button class="close-modal-btn" id="closeProfileBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="profile-edit-avatar-box">
+        <img src="" id="profileModalPreview" class="profile-preview-img" alt="Avatar" />
+        <label class="file-upload-btn">
+          <i class="fa-solid fa-camera"></i> BILD WÄHLEN
+          <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" />
+        </label>
+        <span style="font-size:0.65rem; color:#888;">Lokale Speicherung (DSGVO-Konform)</span>
+      </div>
+
+      <div class="profile-input-group">
+        <label>CODENAME / SPIELERNAME</label>
+        <input type="text" id="agentNameInput" class="cyber-input" maxlength="15" placeholder="Agent 01" />
+      </div>
+
+      <div class="profile-input-group">
+        <label>FRAKTION / RANG</label>
+        <input type="text" id="agentTagInput" class="cyber-input" maxlength="20" placeholder="Cyber-Runner" />
+      </div>
+
+      <!-- Cloud-Sync / Account Verknüpfung -->
+      <div class="account-sync-card">
+        <div style="font-family:var(--font-tech); font-size:0.75rem; color:var(--cyber-gold); display:flex; justify-content:space-between; align-items:center;">
+          <span><i class="fa-solid fa-cloud-arrow-up"></i> CLOUD-SYNC (SUPABASE)</span>
+          <span id="accountSyncStatus" class="cloud-status-badge">GAST</span>
+        </div>
+        <p style="font-size:0.72rem; color:#aaa;" id="syncDescText">
+          Verknüpfe dein Gast-Profil mit einer E-Mail-Adresse, um Fortschritte und Territorien dauerhaft in der Cloud zu sichern (+1.000 $CYB Bonus).
+        </p>
+
+        <div id="authFieldsContainer" style="display:flex; flex-direction:column; gap:6px;">
+          <input type="email" id="syncEmailInput" class="cyber-input" placeholder="agent@papercity.net" style="font-size:0.75rem;" />
+          <input type="password" id="syncPasswordInput" class="cyber-input" placeholder="Sicheres Passwort" style="font-size:0.75rem;" />
+          <button class="tool-btn" id="linkAccountBtn" style="color:var(--cyber-gold); border-color:var(--cyber-gold); width:100%; height:32px; font-size:0.7rem;">
+            ACCOUNT VERKNÜPFEN / ANMELDEN
+          </button>
+        </div>
+      </div>
+
+      <button class="save-profile-btn" id="saveProfileBtn">PROFIL AKTUALISIEREN</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="shareModal">
+    <div class="cyber-modal-card" style="text-align: center; max-width: 500px;">
+      <div class="modal-header">
+        <span><i class="fa-solid fa-share-nodes"></i> STORY EXPORT // FLEX</span>
+        <button class="close-modal-btn" id="closeShareBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p style="font-size:0.8rem; color:#bad3eb; margin-bottom:12px;">Deine generierte Story-Card für TikTok, Instagram & WhatsApp:</p>
+      <div style="display:flex; justify-content:center; margin-bottom:15px; position: relative;">
+        <canvas id="shareCanvas" width="1080" height="1920" style="width: 210px; height: 373px; border: 2px solid var(--cyber-cyan); box-shadow: 0 0 25px rgba(0, 243, 255, 0.45); border-radius: 8px; background: #040812; image-rendering: pixelated;"></canvas>
+      </div>
+      <button class="save-profile-btn" id="executeShareBtn" style="background:linear-gradient(90deg, var(--cyber-cyan), var(--cyber-purple)); color:#fff;">
+        <i class="fa-solid fa-paper-plane"></i> JETZT TEILEN / SPEICHERN
+      </button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="shopModal">
+    <div class="cyber-modal-card">
+      <div class="modal-header" style="color:var(--cyber-gold);">
+        <span><i class="fa-solid fa-cart-shopping"></i> CYBER-TERMINAL</span>
+        <button class="close-modal-btn" id="closeShopBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div style="font-size:0.85rem; color:#aaa; margin-bottom:12px;">Nutze deine erspielten $CYB für permanente Hardware-Upgrades:</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
+        <div>
+          <div style="font-family:var(--font-tech); font-weight:700;">BASIS-EXPANSION I</div>
+          <div style="font-size:0.75rem; color:#888;">Erhöht sicheren Basiskreis auf 35m</div>
+        </div>
+        <button class="tool-btn" id="buyBaseUpgradeBtn" style="color:var(--cyber-gold); border-color:var(--cyber-gold);">500 $CYB</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
+        <div>
+          <div style="font-family:var(--font-tech); font-weight:700;">SCHILD-BOOSTER</div>
+          <div style="font-size:0.75rem; color:#888;">Verlängert Schild-Items auf 18 Sek.</div>
+        </div>
+        <button class="tool-btn" id="buyShieldUpgradeBtn" style="color:var(--cyber-gold); border-color:var(--cyber-gold);">750 $CYB</button>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0;">
+        <div>
+          <div style="font-family:var(--font-tech); font-weight:700; color:var(--cyber-purple);">TRAIL: HYPER-VIOLETT</div>
+          <div style="font-size:0.75rem; color:#888;">Neon-Lila Laser-Schweif</div>
+        </div>
+        <button class="tool-btn" id="buySkinBtn" style="color:var(--cyber-gold); border-color:var(--cyber-gold);">1.200 $CYB</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="map"></div>
+
+  <div class="safety-alert-banner" id="safetyAlertBar">
+    <i class="fa-solid fa-triangle-exclamation fa-lg"></i>
+    <span id="safetyAlertText">WARNUNG: SPERRZONE / BETRETEN VERBOTEN!</span>
+  </div>
+
+  <div id="captureBanner" class="banner-notification">
+    <span id="bannerText">SEKTOR GESICHERT!</span>
+  </div>
+
+  <!-- Top HUD -->
+  <div class="hud-top">
+    <div class="cyber-panel">
+      <div class="hud-profile-row" id="hudProfileTrigger" title="Agenten-Akte öffnen">
+        <img src="" id="hudAvatarImg" class="hud-avatar" alt="Avatar" />
+        <div>
+          <div class="agent-name-label" id="hudAgentName">
+            DU (AGENT) <span id="hudCloudBadge" class="cloud-status-badge">GAST</span>
+          </div>
+          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">TEST-MODE // 50 m/s</div>
+        </div>
+      </div>
+
+      <div class="stat-title"><i class="fa-solid fa-crown"></i> SEKTOR // FLAECHE</div>
+      <div class="stat-value" id="playerAreaStat">0 m²</div>
+      <div class="credits-display"><i class="fa-solid fa-coins"></i> <span id="playerCreditsStat">0</span> $CYB</div>
+      
+      <div class="level-container">
+        <div class="level-row">
+          <span style="color:var(--cyber-cyan);" id="rankTitle">LVL 1 ROOKIE</span>
+          <span id="xpStat" style="color:#799bbb;">0/600 XP</span>
+        </div>
+        <div class="xp-bar-bg">
+          <div class="xp-bar-fill" id="xpFill"></div>
+        </div>
+      </div>
+
+      <div class="status-badge" id="playerStatusBadge">IN BASIS (GESICHERT)</div>
+    </div>
+
+    <div class="top-right-col">
+      <div class="quick-toolbar">
+        <button class="tool-btn active" id="toggleSnapBtn" title="Magnetisches Road-Snapping An/Aus">🧲 SNAP</button>
+        <button class="tool-btn" id="openShareBtn" style="color:var(--cyber-cyan); border-color:var(--cyber-cyan);" title="Social Share Story"><i class="fa-solid fa-share-nodes"></i> SHARE</button>
+        <button class="tool-btn" id="openLegalBtn" title="Rechtliches & Attribution"><i class="fa-solid fa-scale-balanced"></i></button>
+        <button class="tool-btn" id="openProfileBtn" title="Profil"><i class="fa-solid fa-id-card"></i> ID</button>
+        <button class="tool-btn" id="openShopBtn" style="color:var(--cyber-gold); border-color:var(--cyber-gold);" title="Upgrade Shop"><i class="fa-solid fa-cart-shopping"></i></button>
+        <button class="tool-btn" id="paceToggleBtn" title="Tempo wählen">🚀 50 m/s</button>
+        <button class="tool-btn" id="themeToggleBtn" title="Theme"><i class="fa-solid fa-moon"></i></button>
+        <button class="tool-btn" id="soundToggleBtn" title="Audio"><i class="fa-solid fa-volume-high"></i></button>
+      </div>
+
+      <div class="cyber-panel" style="min-width: 145px;">
+        <div class="stat-title"><i class="fa-solid fa-trophy"></i> LEADERBOARD</div>
+        <div class="leaderboard-list" id="leaderboardList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bounty-wrapper" id="bountyWrapper">
+    <button class="bounty-toggle-btn" id="bountyToggleBtn">
+      <span class="drag-grip">⠿</span>
+      <i class="fa-solid fa-crosshairs"></i> TASKS <span id="bountyChevron">▼</span>
+    </button>
+    <div class="cyber-panel bounty-card" id="bountyCard">
+      <div class="stat-title"><i class="fa-solid fa-crosshairs"></i> DAILY BOUNTIES</div>
+      <div class="bounty-item">
+        <div class="bounty-title">1. LANDRUSH (2.000 m²)</div>
+        <div class="bounty-progress"><span id="bountyLandTxt">0/2.000 m²</span><span style="color:var(--cyber-gold);">+250 $CYB</span></div>
+      </div>
+      <div class="bounty-item">
+        <div class="bounty-title">2. HEADHUNTER (1 BOT)</div>
+        <div class="bounty-progress"><span id="bountyBotTxt">0/1 Kill</span><span style="color:var(--cyber-gold);">+300 $CYB</span></div>
+      </div>
+      <div class="bounty-item">
+        <div class="bounty-title">3. CORE CONTROL (1 POI)</div>
+        <div class="bounty-progress"><span id="bountyCoreTxt">0/1 Core</span><span style="color:var(--cyber-gold);">+200 $CYB</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="radar-container" title="Radar">
+    <canvas id="radarCanvas" class="radar-canvas" width="100" height="100"></canvas>
+    <div class="radar-sweep"></div>
+  </div>
+
+  <div class="hud-bottom">
+    <div class="control-actions">
+      <button class="neon-btn" id="toggleGpsBtn">
+        <i class="fa-solid fa-location-crosshairs"></i> <span id="gpsBtnLabel">ECHT-GPS</span>
+      </button>
+      <button class="neon-btn" id="relocateBtn">
+        <i class="fa-solid fa-house-chimney"></i> BASIS RELOCATE
+      </button>
+      <button class="neon-btn" id="resetBtn">
+        <i class="fa-solid fa-rotate-left"></i> REBOOT
+      </button>
+    </div>
+
+    <div class="joystick-panel" id="joystickZone">
+      <div class="joystick-stick" id="joystickHandle"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    /* ========================================================
+       1. Supabase Backend Konfiguration & Fallback
+       ======================================================== */
+    const SUPABASE_URL = "https://DEIN-PROJEKT.supabase.co";
+    const SUPABASE_ANON_KEY = "DEIN-ANON-KEY";
+
+    let supabaseClient = null;
+    let isSupabaseConfigured = false;
+    let cloudUser = null;
+
+    if (SUPABASE_URL !== "https://DEIN-PROJEKT.supabase.co" && window.supabase) {
+      try {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        isSupabaseConfigured = true;
+      } catch (err) {
+        console.warn("Supabase Init Fallback:", err);
+      }
+    }
+
+    /* ========================================================
+       2. Setup & High-Speed Test-Konfiguration (50 m/s)
+       ======================================================== */
+    let playerCustomColor = localStorage.getItem('pc_skin_color') || '#00f3ff';
+    const CRIMSON_COLOR = '#ff0055';
+    const VOLT_COLOR = '#ffee00';
+    const MONUMENT_NEUTRAL = '#ffaa00';
+
+    const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>";
+
+    let playerName = localStorage.getItem('pc_agent_name') || 'AGENT V';
+    let playerTag = localStorage.getItem('pc_agent_tag') || 'TEST-PILOT';
+    let playerAvatar = localStorage.getItem('pc_agent_avatar') || DEFAULT_AVATAR;
+
+    let guestUUID = localStorage.getItem('pc_guest_uuid');
+    if (!guestUUID) {
+      guestUUID = 'guest_' + Math.random().toString(36).substring(2, 11);
+      localStorage.setItem('pc_guest_uuid', guestUUID);
+    }
+
+    let isCloudSynced = localStorage.getItem('pc_cloud_synced') === 'true';
+
+    const RANKS = ["NOOB", "ROOKIE", "SCOUT", "RUNNER", "STREET MASTER", "HOOD LORD", "DISTRICT KING", "CITY OVERLORD"];
+
+    const PACE_MODES = [
+      { label: "🚀 50 m/s", speedMps: 50.0, botFactor: 1.0 },
+      { label: "⚡ 50 m/s", speedMps: 50.0, botFactor: 1.0 },
+      { label: "🔥 50 m/s", speedMps: 50.0, botFactor: 1.0 }
+    ];
+    let currentPaceIdx = 0;
+
+    let savedLevel = parseInt(localStorage.getItem('pc_level') || '1');
+    let savedXP = parseInt(localStorage.getItem('pc_xp') || '0');
+    let savedCredits = parseInt(localStorage.getItem('pc_credits') || '100000000000000');
+    let baseRadius = parseInt(localStorage.getItem('pc_base_radius') || '35');
+    let shieldDurationSec = parseInt(localStorage.getItem('pc_shield_dur') || '12');
+
+    let isSoundMuted = localStorage.getItem('pc_muted') === 'true';
+    let isDarkMode = localStorage.getItem('pc_darkmode') !== 'false';
+    let isRoadSnappingActive = localStorage.getItem('pc_snap_active') !== 'false';
+
+    let bLandClaimed = localStorage.getItem('pc_b_land') === 'true';
+    let bBotClaimed = localStorage.getItem('pc_b_bot') === 'true';
+    let bCoreClaimed = localStorage.getItem('pc_b_core') === 'true';
+
+    let sessionLand = parseInt(localStorage.getItem('pc_session_land') || '0');
+    let sessionBotKills = parseInt(localStorage.getItem('pc_session_bot_kills') || '0');
+    let sessionCores = parseInt(localStorage.getItem('pc_session_cores') || '0');
+
+    function saveSessionBounties() {
+      localStorage.setItem('pc_session_land', sessionLand);
+      localStorage.setItem('pc_session_bot_kills', sessionBotKills);
+      localStorage.setItem('pc_session_cores', sessionCores);
+    }
+
+    function applyPrivacyOffset(coord) {
+      const angle = Math.random() * Math.PI * 2;
+      const offsetMeters = 25 + Math.random() * 20;
+      const dLat = (offsetMeters * Math.cos(angle)) / 111320;
+      const dLng = (offsetMeters * Math.sin(angle)) / (111320 * Math.cos(coord[0] * Math.PI / 180));
+      return [coord[0] + dLat, coord[1] + dLng];
+    }
+
+    let playerSpawn = [52.1738, 7.5312];
+    const savedSpawn = localStorage.getItem('pc_saved_spawn');
+    if (savedSpawn) {
+      try { playerSpawn = JSON.parse(savedSpawn); } catch(e){}
+    }
+
+    let playerPos = [...playerSpawn];
+    let playerHeadingDeg = 0;
+    let isRealGpsActive = false;
+    let gpsWatchId = null;
+    let wakeLock = null;
+    let isCompassActive = false;
+
+    let playerTrail = [];
+    const savedActiveTrail = localStorage.getItem('pc_active_trail');
+    if (savedActiveTrail) {
+      try {
+        const parsed = JSON.parse(savedActiveTrail);
+        if (Array.isArray(parsed)) playerTrail = parsed;
+      } catch(e){}
+    }
+
+    function syncTrailStorage() {
+      try {
+        localStorage.setItem('pc_active_trail', JSON.stringify(playerTrail));
+      } catch(e){}
+    }
+
+    let playerTotalArea = parseInt(localStorage.getItem('pc_total_area') || '1960');
+    let baseCircleLayer = null;
+
+    let botCrimson = {
+      name: "Crimson", color: CRIMSON_COLOR, spawn: [playerSpawn[0] + 0.0018, playerSpawn[1] + 0.0022], pos: [playerSpawn[0] + 0.0018, playerSpawn[1] + 0.0022],
+      trail: [], area: 1960, heading: 45, timeSinceTurn: 0, baseSpeedMps: 50.0,
+      marker: null, trailLayer: null
+    };
+
+    let botVolt = {
+      name: "Volt", color: VOLT_COLOR, spawn: [playerSpawn[0] + 0.0016, playerSpawn[1] - 0.0024], pos: [playerSpawn[0] + 0.0016, playerSpawn[1] - 0.0024],
+      trail: [], area: 1960, heading: 220, timeSinceTurn: 0, baseSpeedMps: 50.0,
+      marker: null, trailLayer: null
+    };
+
+    let cityMonuments = [];
+    let restrictedZones = [];
+    let cachedRoadSegments = [];
+
+    /* ========================================================
+       3. Cloud-Sync (Lazy Authentication Pipeline)
+       ======================================================== */
+    async function syncProfileToCloud() {
+      if (!isSupabaseConfigured || !cloudUser) return;
+      try {
+        await supabaseClient.from('profiles').upsert({
+          id: cloudUser.id,
+          agent_name: playerName,
+          faction_tag: playerTag,
+          avatar_url: playerAvatar,
+          level: savedLevel,
+          xp: savedXP,
+          credits: savedCredits,
+          total_area: playerTotalArea,
+          updated_at: new Date().toISOString()
+        });
+      } catch (err) {
+        console.warn("Cloud Sync Fehler:", err);
+      }
+    }
+
+    async function handleAccountLink() {
+      const emailInput = document.getElementById('syncEmailInput');
+      const passInput = document.getElementById('syncPasswordInput');
+      if (!emailInput || !passInput) return;
+
+      const email = emailInput.value.trim();
+      const password = passInput.value.trim();
+
+      if (!email || password.length < 6) {
+        showBanner("E-MAIL & PASSWORT (>6 ZEICHEN) EINGEBEN!", true);
+        return;
+      }
+
+      if (!isSupabaseConfigured) {
+        isCloudSynced = true;
+        localStorage.setItem('pc_cloud_synced', 'true');
+        addCredits(1000);
+        showBanner("SIMULATION: CLOUD VERKNÜPFT! (+1.000 $CYB)", false);
+        syncProfileUI();
+        return;
+      }
+
+      try {
+        let { data, error } = await supabaseClient.auth.signUp({ email, password });
+        if (error && error.message.includes("already registered")) {
+          const signInRes = await supabaseClient.auth.signInWithPassword({ email, password });
+          data = signInRes.data;
+          error = signInRes.error;
+        }
+
+        if (error) {
+          showBanner("AUTH FEHLER: " + error.message, true);
+          return;
+        }
+
+        if (data && data.user) {
+          cloudUser = data.user;
+          isCloudSynced = true;
+          localStorage.setItem('pc_cloud_synced', 'true');
+          addCredits(1000);
+          await syncProfileToCloud();
+          showBanner("CLOUD-SYNC AKTIV! (+1.000 $CYB)", false);
+          syncProfileUI();
+        }
+      } catch (err) {
+        showBanner("VERBINDUNGSFEHLER!", true);
+      }
+    }
+
+    const linkAccountBtn = document.getElementById('linkAccountBtn');
+    if (linkAccountBtn) {
+      linkAccountBtn.addEventListener('click', () => {
+        ensureAudioContext();
+        handleAccountLink();
+      });
+    }
+
+    /* ========================================================
+       4. Road Snapping Engine
+       ======================================================== */
+    async function fetchRoadNetwork(center) {
+      cachedRoadSegments = [];
+      const radius = 1000;
+      const query = `
+        [out:json][timeout:10];
+        (
+          way["highway"~"primary|secondary|tertiary|residential|living_street|pedestrian|footway|path|cycleway"](around:${radius},${center[0]},${center[1]});
+        );
+        out geom 120;
+      `;
+
+      try {
+        const resp = await fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: query });
+        const data = await resp.json();
+
+        if (data.elements && data.elements.length > 0) {
+          data.elements.forEach(el => {
+            if (el.geometry && el.geometry.length > 1) {
+              for (let i = 0; i < el.geometry.length - 1; i++) {
+                cachedRoadSegments.push([
+                  [el.geometry[i].lat, el.geometry[i].lon],
+                  [el.geometry[i+1].lat, el.geometry[i+1].lon]
+                ]);
+              }
+            }
+          });
+        }
+      } catch (err) {}
+    }
+
+    function snapPointToRoads(lat, lng, maxSnapDistMeters = 20) {
+      if (!isRoadSnappingActive || cachedRoadSegments.length === 0) {
+        return [lat, lng];
+      }
+
+      let closestPoint = [lat, lng];
+      let minDistance = maxSnapDistMeters;
+
+      const pLat = lat;
+      const pLng = lng;
+      const cosLat = Math.cos(lat * Math.PI / 180);
+
+      for (let i = 0; i < cachedRoadSegments.length; i++) {
+        const seg = cachedRoadSegments[i];
+        const a = seg[0];
+        const b = seg[1];
+
+        const dx = (b[1] - a[1]) * 111320 * cosLat;
+        const dy = (b[0] - a[0]) * 111320;
+        const segLenSq = dx * dx + dy * dy;
+
+        if (segLenSq === 0) continue;
+
+        const apx = (pLng - a[1]) * 111320 * cosLat;
+        const apy = (pLat - a[0]) * 111320;
+
+        let t = (apx * dx + apy * dy) / segLenSq;
+        t = Math.max(0, Math.min(1, t));
+
+        const projLat = a[0] + t * (b[0] - a[0]);
+        const projLng = a[1] + t * (b[1] - a[1]);
+
+        const dist = getDistanceMeters([lat, lng], [projLat, projLng]);
+
+        if (dist < minDistance) {
+          minDistance = dist;
+          closestPoint = [projLat, projLng];
+        }
+      }
+
+      return closestPoint;
+    }
+
+    /* ========================================================
+       5. Audio, FX & Story-Share
+       ======================================================== */
+    let audioCtx = null;
+    function ensureAudioContext() {
+      if (isSoundMuted) return null;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        return audioCtx;
+      } catch (e) { return null; }
+    }
+
+    ['click', 'touchstart', 'pointerdown'].forEach(ev => {
+      window.addEventListener(ev, () => { ensureAudioContext(); }, { once: true, passive: true });
+    });
+
+    function playTone(freqStart, freqEnd, type, duration) {
+      if (isSoundMuted) return;
+      const ctx = ensureAudioContext();
+      if (!ctx) return;
+      try {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freqStart, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freqEnd, ctx.currentTime + duration);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch(e){}
+    }
+
+    function playFanfare() {
+      if (isSoundMuted) return;
+      playTone(330, 440, 'triangle', 0.15);
+      setTimeout(() => playTone(440, 550, 'triangle', 0.15), 150);
+      setTimeout(() => playTone(550, 880, 'triangle', 0.35), 300);
+    }
+
+    const fxCanvas = document.getElementById('fxCanvas');
+    const fxCtx = fxCanvas.getContext('2d');
+    let particles = [];
+    let shockwaves = [];
+
+    function resizeFxCanvas() {
+      fxCanvas.width = window.innerWidth;
+      fxCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeFxCanvas);
+    resizeFxCanvas();
+
+    function triggerShockwave(latLng, color = '#00f3ff') {
+      const point = map.latLngToContainerPoint(latLng);
+      shockwaves.push({ x: point.x, y: point.y, radius: 10, maxRadius: 180, opacity: 0.9, color: color });
+      for (let i = 0; i < 35; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2 + Math.random() * 5.5;
+        particles.push({
+          x: point.x, y: point.y,
+          vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+          life: 1.0, decay: 0.015 + Math.random() * 0.02,
+          size: 2.5 + Math.random() * 3.5, color: color
+        });
+      }
+    }
+
+    function renderFx() {
+      fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+      for (let i = shockwaves.length - 1; i >= 0; i--) {
+        const sw = shockwaves[i];
+        sw.radius += 4.5; sw.opacity -= 0.022;
+        if (sw.opacity <= 0 || sw.radius >= sw.maxRadius) { shockwaves.splice(i, 1); continue; }
+        fxCtx.save();
+        fxCtx.beginPath();
+        fxCtx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+        fxCtx.strokeStyle = sw.color;
+        fxCtx.lineWidth = 4 * sw.opacity;
+        fxCtx.globalAlpha = sw.opacity;
+        fxCtx.shadowColor = sw.color;
+        fxCtx.shadowBlur = 18;
+        fxCtx.stroke();
+        fxCtx.restore();
+      }
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx; p.y += p.vy; p.life -= p.decay;
+        if (p.life <= 0) { particles.splice(i, 1); continue; }
+        fxCtx.save();
+        fxCtx.globalAlpha = p.life;
+        fxCtx.fillStyle = p.color;
+        fxCtx.shadowColor = p.color;
+        fxCtx.shadowBlur = 10;
+        fxCtx.beginPath();
+        fxCtx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+        fxCtx.fill();
+        fxCtx.restore();
+      }
+      requestAnimationFrame(renderFx);
+    }
+    requestAnimationFrame(renderFx);
+
+    const shareModal = document.getElementById('shareModal');
+    const shareCanvas = document.getElementById('shareCanvas');
+    const sCtx = shareCanvas.getContext('2d');
+
+    function generateShareStoryCard() {
+      sCtx.clearRect(0, 0, 1080, 1920);
+      const bgGrad = sCtx.createLinearGradient(0, 0, 1080, 1920);
+      bgGrad.addColorStop(0, '#040813');
+      bgGrad.addColorStop(0.5, '#071224');
+      bgGrad.addColorStop(1, '#02050a');
+      sCtx.fillStyle = bgGrad;
+      sCtx.fillRect(0, 0, 1080, 1920);
+
+      sCtx.strokeStyle = 'rgba(0, 243, 255, 0.08)';
+      sCtx.lineWidth = 2;
+      for (let x = 0; x < 1080; x += 72) { sCtx.beginPath(); sCtx.moveTo(x, 0); sCtx.lineTo(x, 1920); sCtx.stroke(); }
+      for (let y = 0; y < 1920; y += 72) { sCtx.beginPath(); sCtx.moveTo(0, y); sCtx.lineTo(1080, y); sCtx.stroke(); }
+
+      sCtx.strokeStyle = '#00f3ff';
+      sCtx.lineWidth = 6;
+      sCtx.shadowColor = '#00f3ff';
+      sCtx.shadowBlur = 30;
+      sCtx.strokeRect(40, 40, 1000, 1840);
+      sCtx.shadowBlur = 0;
+
+      sCtx.fillStyle = '#00f3ff';
+      sCtx.font = '900 48px Orbitron';
+      sCtx.textAlign = 'center';
+      sCtx.fillText('PAPERCITY // NEON GRID', 540, 150);
+
+      sCtx.fillStyle = '#799bbb';
+      sCtx.font = '700 26px Orbitron';
+      sCtx.fillText('HIGH-SPEED TEST REPORT', 540, 200);
+
+      const avImg = new Image();
+      avImg.onload = function() {
+        sCtx.save();
+        sCtx.beginPath();
+        sCtx.arc(540, 400, 120, 0, Math.PI * 2);
+        sCtx.clip();
+        sCtx.drawImage(avImg, 420, 280, 240, 240);
+        sCtx.restore();
+
+        sCtx.beginPath();
+        sCtx.arc(540, 400, 120, 0, Math.PI * 2);
+        sCtx.strokeStyle = '#00f3ff';
+        sCtx.lineWidth = 8;
+        sCtx.shadowColor = '#00f3ff';
+        sCtx.shadowBlur = 40;
+        sCtx.stroke();
+        sCtx.shadowBlur = 0;
+
+        sCtx.fillStyle = '#ffffff';
+        sCtx.font = '900 56px Orbitron';
+        sCtx.fillText(playerName.toUpperCase(), 540, 610);
+
+        sCtx.fillStyle = '#ffaa00';
+        sCtx.font = '700 32px Orbitron';
+        sCtx.fillText(playerTag.toUpperCase() + ' // ' + (RANKS[Math.min(savedLevel - 1, RANKS.length - 1)]), 540, 670);
+
+        drawMetricCard(sCtx, 100, 760, 880, 260, 'EROBERTE FLAECHE', playerTotalArea.toLocaleString() + ' m²', '#00f3ff', true);
+        drawMetricCard(sCtx, 100, 1060, 420, 240, 'LEVEL', 'LVL ' + savedLevel, '#00ff66');
+        drawMetricCard(sCtx, 560, 1060, 420, 240, 'BOT-ABSCHUESSE', sessionBotKills + ' KILLS', '#ff0055');
+        drawMetricCard(sCtx, 100, 1340, 880, 220, 'CYBER-CREDITS', savedCredits.toLocaleString() + ' $CYB', '#ffaa00', true);
+
+        sCtx.fillStyle = '#ffffff';
+        sCtx.font = '800 28px Orbitron';
+        sCtx.fillText('KANNST DU MEIN VIERTEL EINNEHMEN?', 540, 1680);
+
+        sCtx.fillStyle = 'rgba(0, 243, 255, 0.7)';
+        sCtx.font = '700 24px Rajdhani';
+        sCtx.fillText('PLAY PAPERCITY // REAL GPS MULTIPLAYER', 540, 1740);
+      };
+      avImg.src = playerAvatar;
+    }
+
+    function drawMetricCard(ctx, x, y, w, h, label, val, color, wrapValue = false) {
+      ctx.fillStyle = 'rgba(6, 12, 22, 0.85)';
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.fillRect(x, y, w, h);
+      ctx.strokeRect(x, y, w, h);
+
+      ctx.fillStyle = '#799bbb';
+      ctx.font = '700 24px Orbitron';
+      ctx.textAlign = 'left';
+      ctx.fillText(label, x + 32, y + 56);
+
+      ctx.fillStyle = color;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+
+      let fontSize = wrapValue ? 44 : 52;
+      ctx.font = `900 ${fontSize}px Orbitron`;
+
+      const maxWidth = w - 64;
+      while (ctx.measureText(val).width > maxWidth && fontSize > 20) {
+        fontSize -= 2;
+        ctx.font = `900 ${fontSize}px Orbitron`;
+      }
+
+      const valueY = y + 56 + (h - 56) / 2;
+      ctx.fillText(val, x + 32, valueY);
+      ctx.textBaseline = 'alphabetic';
+    }
+
+    document.getElementById('openShareBtn').addEventListener('click', () => {
+      ensureAudioContext();
+      generateShareStoryCard();
+      shareModal.style.display = 'flex';
+    });
+    document.getElementById('closeShareBtn').addEventListener('click', () => shareModal.style.display = 'none');
+
+    document.getElementById('executeShareBtn').addEventListener('click', async () => {
+      ensureAudioContext();
+      shareCanvas.toBlob(async (blob) => {
+        if (!blob) return;
+        const file = new File([blob], 'papercity-territory.png', { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              files: [file],
+              title: 'PaperCity Territorium',
+              text: `Ich halte ${playerTotalArea.toLocaleString()} m² in meiner Stadt bei 50 m/s Speed!`
+            });
+          } catch(e){}
+        } else {
+          const a = document.createElement('a');
+          a.download = `papercity-${playerName}.png`;
+          a.href = shareCanvas.toDataURL();
+          a.click();
+          showBanner("STORY CARD ERFOLGREICH GESPEICHERT!", false);
+        }
+      });
+    });
+
+    /* ========================================================
+       6. Profil UI & Synchronisation
+       ======================================================== */
+    function syncProfileUI() {
+      const hudAv = document.getElementById('hudAvatarImg');
+      if (hudAv) hudAv.src = playerAvatar;
+
+      const hudName = document.getElementById('hudAgentName');
+      if (hudName) {
+        hudName.innerHTML = `${playerName} <span class="cloud-status-badge ${isCloudSynced ? 'synced' : ''}">${isCloudSynced ? 'CLOUD' : 'GAST'}</span>`;
+      }
+
+      const hudTag = document.getElementById('hudAgentTag');
+      if (hudTag) hudTag.textContent = playerTag;
+
+      const preview = document.getElementById('profileModalPreview');
+      if (preview) preview.src = playerAvatar;
+
+      const nameInp = document.getElementById('agentNameInput');
+      if (nameInp) nameInp.value = playerName;
+
+      const tagInp = document.getElementById('agentTagInput');
+      if (tagInp) tagInp.value = playerTag;
+
+      const syncStatusBadge = document.getElementById('accountSyncStatus');
+      if (syncStatusBadge) {
+        syncStatusBadge.textContent = isCloudSynced ? "VERKNÜPFT" : "GAST";
+        syncStatusBadge.className = `cloud-status-badge ${isCloudSynced ? 'synced' : ''}`;
+      }
+
+      if (isCloudSynced) {
+        const descText = document.getElementById('syncDescText');
+        if (descText) descText.textContent = "✓ Dieses Profil ist dauerhaft mit der Cloud synchronisiert.";
+        const authBox = document.getElementById('authFieldsContainer');
+        if (authBox) authBox.style.display = 'none';
+      }
+
+      const mapPinImg = document.getElementById('playerMapAvatar');
+      if (mapPinImg) mapPinImg.src = playerAvatar;
+    }
+
+    document.getElementById('avatarFileInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 160;
+          let w = img.width, h = img.height;
+          if (w > h) {
+            if (w > maxDim) { h = Math.round(h * maxDim / w); w = maxDim; }
+          } else {
+            if (h > maxDim) { w = Math.round(w * maxDim / h); h = maxDim; }
+          }
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+
+          playerAvatar = canvas.toDataURL('image/jpeg', 0.85);
+          document.getElementById('profileModalPreview').src = playerAvatar;
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    const profileModal = document.getElementById('profileModal');
+    document.getElementById('openProfileBtn').addEventListener('click', () => { ensureAudioContext(); profileModal.style.display = 'flex'; });
+    document.getElementById('hudProfileTrigger').addEventListener('click', () => { ensureAudioContext(); profileModal.style.display = 'flex'; });
+    document.getElementById('closeProfileBtn').addEventListener('click', () => profileModal.style.display = 'none');
+
+    document.getElementById('saveProfileBtn').addEventListener('click', () => {
+      ensureAudioContext();
+      const newName = document.getElementById('agentNameInput').value.trim();
+      const newTag = document.getElementById('agentTagInput').value.trim();
+      if (newName) playerName = newName;
+      if (newTag) playerTag = newTag;
+
+      localStorage.setItem('pc_agent_name', playerName);
+      localStorage.setItem('pc_agent_tag', playerTag);
+      localStorage.setItem('pc_agent_avatar', playerAvatar);
+
+      syncProfileUI();
+      syncProfileToCloud();
+      updateUI();
+      profileModal.style.display = 'none';
+      showBanner("PROFIL ERFOLGREICH SYNCHRONISIERT!", false);
+    });
+
+    const legalModal = document.getElementById('legalModal');
+    document.getElementById('openLegalBtn').addEventListener('click', () => { ensureAudioContext(); legalModal.style.display = 'flex'; });
+    document.getElementById('closeLegalBtn').addEventListener('click', () => legalModal.style.display = 'none');
+    document.getElementById('confirmLegalBtn').addEventListener('click', () => legalModal.style.display = 'none');
+
+    /* ========================================================
+       7. Währung, Bounties & Snap Toggle
+       ======================================================== */
+    function addCredits(amount) {
+      savedCredits += amount;
+      localStorage.setItem('pc_credits', savedCredits);
+      updateBountyUI();
+      syncProfileToCloud();
+      if (amount > 0) spawnFloatingText(`+${amount} $CYB`, '#ffaa00');
+    }
+
+    function checkBounties() {
+      if (!bLandClaimed && sessionLand >= 2000) {
+        bLandClaimed = true;
+        localStorage.setItem('pc_b_land', 'true');
+        addCredits(250);
+        addXP(300);
+        showBanner("🎯 BOUNTY ERFÜLLT: LANDRUSH (+250 $CYB)", false);
+      }
+      if (!bBotClaimed && sessionBotKills >= 1) {
+        bBotClaimed = true;
+        localStorage.setItem('pc_b_bot', 'true');
+        addCredits(300);
+        addXP(400);
+        showBanner("🎯 BOUNTY ERFÜLLT: HEADHUNTER (+300 $CYB)", false);
+      }
+      if (!bCoreClaimed && sessionCores >= 1) {
+        bCoreClaimed = true;
+        localStorage.setItem('pc_b_core', 'true');
+        addCredits(200);
+        addXP(250);
+        showBanner("🎯 BOUNTY ERFÜLLT: CORE CONTROL (+200 $CYB)", false);
+      }
+      saveSessionBounties();
+      updateBountyUI();
+    }
+
+    function updateBountyUI() {
+      document.getElementById('playerCreditsStat').textContent = savedCredits.toLocaleString();
+
+      const landEl = document.getElementById('bountyLandTxt');
+      if (bLandClaimed) { landEl.textContent = "ABGESCHLOSSEN"; landEl.className = "bounty-done"; }
+      else { landEl.textContent = `${sessionLand.toLocaleString()}/2.000 m²`; }
+
+      const botEl = document.getElementById('bountyBotTxt');
+      if (bBotClaimed) { botEl.textContent = "ABGESCHLOSSEN"; botEl.className = "bounty-done"; }
+      else { botEl.textContent = `${sessionBotKills}/1 Kill`; }
+
+      const coreEl = document.getElementById('bountyCoreTxt');
+      if (bCoreClaimed) { coreEl.textContent = "ABGESCHLOSSEN"; coreEl.className = "bounty-done"; }
+      else { coreEl.textContent = `${sessionCores}/1 Core`; }
+    }
+
+    const snapBtn = document.getElementById('toggleSnapBtn');
+    snapBtn.addEventListener('click', () => {
+      ensureAudioContext();
+      isRoadSnappingActive = !isRoadSnappingActive;
+      localStorage.setItem('pc_snap_active', isRoadSnappingActive);
+      snapBtn.classList.toggle('active', isRoadSnappingActive);
+      showBanner(isRoadSnappingActive ? "🧲 ROAD-SNAPPING: AKTIV" : "⚡ ROAD-SNAPPING: FREIFORM", false);
+    });
+    if (!isRoadSnappingActive) snapBtn.classList.remove('active');
+
+    const bountyWrapper = document.getElementById('bountyWrapper');
+    const bountyToggleBtn = document.getElementById('bountyToggleBtn');
+    const bountyCard = document.getElementById('bountyCard');
+    const bountyChevron = document.getElementById('bountyChevron');
+    let isBountyOpen = false;
+
+    const savedPosX = localStorage.getItem('pc_task_x');
+    const savedPosY = localStorage.getItem('pc_task_y');
+    if (savedPosX !== null && savedPosY !== null) {
+      bountyWrapper.style.left = savedPosX + 'px';
+      bountyWrapper.style.top = savedPosY + 'px';
+    }
+
+    let isDraggingTask = false;
+    let dragStartX = 0, dragStartY = 0;
+    let initialLeft = 0, initialTop = 0;
+    let dragMoved = false;
+
+    bountyToggleBtn.addEventListener('pointerdown', (e) => {
+      ensureAudioContext();
+      isDraggingTask = true;
+      dragMoved = false;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      const rect = bountyWrapper.getBoundingClientRect();
+      initialLeft = rect.left;
+      initialTop = rect.top;
+      bountyToggleBtn.setPointerCapture(e.pointerId);
+      e.stopPropagation();
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!isDraggingTask) return;
+      const dx = e.clientX - dragStartX;
+      const dy = e.clientY - dragStartY;
+      if (Math.hypot(dx, dy) > 6) dragMoved = true;
+
+      if (dragMoved) {
+        let newX = Math.max(10, Math.min(window.innerWidth - 120, initialLeft + dx));
+        let newY = Math.max(70, Math.min(window.innerHeight - 80, initialTop + dy));
+        bountyWrapper.style.left = newX + 'px';
+        bountyWrapper.style.top = newY + 'px';
+      }
+    });
+
+    window.addEventListener('pointerup', () => {
+      if (!isDraggingTask) return;
+      isDraggingTask = false;
+
+      if (dragMoved) {
+        localStorage.setItem('pc_task_x', parseInt(bountyWrapper.style.left));
+        localStorage.setItem('pc_task_y', parseInt(bountyWrapper.style.top));
+      } else {
+        isBountyOpen = !isBountyOpen;
+        bountyCard.style.display = isBountyOpen ? 'block' : 'none';
+        bountyChevron.textContent = isBountyOpen ? '▲' : '▼';
+      }
+    });
+
+    /* ========================================================
+       8. Sensor & Anti-Cheat
+       ======================================================== */
+    function initDeviceCompass() {
+      if (window.DeviceOrientationEvent) {
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+          DeviceOrientationEvent.requestPermission().then(res => {
+            if (res === 'granted') {
+              window.addEventListener('deviceorientation', handleOrientation, true);
+              isCompassActive = true;
+            }
+          }).catch(() => {});
+        } else {
+          window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+          window.addEventListener('deviceorientation', handleOrientation, true);
+          isCompassActive = true;
+        }
+      }
+    }
+
+    function handleOrientation(e) {
+      let compass = null;
+      if (e.webkitCompassHeading !== undefined && e.webkitCompassHeading !== null) {
+        compass = e.webkitCompassHeading;
+      } else if (e.alpha !== null && e.alpha !== undefined) {
+        compass = (360 - e.alpha) % 360;
+      }
+
+      if (compass !== null && !isNaN(compass)) {
+        playerHeadingDeg = Math.round(compass);
+        applyVisionRotation(playerHeadingDeg);
+      }
+    }
+
+    function applyVisionRotation(deg) {
+      const rotator = document.getElementById('playerRotator');
+      if (rotator) rotator.style.transform = `rotate(${deg}deg)`;
+    }
+
+    let lastGpsPing = null;
+    let cheatStrikeCount = 0;
+    let banRemainingSeconds = 0;
+    let isShadowBanned = false;
+
+    setInterval(() => {
+      if (banRemainingSeconds > 0) {
+        banRemainingSeconds--;
+        document.getElementById('playerStatusBadge').textContent = `LOCK // CHEATING (${banRemainingSeconds}s)`;
+        if (banRemainingSeconds === 0) {
+          isShadowBanned = false;
+          cheatStrikeCount = 0;
+          document.getElementById('playerStatusBadge').classList.remove('banned');
+          document.getElementById('safetyAlertBar').style.display = 'none';
+          showBanner("SYSTEM ENTSPERRT. FAIRPLAY AKTIV!", false);
+        }
+      }
+    }, 1000);
+
+    function triggerCheatPenalty(reason) {
+      cheatStrikeCount++;
+      playTone(180, 80, 'sawtooth', 0.5);
+      if (navigator.vibrate) navigator.vibrate([200, 100, 300]);
+
+      playerTrail = [];
+      syncTrailStorage();
+      playerTrailLayer.setLatLngs([]);
+
+      if (cheatStrikeCount >= 3) {
+        isShadowBanned = true;
+        banRemainingSeconds = 180;
+        const badge = document.getElementById('playerStatusBadge');
+        badge.textContent = `LOCK // CHEATING (180s)`;
+        badge.className = 'status-badge banned';
+
+        const alertBar = document.getElementById('safetyAlertBar');
+        const alertText = document.getElementById('safetyAlertText');
+        alertText.textContent = `ANTI-CHEAT INTERVENTION: ${reason} (3 MIN LOCK)`;
+        alertBar.style.display = 'flex';
+      } else {
+        showBanner(`⚠️ ANOMALIE (${cheatStrikeCount}/3): ${reason}`, true);
+      }
+    }
+
+    function validateGpsIntegrity(rawPos) {
+      if (isShadowBanned) return false;
+
+      const now = rawPos.timestamp || Date.now();
+      const lat = rawPos.coords.latitude;
+      const lng = rawPos.coords.longitude;
+      const accuracy = rawPos.coords.accuracy;
+
+      if (accuracy <= 0.05) {
+        triggerCheatPenalty("Gefälschte GPS-Genauigkeit erkannt!");
+        return false;
+      }
+      if (accuracy > 45) {
+        showBanner("SIGNAL INSTABIL (>45m ACCURACY)", true);
+        return false;
+      }
+
+      if (lastGpsPing !== null) {
+        const timeDiffSec = (now - lastGpsPing.time) / 1000;
+        if (timeDiffSec > 0.3) {
+          const distMeters = getDistanceMeters([lat, lng], [lastGpsPing.lat, lastGpsPing.lng]);
+          const calculatedSpeedKmh = (distMeters / timeDiffSec) * 3.6;
+
+          if (calculatedSpeedKmh > 280 && distMeters > 30) {
+            triggerCheatPenalty(`Teleportation erkannt (${Math.round(calculatedSpeedKmh)} km/h)!`);
+            lastGpsPing = { lat, lng, time: now, accuracy };
+            return false;
+          }
+        }
+      }
+
+      lastGpsPing = { lat, lng, time: now, accuracy };
+      return true;
+    }
+
+    function spawnFloatingText(text, color = '#00f3ff') {
+      const point = map.latLngToContainerPoint(playerPos);
+      const el = document.createElement('div');
+      el.className = 'floating-text';
+      el.style.left = point.x + 'px';
+      el.style.top = point.y + 'px';
+      el.style.color = color;
+      el.textContent = text;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1600);
+    }
+
+    /* ========================================================
+       9. Map, Layers & Setup
+       ======================================================== */
+    const map = L.map('map', { zoomControl: false, attributionControl: false }).setView(playerPos, 17);
+    const darkTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, subdomains: 'abcd' });
+    const dayTileLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 });
+
+    function applyMapTheme() {
+      if (isDarkMode) {
+        if (map.hasLayer(dayTileLayer)) map.removeLayer(dayTileLayer);
+        darkTileLayer.addTo(map);
+        document.getElementById('themeToggleBtn').innerHTML = '<i class="fa-solid fa-moon"></i>';
+      } else {
+        if (map.hasLayer(darkTileLayer)) map.removeLayer(darkTileLayer);
+        dayTileLayer.addTo(map);
+        document.getElementById('themeToggleBtn').innerHTML = '<i class="fa-solid fa-sun" style="color:#ffee00;"></i>';
+      }
+      localStorage.setItem('pc_darkmode', isDarkMode);
+    }
+    applyMapTheme();
+
+    setTimeout(() => map.invalidateSize(), 300);
+
+    const territoryGroup = L.featureGroup().addTo(map);
+    const restrictedGroup = L.featureGroup().addTo(map);
+    const monumentGroup = L.featureGroup().addTo(map);
+
+    const playerTrailLayer = L.polyline([], { color: playerCustomColor, weight: 6, opacity: 0.95 }).addTo(map);
+    botCrimson.trailLayer = L.polyline([], { className: 'crimson-laser', weight: 6, opacity: 0.95 }).addTo(map);
+    botVolt.trailLayer = L.polyline([], { className: 'volt-laser', weight: 6, opacity: 0.95 }).addTo(map);
+
+    const playerMarker = L.marker(playerPos, {
+      icon: L.divIcon({
+        className: 'p-avatar-wrap',
+        html: `
+          <div class="player-avatar-container">
+            <div class="player-rotator" id="playerRotator">
+              <div class="player-cone" style="border-top-color:${playerCustomColor}66;"></div>
+            </div>
+            <img src="${playerAvatar}" id="playerMapAvatar" class="player-custom-pin" style="border-color:${playerCustomColor};" />
+          </div>
+        `,
+        iconSize: [54, 54],
+        iconAnchor: [27, 27]
+      }),
+      zIndexOffset: 1000
+    }).addTo(map);
+
+    botCrimson.marker = L.marker(botCrimson.pos, {
+      icon: L.divIcon({ className: 'b-pin', html: '<div class="crimson-dot"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }),
+      zIndexOffset: 950
+    }).addTo(map);
+
+    botVolt.marker = L.marker(botVolt.pos, {
+      icon: L.divIcon({ className: 'v-pin', html: '<div class="volt-dot"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }),
+      zIndexOffset: 940
+    }).addTo(map);
+
+    function getDistanceMeters(c1, c2) {
+      const R = 6371e3;
+      const dLat = (c2[0] - c1[0]) * Math.PI / 180;
+      const dLon = (c2[1] - c1[1]) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(c1[0] * Math.PI / 180) * Math.cos(c2[0] * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+
+    function moveCoordsByMeters(lat, lng, dxMeters, dyMeters) {
+      const dLat = dyMeters / 111320;
+      const dLng = dxMeters / (111320 * Math.cos(lat * Math.PI / 180));
+      return [lat + dLat, lng + dLng];
+    }
+
+    function setupRestrictedZones() {
+      restrictedGroup.clearLayers();
+      restrictedZones = [];
+
+      const rCenter = [playerSpawn[0] - 0.0011, playerSpawn[1] + 0.0005];
+      restrictedZones.push({ center: rCenter, radius: 35, name: "BAHNGLEISE // INDUSTRIE" });
+
+      restrictedZones.forEach(rz => {
+        L.circle(rz.center, {
+          radius: rz.radius,
+          color: '#ff0033',
+          fillColor: '#ff0033',
+          fillOpacity: 0.35,
+          dashArray: '6, 6',
+          weight: 2
+        }).bindPopup(`⚠️ SPERRZONE: ${rz.name} - Betreten verboten!`).addTo(restrictedGroup);
+      });
+    }
+
+    function checkSafetyViolations(currentCoords, speedKmh) {
+      const alertBar = document.getElementById('safetyAlertBar');
+      const alertText = document.getElementById('safetyAlertText');
+
+      if (isShadowBanned) return true;
+
+      if (isRealGpsActive && speedKmh > 250) {
+        alertText.textContent = "TEMPOLIMIT ÜBERSCHRITTEN (>250 km/h)!";
+        alertBar.style.display = 'flex';
+        return true;
+      }
+
+      for (let rz of restrictedZones) {
+        if (getDistanceMeters(currentCoords, rz.center) <= rz.radius) {
+          alertText.textContent = `ALARM: ${rz.name}! SPERRZONE BETRETEN!`;
+          alertBar.style.display = 'flex';
+          if (navigator.vibrate) navigator.vibrate(200);
+          return true;
+        }
+      }
+
+      alertBar.style.display = 'none';
+      return false;
+    }
+
+    async function fetchRealMonuments(center) {
+      monumentGroup.clearLayers();
+      cityMonuments = [];
+
+      const radius = 800;
+      const query = `
+        [out:json][timeout:8];
+        (
+          node["historic"](around:${radius},${center[0]},${center[1]});
+          node["tourism"="artwork"](around:${radius},${center[0]},${center[1]});
+          node["amenity"="place_of_worship"](around:${radius},${center[0]},${center[1]});
+          node["amenity"="fountain"](around:${radius},${center[0]},${center[1]});
+          node["leisure"="park"](around:${radius},${center[0]},${center[1]});
+        );
+        out body 8;
+      `;
+
+      try {
+        const resp = await fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: query });
+        const data = await resp.json();
+
+        if (data.elements && data.elements.length > 0) {
+          data.elements.slice(0, 6).forEach(el => {
+            const name = el.tags.name || el.tags.description || "Stadt-Monument";
+            let icon = '🏛';
+            if (el.tags.amenity === 'fountain') icon = '⛲';
+            else if (el.tags.amenity === 'place_of_worship') icon = '⛪';
+            else if (el.tags.leisure === 'park') icon = '🌳';
+
+            addMonumentToMap(el.id, name, icon, [el.lat, el.lon]);
+          });
+          showBanner(`📍 ${cityMonuments.length} CYBER-CORES GEORTET!`, false);
+        } else {
+          fallbackLocalMonuments(center);
+        }
+      } catch (err) {
+        fallbackLocalMonuments(center);
+      }
+    }
+
+    function fallbackLocalMonuments(center) {
+      const mockPOI = [
+        { name: "Historischer Marktbrunnen", icon: "⛲", offset: [0.0018, 0.0014] },
+        { name: "Alte Stadtkirche", icon: "⛪", offset: [-0.0019, 0.0016] },
+        { name: "Bürgerpark-Skulptur", icon: "🏛️", offset: [0.0012, -0.0022] }
+      ];
+
+      mockPOI.forEach((p, idx) => {
+        addMonumentToMap("local_" + idx, p.name, p.icon, [center[0] + p.offset[0], center[1] + p.offset[1]]);
+      });
+      showBanner("📍 CYBER-CORES AKTIVIERT!", false);
+    }
+
+    function addMonumentToMap(id, name, icon, pos) {
+      const marker = L.marker(pos, {
+        icon: L.divIcon({
+          className: 'monument-pin',
+          html: `
+            <div class="monument-pin-container" id="monument_${id}">
+              <div class="monument-icon-badge" style="border-color:${MONUMENT_NEUTRAL}; box-shadow:0 0 18px ${MONUMENT_NEUTRAL};">
+                ${icon}
+              </div>
+              <div class="monument-label">${name}</div>
+            </div>
+          `,
+          iconSize: [80, 50],
+          iconAnchor: [40, 25]
+        })
+      }).addTo(monumentGroup);
+
+      cityMonuments.push({ id, name, icon, pos, owner: 'NEUTRAL', marker });
+    }
+
+    setInterval(() => {
+      if (isShadowBanned) return;
+      const playerOwned = cityMonuments.filter(m => m.owner === 'PLAYER');
+      if (playerOwned.length > 0) {
+        const bonusXP = playerOwned.length * 20;
+        const bonusCYB = playerOwned.length * 5;
+        addXP(bonusXP);
+        addCredits(bonusCYB);
+        showBanner(`💰 TRIBUT: +${bonusXP} XP & +${bonusCYB} $CYB!`, false);
+      }
+    }, 5000);
+
+    /* ========================================================
+       10. Radar Mini-Map
+       ======================================================== */
+    const radarCanvas = document.getElementById('radarCanvas');
+    const rCtx = radarCanvas.getContext('2d');
+    const RADAR_RADIUS_METERS = 360;
+
+    function updateRadar() {
+      rCtx.clearRect(0, 0, 100, 100);
+      const center = 50;
+
+      rCtx.strokeStyle = 'rgba(0, 243, 255, 0.25)';
+      rCtx.lineWidth = 1;
+      rCtx.beginPath();
+      rCtx.arc(center, center, 24, 0, Math.PI * 2);
+      rCtx.arc(center, center, 46, 0, Math.PI * 2);
+      rCtx.moveTo(center, 4); rCtx.lineTo(center, 96);
+      rCtx.moveTo(4, center); rCtx.lineTo(96, center);
+      rCtx.stroke();
+
+      function plotRadarPoint(targetPos, color, size, isDiamond = false) {
+        const dLat = targetPos[0] - playerPos[0];
+        const dLng = targetPos[1] - playerPos[1];
+        const my = dLat * 111320;
+        const mx = dLng * (111320 * Math.cos(playerPos[0] * Math.PI / 180));
+        const dist = Math.hypot(mx, my);
+
+        if (dist <= RADAR_RADIUS_METERS) {
+          const rx = center + (mx / RADAR_RADIUS_METERS) * 44;
+          const ry = center - (my / RADAR_RADIUS_METERS) * 44;
+          rCtx.fillStyle = color;
+
+          if (isDiamond) {
+            rCtx.beginPath();
+            rCtx.moveTo(rx, ry - size);
+            rCtx.lineTo(rx + size, ry);
+            rCtx.lineTo(rx, ry + size);
+            rCtx.lineTo(rx - size, ry);
+            rCtx.closePath();
+            rCtx.fill();
+          } else {
+            rCtx.beginPath();
+            rCtx.arc(rx, ry, size, 0, Math.PI * 2);
+            rCtx.fill();
+          }
+        }
+      }
+
+      restrictedZones.forEach(rz => plotRadarPoint(rz.center, '#ff0033', 4));
+
+      cityMonuments.forEach(m => {
+        const color = m.owner === 'PLAYER' ? playerCustomColor : (m.owner === 'CRIMSON' ? CRIMSON_COLOR : MONUMENT_NEUTRAL);
+        plotRadarPoint(m.pos, color, 3.5, true);
+      });
+
+      plotRadarPoint(botCrimson.pos, CRIMSON_COLOR, 3);
+      plotRadarPoint(botVolt.pos, VOLT_COLOR, 3);
+
+      rCtx.fillStyle = playerCustomColor;
+      rCtx.beginPath();
+      rCtx.arc(center, center, 4, 0, Math.PI * 2);
+      rCtx.fill();
+    }
+
+    function addXP(amount) {
+      if (isShadowBanned) return;
+      savedXP += amount;
+      const neededXP = savedLevel * 600;
+      if (savedXP >= neededXP) {
+        savedXP -= neededXP;
+        savedLevel++;
+        playFanfare();
+        showBanner(`🎉 LEVEL UP! // LEVEL ${savedLevel}!`, false);
+        spawnFloatingText(`LEVEL UP!`, '#00ff66');
+        addCredits(150);
+        if (navigator.vibrate) navigator.vibrate([150, 100, 250]);
+      }
+      localStorage.setItem('pc_level', savedLevel);
+      localStorage.setItem('pc_xp', savedXP);
+      updateLevelUI();
+      syncProfileToCloud();
+    }
+
+    function updateLevelUI() {
+      const neededXP = savedLevel * 600;
+      const pct = Math.min(100, Math.round((savedXP / neededXP) * 100));
+      document.getElementById('xpFill').style.width = pct + '%';
+      document.getElementById('xpStat').textContent = `${savedXP}/${neededXP} XP`;
+      
+      const rankIdx = Math.min(savedLevel - 1, RANKS.length - 1);
+      document.getElementById('rankTitle').textContent = `LVL ${savedLevel} ${RANKS[rankIdx]}`;
+    }
+
+    function initGame(newCenter) {
+      if (newCenter) {
+        playerSpawn = applyPrivacyOffset(newCenter);
+        localStorage.setItem('pc_saved_spawn', JSON.stringify(playerSpawn));
+        botCrimson.spawn = [playerSpawn[0] + 0.0018, playerSpawn[1] + 0.0022];
+        botVolt.spawn = [playerSpawn[0] + 0.0016, playerSpawn[1] - 0.0024];
+      }
+
+      territoryGroup.clearLayers();
+
+      [botCrimson, botVolt].forEach(b => {
+        b.trail = [];
+        b.trailLayer.setLatLngs([]);
+        b.pos = [...b.spawn];
+        b.marker.setLatLng(b.pos);
+        b.area = 1960;
+        L.circle(b.spawn, { radius: 35, color: b.color, fillColor: b.color, fillOpacity: 0.35, weight: 2 }).addTo(territoryGroup);
+      });
+
+      baseCircleLayer = L.circle(playerSpawn, { radius: baseRadius, color: playerCustomColor, fillColor: playerCustomColor, fillOpacity: 0.4, weight: 2 }).addTo(territoryGroup);
+
+      if (playerTrail.length > 0) {
+        playerTrailLayer.setLatLngs(playerTrail);
+        playerPos = [...playerTrail[playerTrail.length - 1]];
+      } else {
+        playerPos = [...playerSpawn];
+        playerTrailLayer.setLatLngs([]);
+      }
+
+      playerMarker.setLatLng(playerPos);
+      map.setView(playerPos, 17);
+
+      setupRestrictedZones();
+      fetchRealMonuments(playerSpawn);
+      fetchRoadNetwork(playerSpawn);
+      syncProfileUI();
+      updateUI();
+      updateLevelUI();
+      updateBountyUI();
+    }
+
+    document.getElementById('acceptSafetyBtn').addEventListener('click', () => {
+      ensureAudioContext();
+      document.getElementById('safetyModal').style.display = 'none';
+      initDeviceCompass();
+
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => initGame([pos.coords.latitude, pos.coords.longitude]),
+          () => initGame(),
+          { enableHighAccuracy: true, timeout: 5000 }
+        );
+      } else {
+        initGame();
+      }
+    });
+
+    const shopModal = document.getElementById('shopModal');
+    document.getElementById('openShopBtn').addEventListener('click', () => { ensureAudioContext(); shopModal.style.display = 'flex'; });
+    document.getElementById('closeShopBtn').addEventListener('click', () => shopModal.style.display = 'none');
+
+    document.getElementById('buyBaseUpgradeBtn').addEventListener('click', () => {
+      ensureAudioContext();
+      if (savedCredits >= 500 && baseRadius < 45) {
+        savedCredits -= 500;
+        baseRadius = 45;
+        localStorage.setItem('pc_base_radius', baseRadius);
+        if (baseCircleLayer) baseCircleLayer.setRadius(baseRadius);
+        addCredits(0);
+        showBanner("BASIS-RADIUS AUF 45 METER ERWEITERT!", false);
+      }
+    });
+
+    document.getElementById('buyShieldUpgradeBtn').addEventListener('click', () => {
+      ensureAudioContext();
+      if (savedCredits >= 750 && shieldDurationSec < 18) {
+        savedCredits -= 750;
+        shieldDurationSec = 18;
+        localStorage.setItem('pc_shield_dur', shieldDurationSec);
+        addCredits(0);
+        showBanner("SCHILD-DAUER AUF 18s GEBOOSTET!", false);
+      }
+    });
+
+    document.getElementById('buySkinBtn').addEventListener('click', () => {
+      ensureAudioContext();
+      if (savedCredits >= 1200 && playerCustomColor !== '#bd00ff') {
+        savedCredits -= 1200;
+        playerCustomColor = '#bd00ff';
+        localStorage.setItem('pc_skin_color', playerCustomColor);
+        playerTrailLayer.setStyle({ color: playerCustomColor });
+        addCredits(0);
+        showBanner("SKIN: HYPER-VIOLETT FREIGESCHALTET!", false);
+      }
+    });
+
+    /* ========================================================
+       11. Spiellogik & Snapped-Movement
+       ======================================================== */
+    function checkCut(runnerPos, trail) {
+      if (trail.length < 3) return false;
+      for (let i = 0; i < trail.length - 2; i++) {
+        if (getDistanceMeters(runnerPos, trail[i]) < 12) return true;
+      }
+      return false;
+    }
+
+    function checkMonumentCapture(runnerPos, ownerName, ownerColor) {
+      cityMonuments.forEach(m => {
+        if (getDistanceMeters(runnerPos, m.pos) < 28) {
+          if (m.owner !== ownerName) {
+            m.owner = ownerName;
+            const el = document.getElementById(`monument_${m.id}`);
+            if (el) {
+              const badge = el.querySelector('.monument-icon-badge');
+              badge.style.borderColor = ownerColor;
+              badge.style.boxShadow = `0 0 22px ${ownerColor}`;
+              badge.style.color = ownerColor;
+            }
+
+            if (ownerName === 'PLAYER') {
+              triggerShockwave(m.pos, ownerColor);
+              showBanner(`CORE // ${m.name.toUpperCase()} GESICHERT!`, false);
+              addXP(250);
+              addCredits(35);
+              sessionCores++;
+              checkBounties();
+              spawnFloatingText(`+250 XP`, '#00ff66');
+              playTone(520, 880, 'triangle', 0.4);
+              if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+            }
+          }
+        }
+      });
+    }
+
+    function handlePlayerMovement(rawLat, rawLng, speedKmh = 0, fallbackHeadingDeg = null) {
+      if (isShadowBanned) return;
+      if (checkSafetyViolations([rawLat, rawLng], speedKmh)) return;
+
+      const [lat, lng] = snapPointToRoads(rawLat, rawLng, 20);
+
+      if (!isCompassActive) {
+        if (fallbackHeadingDeg !== null) {
+          playerHeadingDeg = fallbackHeadingDeg;
+        } else {
+          const dLat = lat - playerPos[0];
+          const dLng = lng - playerPos[1];
+          if (Math.hypot(dLat, dLng) > 0.000005) {
+            playerHeadingDeg = (Math.atan2(dLng, dLat) * 180 / Math.PI + 360) % 360;
+          }
+        }
+        applyVisionRotation(playerHeadingDeg);
+      }
+
+      playerPos = [lat, lng];
+      playerMarker.setLatLng(playerPos);
+
+      checkMonumentCapture(playerPos, 'PLAYER', playerCustomColor);
+
+      const inBase = getDistanceMeters(playerPos, playerSpawn) <= (baseRadius + 5);
+      const badge = document.getElementById('playerStatusBadge');
+
+      if (inBase) {
+        badge.textContent = 'IN BASIS (GESICHERT)';
+        badge.classList.remove('danger');
+
+        if (playerTrail.length >= 4) {
+          const addedArea = Math.round(playerTrail.length * 60);
+          playerTotalArea += addedArea;
+          localStorage.setItem('pc_total_area', playerTotalArea);
+          sessionLand += addedArea;
+          checkBounties();
+
+          triggerShockwave(playerPos, playerCustomColor);
+          if (navigator.vibrate) navigator.vibrate([60, 40, 120]);
+
+          const gainedXP = Math.round(addedArea * 0.8);
+          const gainedCredits = Math.max(10, Math.round(addedArea * 0.04));
+          addXP(gainedXP);
+          addCredits(gainedCredits);
+
+          const polyCoords = [...playerTrail, playerSpawn];
+          L.polygon(polyCoords, { color: playerCustomColor, fillColor: playerCustomColor, fillOpacity: 0.4, weight: 2 }).addTo(territoryGroup);
+
+          if (isSupabaseConfigured && cloudUser) {
+            supabaseClient.from('territories').insert({
+              owner_id: cloudUser.id,
+              color: playerCustomColor,
+              polygon_points: polyCoords,
+              area_m2: addedArea
+            }).then(() => {});
+          }
+
+          spawnFloatingText(`+${addedArea.toLocaleString()} m²`, playerCustomColor);
+          showBanner(`+${addedArea.toLocaleString()} m² SEKTOR EROBERT! 🏆`, false);
+          playTone(440, 880, 'triangle', 0.3);
+
+          playerTrail = [];
+          syncTrailStorage();
+          playerTrailLayer.setLatLngs([]);
+          updateUI();
+          syncProfileToCloud();
+        } else {
+          playerTrail = [];
+          syncTrailStorage();
+          playerTrailLayer.setLatLngs([]);
+        }
+      } else {
+        badge.textContent = 'EXPEDITION (GEFAHR)';
+        badge.classList.add('danger');
+
+        const last = playerTrail[playerTrail.length - 1];
+        if (!last || getDistanceMeters(playerPos, last) >= 6.0) {
+          if (checkCut(playerPos, playerTrail)) {
+            triggerPlayerDeath("Eigene Spur geschnitten!");
+            return;
+          }
+          playerTrail.push(playerPos);
+          syncTrailStorage();
+          playerTrailLayer.setLatLngs(playerTrail);
+        }
+      }
+
+      [botCrimson, botVolt].forEach(b => {
+        if (b.trail.length > 2 && checkCut(playerPos, b.trail)) {
+          triggerShockwave(b.pos, b.color);
+          b.trail = [];
+          b.trailLayer.setLatLngs([]);
+          b.pos = [...b.spawn];
+          b.marker.setLatLng(b.pos);
+          showBanner(`${b.name.toUpperCase()} ELIMINIERT! ⚔ +400 XP`, false);
+          playerTotalArea += 450;
+          localStorage.setItem('pc_total_area', playerTotalArea);
+          addXP(400);
+          addCredits(60);
+          sessionBotKills++;
+          checkBounties();
+          spawnFloatingText(`+400 XP (KILL)`, b.color);
+          playTone(600, 200, 'sawtooth', 0.35);
+          if (navigator.vibrate) navigator.vibrate([100, 30, 200]);
+          updateUI();
+          syncProfileToCloud();
+        }
+      });
+    }
+
+    function triggerPlayerDeath(reason) {
+      triggerShockwave(playerPos, '#ff0055');
+      showBanner(`CRASH // ${reason}`, true);
+      spawnFloatingText(`CRASH!`, '#ff0055');
+      playTone(250, 100, 'sawtooth', 0.45);
+      if (navigator.vibrate) navigator.vibrate(350);
+
+      playerTrail = [];
+      syncTrailStorage();
+      playerTrailLayer.setLatLngs([]);
+      playerPos = [...playerSpawn];
+      playerMarker.setLatLng(playerPos);
+      map.panTo(playerPos);
+    }
+
+    function updateRealisticBot(bot, deltaSec, turnIntervalSec, turnAngle) {
+      bot.timeSinceTurn += deltaSec;
+      if (bot.timeSinceTurn >= turnIntervalSec) {
+        bot.timeSinceTurn = 0;
+        bot.heading += (Math.random() > 0.5 ? turnAngle : -turnAngle);
+      }
+
+      const currentPace = PACE_MODES[currentPaceIdx];
+      const botSpeedMps = bot.baseSpeedMps * currentPace.botFactor;
+      const moveDistanceMeters = botSpeedMps * deltaSec;
+
+      const rad = bot.heading * (Math.PI / 180);
+      const dxMeters = Math.sin(rad) * moveDistanceMeters;
+      const dyMeters = Math.cos(rad) * moveDistanceMeters;
+
+      let nextPos = moveCoordsByMeters(bot.pos[0], bot.pos[1], dxMeters, dyMeters);
+      bot.pos = snapPointToRoads(nextPos[0], nextPos[1], 18);
+      bot.marker.setLatLng(bot.pos);
+
+      checkMonumentCapture(bot.pos, bot.name.toUpperCase(), bot.color);
+
+      const inBase = getDistanceMeters(bot.pos, bot.spawn) <= 35;
+
+      if (!inBase) {
+        const last = bot.trail[bot.trail.length - 1];
+        if (!last || getDistanceMeters(bot.pos, last) >= 7) {
+          bot.trail.push(bot.pos);
+          bot.trailLayer.setLatLngs(bot.trail);
+        }
+
+        if (playerTrail.length > 2 && checkCut(bot.pos, playerTrail)) {
+          triggerPlayerDeath(`${bot.name} hat deine Spur geschnitten!`);
+        }
+      } else {
+        if (bot.trail.length >= 4) {
+          const added = Math.round(bot.trail.length * 50);
+          bot.area += added;
+          const coords = [...bot.trail, bot.spawn];
+          L.polygon(coords, { color: bot.color, fillColor: bot.color, fillOpacity: 0.35, weight: 2 }).addTo(territoryGroup);
+          updateUI();
+        }
+        bot.trail = [];
+        bot.trailLayer.setLatLngs([]);
+      }
+    }
+
+    function updateUI() {
+      document.getElementById('playerAreaStat').textContent = `${playerTotalArea.toLocaleString()} m²`;
+
+      const players = [
+        { name: playerName, area: playerTotalArea, color: playerCustomColor },
+        { name: "Bot Crimson", area: botCrimson.area, color: CRIMSON_COLOR },
+        { name: "Bot Volt", area: botVolt.area, color: VOLT_COLOR }
+      ].sort((a, b) => b.area - a.area);
+
+      const listEl = document.getElementById('leaderboardList');
+      listEl.innerHTML = '';
+      players.forEach((p, idx) => {
+        const row = document.createElement('div');
+        row.className = 'leaderboard-item';
+        row.innerHTML = `<span style="color:${p.color};">#${idx+1} ${p.name}</span><span style="color:#fff;">${p.area.toLocaleString()} m²</span>`;
+        listEl.appendChild(row);
+      });
+    }
+
+    function showBanner(text, isDanger) {
+      const banner = document.getElementById('captureBanner');
+      banner.textContent = text;
+      banner.className = 'banner-notification show' + (isDanger ? ' danger' : '');
+      setTimeout(() => banner.classList.remove('show'), 2400);
+    }
+
+    const paceBtn = document.getElementById('paceToggleBtn');
+    paceBtn.addEventListener('click', () => {
+      ensureAudioContext();
+      currentPaceIdx = (currentPaceIdx + 1) % PACE_MODES.length;
+      paceBtn.textContent = PACE_MODES[currentPaceIdx].label;
+      showBanner(`TEST-SPEED: 50 m/s (~180 km/h)`, false);
+    });
+
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      ensureAudioContext();
+      isDarkMode = !isDarkMode;
+      applyMapTheme();
+    });
+
+    const soundBtn = document.getElementById('soundToggleBtn');
+    soundBtn.addEventListener('click', () => {
+      ensureAudioContext();
+      isSoundMuted = !isSoundMuted;
+      localStorage.setItem('pc_muted', isSoundMuted);
+      soundBtn.innerHTML = isSoundMuted ? '<i class="fa-solid fa-volume-xmark" style="color:#ff0055;"></i>' : '<i class="fa-solid fa-volume-high"></i>';
+    });
+
+    /* ========================================================
+       12. Joystick & Gameloop
+       ======================================================== */
+    const joystickZone = document.getElementById('joystickZone');
+    const joystickHandle = document.getElementById('joystickHandle');
+    let joyDeltaX = 0, joyDeltaY = 0, joyActive = false;
+
+    joystickZone.addEventListener('pointerdown', (e) => {
+      ensureAudioContext();
+      joyActive = true;
+      joystickZone.setPointerCapture(e.pointerId);
+      calcJoy(e);
+    });
+    window.addEventListener('pointermove', (e) => { if (joyActive) calcJoy(e); });
+    window.addEventListener('pointerup', () => {
+      joyActive = false; joyDeltaX = 0; joyDeltaY = 0;
+      joystickHandle.style.transform = 'translate(0px, 0px)';
+    });
+
+    function calcJoy(e) {
+      const rect = joystickZone.getBoundingClientRect();
+      let dx = e.clientX - (rect.left + rect.width / 2);
+      let dy = e.clientY - (rect.top + rect.height / 2);
+      const dist = Math.hypot(dx, dy);
+      const maxR = 34;
+      if (dist > maxR) { dx = (dx / dist) * maxR; dy = (dy / dist) * maxR; }
+      joyDeltaX = dx / maxR; joyDeltaY = dy / maxR;
+      joystickHandle.style.transform = `translate(${dx}px, ${dy}px)`;
+    }
+
+    const keys = {};
+    window.addEventListener('keydown', (e) => { ensureAudioContext(); keys[e.key.toLowerCase()] = true; });
+    window.addEventListener('keyup', (e) => keys[e.key.toLowerCase()] = false);
+
+    let lastFrameTime = performance.now();
+
+    function gameLoop(currentTime) {
+      let deltaSec = (currentTime - lastFrameTime) / 1000;
+      if (deltaSec > 0.2) deltaSec = 0.05;
+      lastFrameTime = currentTime;
+
+      if (!isRealGpsActive && !isShadowBanned) {
+        let vx = joyDeltaX, vy = joyDeltaY;
+        if (keys['w'] || keys['arrowup']) vy = -1;
+        if (keys['s'] || keys['arrowdown']) vy = 1;
+        if (keys['a'] || keys['arrowleft']) vx = -1;
+        if (keys['d'] || keys['arrowright']) vx = 1;
+
+        if (vx !== 0 || vy !== 0) {
+          const moveMeters = PACE_MODES[currentPaceIdx].speedMps * deltaSec;
+          const newCoords = moveCoordsByMeters(playerPos[0], playerPos[1], vx * moveMeters, -vy * moveMeters);
+          
+          let simulatedHeading = (Math.atan2(vx, -vy) * 180 / Math.PI + 360) % 360;
+          handlePlayerMovement(newCoords[0], newCoords[1], 0, simulatedHeading);
+          map.panTo(playerPos, { animate: false });
+        }
+      }
+
+      updateRealisticBot(botCrimson, deltaSec, 3.2, 85);
+      updateRealisticBot(botVolt, deltaSec, 2.6, 110);
+      updateRadar();
+
+      requestAnimationFrame(gameLoop);
+    }
+    requestAnimationFrame(gameLoop);
+
+    /* ========================================================
+       13. GPS Pipeline
+       ======================================================== */
+    const toggleGpsBtn = document.getElementById('toggleGpsBtn');
+    const gpsBtnLabel = document.getElementById('gpsBtnLabel');
+
+    async function requestWakeLock() {
+      if ('wakeLock' in navigator) {
+        try { wakeLock = await navigator.wakeLock.request('screen'); } catch(e){}
+      }
+    }
+
+    function releaseWakeLock() {
+      if (wakeLock) { wakeLock.release(); wakeLock = null; }
+    }
+
+    toggleGpsBtn.addEventListener('click', () => {
+      ensureAudioContext();
+      if (!isRealGpsActive) {
+        initDeviceCompass();
+
+        if ('geolocation' in navigator) {
+          gpsBtnLabel.textContent = 'GPS STOP';
+          toggleGpsBtn.classList.add('active');
+          isRealGpsActive = true;
+          lastGpsPing = null;
+          requestWakeLock();
+
+          gpsWatchId = navigator.geolocation.watchPosition(
+            (pos) => {
+              if (validateGpsIntegrity(pos)) {
+                const speedKmh = pos.coords.speed !== null ? pos.coords.speed * 3.6 : 0;
+                const heading = pos.coords.heading !== null && !isNaN(pos.coords.heading) ? pos.coords.heading : null;
+                handlePlayerMovement(pos.coords.latitude, pos.coords.longitude, speedKmh, heading);
+                map.panTo(playerPos);
+              }
+            },
+            (err) => alert('GPS: ' + err.message),
+            { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 }
+          );
+        }
+      } else {
+        if (gpsWatchId) navigator.geolocation.clearWatch(gpsWatchId);
+        releaseWakeLock();
+        isRealGpsActive = false;
+        toggleGpsBtn.classList.remove('active');
+        gpsBtnLabel.textContent = 'ECHT-GPS';
+      }
+    });
+
+    document.getElementById('relocateBtn').addEventListener('click', () => {
+      ensureAudioContext();
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition((pos) => {
+          initGame([pos.coords.latitude, pos.coords.longitude]);
+          showBanner("BASIS // RELOCATED!", false);
+        });
+      }
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      ensureAudioContext();
+      playerTrail = [];
+      syncTrailStorage();
+      initGame(playerSpawn);
+    });
+
+    /* ========================================================
+       14. PWA Service Worker & Install-Prompt Pipeline
+       ======================================================== */
+    let deferredInstallPrompt = null;
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => console.log('PWA ServiceWorker registriert:', reg.scope))
+          .catch((err) => console.warn('PWA ServiceWorker Fehler:', err));
+      });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      
+      let installBtn = document.getElementById('pwaInstallBtn');
+      if (!installBtn) {
+        installBtn = document.createElement('button');
+        installBtn.id = 'pwaInstallBtn';
+        installBtn.className = 'tool-btn active';
+        installBtn.style.color = '#39ff14';
+        installBtn.style.borderColor = '#39ff14';
+        installBtn.innerHTML = '<i class="fa-solid fa-download"></i> INSTALLIEREN';
+        
+        document.querySelector('.quick-toolbar').prepend(installBtn);
+        
+        installBtn.addEventListener('click', async () => {
+          if (deferredInstallPrompt) {
+            deferredInstallPrompt.prompt();
+            const choice = await deferredInstallPrompt.userChoice;
+            if (choice.outcome === 'accepted') {
+              showBanner("PAPERCITY INSTALLIERT! 🚀", false);
+              installBtn.remove();
+            }
+            deferredInstallPrompt = null;
+          }
+        });
+      }
+    });
+
+    window.addEventListener('appinstalled', () => {
+      showBanner("WILLKOMMEN IN DER NATIVEN APP!", false);
+      const installBtn = document.getElementById('pwaInstallBtn');
+      if (installBtn) installBtn.remove();
+    });
+  </script>
+</body>
+</html>

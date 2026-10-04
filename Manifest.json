@@ -1,0 +1,18 @@
+{
+  "name": "PaperCity: Neon Grid",
+  "short_name": "PaperCity",
+  "description": "Cyberpunk GPS Real-World Territory Game",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#03060a",
+  "theme_color": "#00f3ff",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%2303060a'/><path d='M256 60 L450 170 L450 390 L256 470 L62 390 L62 170 Z' fill='none' stroke='%2300f3ff' stroke-width='24'/><circle cx='256' cy='256' r='90' fill='%2300f3ff'/><path d='M256 120 L256 392' stroke='%23ff0055' stroke-width='16'/></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
