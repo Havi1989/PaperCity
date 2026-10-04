@@ -3,16 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // NEON GRID - FULL MASTER VERIFIED</title>
+  <title>PaperCity // CYBER-GRID // POKEMON GO STYLE</title>
 
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#00f3ff" />
+  <meta name="theme-color" content="#03060a" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <style>
@@ -23,7 +21,7 @@
       --cyber-gold: #ffaa00;
       --cyber-green: #00ff66;
       --cyber-purple: #bd00ff;
-      --cyber-dark: rgba(6, 10, 18, 0.88);
+      --cyber-dark: rgba(6, 10, 18, 0.92);
       --cyber-border: rgba(0, 243, 255, 0.45);
       --cyber-glow: 0 0 15px rgba(0, 243, 255, 0.55);
       --font-tech: 'Orbitron', monospace, sans-serif;
@@ -33,18 +31,16 @@
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
     body, html { width: 100%; height: 100%; overflow: hidden; background: #03060a; font-family: var(--font-hud); color: #fff; }
 
+    #worldCanvas {
+      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; background: #03060d; display: block;
+    }
+
     .cyber-overlay {
       position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none !important; z-index: 400;
       background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-                  linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.03));
-      background-size: 100% 3px, 6px 100%; opacity: 0.5;
+                  linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.02));
+      background-size: 100% 3px, 6px 100%; opacity: 0.4;
     }
-
-    #map { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; background: #05080e; }
-    #fxCanvas { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 450; }
-
-    .leaflet-pane > svg path.crimson-laser { stroke: var(--cyber-crimson); filter: drop-shadow(0 0 8px #ff0055) drop-shadow(0 0 14px rgba(255, 0, 85, 0.7)); }
-    .leaflet-pane > svg path.volt-laser { stroke: var(--cyber-volt); filter: drop-shadow(0 0 8px #ffee00) drop-shadow(0 0 14px rgba(255, 238, 0, 0.7)); }
 
     .hud-top {
       position: absolute; top: 10px; left: 10px; right: 10px; z-index: 1000; display: flex; justify-content: space-between; gap: 10px; pointer-events: none;
@@ -55,7 +51,6 @@
       clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
       box-shadow: var(--cyber-glow), inset 0 0 15px rgba(0, 243, 255, 0.12); pointer-events: auto; position: relative;
     }
-
     .cyber-panel::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 6px; background: var(--cyber-cyan); }
 
     .hud-profile-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
@@ -105,12 +100,8 @@
     .shop-item-desc { font-size: 0.72rem; color: #8fa5ba; }
     .shop-action-box { display: flex; gap: 6px; }
 
-    .buy-btn-cyb {
-      background: rgba(255, 170, 0, 0.15); border: 1px solid var(--cyber-gold); color: var(--cyber-gold); padding: 5px 9px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 800; cursor: pointer; border-radius: 4px;
-    }
-    .buy-btn-eur {
-      background: rgba(0, 255, 102, 0.15); border: 1px solid var(--cyber-green); color: var(--cyber-green); padding: 5px 9px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 800; cursor: pointer; border-radius: 4px;
-    }
+    .buy-btn-cyb { background: rgba(255, 170, 0, 0.15); border: 1px solid var(--cyber-gold); color: var(--cyber-gold); padding: 5px 9px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 800; cursor: pointer; border-radius: 4px; }
+    .buy-btn-eur { background: rgba(0, 255, 102, 0.15); border: 1px solid var(--cyber-green); color: var(--cyber-green); padding: 5px 9px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 800; cursor: pointer; border-radius: 4px; }
 
     .hack-hud-trigger { position: absolute; top: 110px; left: 50%; transform: translateX(-50%); z-index: 1500; display: none; pointer-events: auto; }
     .hack-action-btn {
@@ -134,25 +125,6 @@
 
     .leaderboard-list { display: flex; flex-direction: column; gap: 4px; margin-top: 5px; font-size: 0.8rem; font-weight: 700; }
     .leaderboard-item { display: flex; justify-content: space-between; gap: 12px; font-family: var(--font-tech); font-size: 0.68rem; }
-
-    .player-avatar-container { position: relative; width: 58px; height: 58px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-    .player-rotator { position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition: transform 0.12s ease-out; pointer-events: none; }
-    .player-cone {
-      position: absolute; top: -22px; width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent;
-      border-top: 42px solid rgba(0, 243, 255, 0.35); filter: drop-shadow(0 0 10px var(--cyber-cyan)); pointer-events: none;
-    }
-    .player-custom-pin { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--cyber-cyan); box-shadow: 0 0 15px var(--cyber-cyan); object-fit: cover; position: relative; z-index: 2; background: #000; }
-
-    .crimson-dot, .volt-dot { width: 18px; height: 18px; border-radius: 50%; background: #ffffff; border: 3px solid; }
-    .crimson-dot { border-color: var(--cyber-crimson); box-shadow: 0 0 16px var(--cyber-crimson); }
-    .volt-dot { border-color: var(--cyber-volt); box-shadow: 0 0 16px var(--cyber-volt); }
-
-    .monument-pin-container { display: flex; flex-direction: column; align-items: center; transform: translateY(-50%); }
-    .monument-icon-badge {
-      width: 36px; height: 36px; background: rgba(6, 12, 22, 0.95); border: 2px solid var(--cyber-gold); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-      box-shadow: 0 0 20px var(--cyber-gold); display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--cyber-gold);
-    }
-    .monument-label { background: rgba(6, 12, 22, 0.9); border: 1px solid rgba(255, 170, 0, 0.5); color: #fff; font-family: var(--font-tech); font-size: 0.6rem; font-weight: 800; letter-spacing: 1px; padding: 3px 8px; border-radius: 4px; margin-top: 5px; white-space: nowrap; }
 
     .radar-container {
       position: absolute; bottom: 20px; left: 15px; width: 100px; height: 100px; border-radius: 50%;
@@ -197,7 +169,9 @@
 <body>
 
   <div class="cyber-overlay"></div>
-  <canvas id="fxCanvas"></canvas>
+  
+  <!-- Pokémon GO Style Cyber Canvas Map -->
+  <canvas id="worldCanvas"></canvas>
 
   <div class="hack-hud-trigger" id="hackHudTrigger">
     <button class="hack-action-btn" id="startHackBtn">
@@ -220,36 +194,17 @@
     </div>
   </div>
 
-  <div class="modal-overlay" id="outpostModal">
-    <div class="cyber-modal-card">
-      <div class="modal-header">
-        <span><i class="fa-solid fa-map-location-dot"></i> NEUER DISTRIKT ENTDECKT!</span>
-      </div>
-      <div style="font-size: 0.9rem; line-height: 1.5; color: #bad3eb; margin-bottom: 14px;">
-        Du betrittst <b id="detectedDistrictName" style="color:var(--cyber-cyan);">Unbekannter Distrikt</b>! Du besitzt hier noch keinen Außenposten.
-      </div>
-      <p style="font-size: 0.78rem; color: #aaa; margin-bottom: 20px;">
-        ✓ Errichte den offiziellen Stützpunkt für dieses Viertel.<br>
-        ✓ Deine Basen und Gebiete in anderen Stadtteilen bleiben vollständig erhalten.
-      </p>
-      <div style="display:flex; gap:10px;">
-        <button class="save-profile-btn" id="confirmNewOutpostBtn">BASIS ERRICHTEN</button>
-        <button class="save-profile-btn" id="cancelNewOutpostBtn" style="background:#222; color:#fff; border:1px solid #555;">SPÄTER</button>
-      </div>
-    </div>
-  </div>
-
   <div class="modal-overlay" id="safetyModal" style="display:flex;">
     <div class="cyber-modal-card">
       <div class="modal-header">
         <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Anchor & Monuments Fixed</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Cyber-Canvas Edition</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem;">
-        <li><i class="fa-solid fa-anchor" style="color:var(--cyber-volt);"></i> <b>Anker-Zwang:</b> Verbinde deine Laserspur mit deinen Basen oder eroberten Zonen!</li>
-        <li><i class="fa-solid fa-landmark" style="color:var(--cyber-gold);"></i> <b>Monumente:</b> Cyber-Cores geladen und aktiv.</li>
+        <li><i class="fa-solid fa-globe" style="color:var(--cyber-cyan);"></i> <b>Offline-Ready Canvas:</b> Keine langsamen Kartenkacheln – flüssige Performance wie bei Pokémon GO!</li>
+        <li><i class="fa-solid fa-route" style="color:var(--cyber-volt);"></i> <b>Neon Trails:</b> Zeichne Spuren und erobere Sektoren.</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
     </div>
@@ -283,24 +238,7 @@
           <button class="buy-btn-eur" onclick="upgradeHackTool(3, 0, 2.99)">2,99 €</button>
         </div>
       </div>
-      <div class="shop-section-title"><span>DISTRIKT-EXPANSION</span><span>BASIS-SLOTS</span></div>
-      <div class="shop-row">
-        <div>
-          <div style="font-family:var(--font-tech); font-weight:700;">BASIS-EXPANSION (45m)</div>
-          <div class="shop-item-desc">Erweitert Basiskreis auf 45 Meter</div>
-        </div>
-        <div class="shop-action-box">
-          <button class="buy-btn-cyb" onclick="buyBaseExpansion(500, 0)">500 $CYB</button>
-          <button class="buy-btn-eur" onclick="buyBaseExpansion(0, 0.99)">0,99 €</button>
-        </div>
-      </div>
     </div>
-  </div>
-
-  <div id="map"></div>
-
-  <div id="captureBanner" class="banner-notification">
-    <span id="bannerText">SEKTOR GESICHERT!</span>
   </div>
 
   <div class="hud-top">
@@ -309,7 +247,7 @@
         <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
         <div>
           <div class="agent-name-label" id="hudAgentName">AGENT V</div>
-          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">ANCHOR MASTER // 50 m/s</div>
+          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">CANVAS ENGINE // 50 m/s</div>
         </div>
       </div>
 
@@ -332,7 +270,7 @@
 
     <div class="top-right-col">
       <div class="quick-toolbar">
-        <button class="tool-btn" id="cycleOutpostBtn" style="color:var(--cyber-volt); border-color:var(--cyber-volt);">🏢 DISTRIKT</button>
+        <button class="tool-btn" id="cycleOutpostBtn" style="color:var(--cyber-volt); border-color:var(--cyber-volt);">🏢 ZENTRUM</button>
         <button class="tool-btn" id="openShopBtn" style="color:var(--cyber-gold); border-color:var(--cyber-gold);"><i class="fa-solid fa-cart-shopping"></i> SHOP</button>
         <button class="tool-btn active" id="synthMusicBtn"><i class="fa-solid fa-music"></i> SYNTH</button>
         <button class="tool-btn active" id="voiceToggleBtn"><i class="fa-solid fa-headset"></i> EVA</button>
@@ -368,8 +306,6 @@
       <div class="joystick-stick" id="joystickHandle"></div>
     </div>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
     /* ========================================================
@@ -470,357 +406,86 @@
     }
 
     /* ========================================================
-       2. OUTPOST-LISTE, BOTS & GLOBALE DATEN
+       2. CANVAS MAP ENGINE (POKEMON GO STYLE)
        ======================================================== */
+    const canvas = document.getElementById('worldCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Spieler-Weltkoordinaten (Meter relativ zum Startpunkt)
+    let worldX = 0;
+    let worldY = 0;
     let playerCustomColor = localStorage.getItem('pc_skin_color') || '#00f3ff';
     let hackToolLevel = parseInt(localStorage.getItem('pc_hack_tool_lvl') || '1');
     let playerName = localStorage.getItem('pc_agent_name') || 'AGENT V';
     const RANKS = ["NOOB", "ROOKIE", "SCOUT", "RUNNER", "STREET MASTER", "HOOD LORD", "DISTRICT KING", "CITY OVERLORD"];
-
-    let outpostList = [];
-    const savedOutposts = localStorage.getItem('pc_outposts');
-    if (savedOutposts) {
-      try { outpostList = JSON.parse(savedOutposts); } catch(e){}
-    }
-    if (outpostList.length === 0) {
-      outpostList = [
-        { id: 1, districtName: "Zentrum", coords: [52.1738, 7.5312], radius: 35 }
-      ];
-      localStorage.setItem('pc_outposts', JSON.stringify(outpostList));
-    }
-
-    let currentOutpostIdx = 0;
-    let playerSpawn = [...outpostList[0].coords];
-    let baseRadius = outpostList[0].radius;
 
     let savedLevel = parseInt(localStorage.getItem('pc_level') || '1');
     let savedXP = parseInt(localStorage.getItem('pc_xp') || '0');
     let savedCredits = parseInt(localStorage.getItem('pc_credits') || '250');
     let playerTotalArea = parseInt(localStorage.getItem('pc_total_area') || '1960');
 
-    let playerPos = [...playerSpawn];
+    let playerTrail = []; // Array von {x, y}
+    let territories = []; // Array von geschlossenen Polygonen [{points: [{x, y}, ...]}]
+    let monuments = [
+      { id: 1, name: "Alte Stadtkirche", x: 60, y: -120, owner: 'NEUTRAL', icon: '⛪' },
+      { id: 2, name: "Marktbrunnen", x: -100, y: 150, owner: 'NEUTRAL', icon: '⛲' },
+      { id: 3, name: "Cyber-Monolith", x: 180, y: 100, owner: 'NEUTRAL', icon: '🏛' }
+    ];
+
+    let bots = [
+      { name: "Crimson", color: '#ff0055', x: 120, y: -80, trail: [], area: 1960, heading: 45 },
+      { name: "Volt", color: '#ffee00', x: -140, y: 120, trail: [], area: 1960, heading: 200 }
+    ];
+
+    let baseRadiusMeters = 35;
+    let justCapturedCooldown = false;
     let isRealGpsActive = false;
     let gpsWatchId = null;
-    let playerTrail = [];
-    let playerTerritoryPolygons = [];
-    let cityMonuments = [];
-    let justCapturedCooldown = false;
 
-    let botCrimson = {
-      name: "Crimson", color: '#ff0055', spawn: [playerSpawn[0] + 0.0018, playerSpawn[1] + 0.0022], pos: [playerSpawn[0] + 0.0018, playerSpawn[1] + 0.0022],
-      trail: [], area: 1960, heading: 45, timeSinceTurn: 0, marker: null, trailLayer: null
-    };
-    let botVolt = {
-      name: "Volt", color: '#ffee00', spawn: [playerSpawn[0] + 0.0016, playerSpawn[1] - 0.0024], pos: [playerSpawn[0] + 0.0016, playerSpawn[1] - 0.0024],
-      trail: [], area: 1960, heading: 220, timeSinceTurn: 0, marker: null, trailLayer: null
-    };
-
-    const map = L.map('map', { zoomControl: false, attributionControl: false }).setView(playerPos, 17);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, subdomains: 'abcd' }).addTo(map);
-
-    const territoryGroup = L.featureGroup().addTo(map);
-    const monumentGroup = L.featureGroup().addTo(map);
-    const playerTrailLayer = L.polyline([], { color: playerCustomColor, weight: 6, opacity: 0.95 }).addTo(map);
-
-    botCrimson.trailLayer = L.polyline([], { color: botCrimson.color, className: 'crimson-laser', weight: 6, opacity: 0.95 }).addTo(map);
-    botVolt.trailLayer = L.polyline([], { color: botVolt.color, className: 'volt-laser', weight: 6, opacity: 0.95 }).addTo(map);
-
-    const playerMarker = L.marker(playerPos, {
-      icon: L.divIcon({
-        className: 'p-avatar-wrap',
-        html: `
-          <div class="player-avatar-container">
-            <div class="player-rotator" id="playerRotator">
-              <div class="player-cone" style="border-top-color:${playerCustomColor}66;"></div>
-            </div>
-            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="player-custom-pin" style="border-color:${playerCustomColor};" />
-          </div>
-        `,
-        iconSize: [58, 58],
-        iconAnchor: [29, 29]
-      }),
-      zIndexOffset: 1000
-    }).addTo(map);
-
-    botCrimson.marker = L.marker(botCrimson.pos, {
-      icon: L.divIcon({ className: 'b-pin', html: '<div class="crimson-dot"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }),
-      zIndexOffset: 950
-    }).addTo(map);
-
-    botVolt.marker = L.marker(botVolt.pos, {
-      icon: L.divIcon({ className: 'v-pin', html: '<div class="volt-dot"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }),
-      zIndexOffset: 940
-    }).addTo(map);
-
-    function getDistanceMeters(c1, c2) {
-      if (!c1 || !c2) return 9999;
-      const R = 6371e3;
-      const dLat = (c2[0] - c1[0]) * Math.PI / 180;
-      const dLon = (c2[1] - c1[1]) * Math.PI / 180;
-      const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(c1[0] * Math.PI / 180) * Math.cos(c2[0] * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    function getDistance(p1, p2) {
+      return Math.hypot(p2.x - p1.x, p2.y - p1.y);
     }
 
-    function moveCoordsByMeters(lat, lng, dxMeters, dyMeters) {
-      const dLat = dyMeters / 111320;
-      const dLng = dxMeters / (111320 * Math.cos(lat * Math.PI / 180));
-      return [lat + dLat, lng + dLng];
-    }
-
-    function calculatePolygonAreaM2(coords) {
-      if (!coords || coords.length < 3) return 0;
+    function calculatePolygonArea(points) {
+      if (!points || points.length < 3) return 0;
       let total = 0;
-      const cosFactor = Math.cos(coords[0][0] * Math.PI / 180);
-      for (let i = 0; i < coords.length; i++) {
-        const j = (i + 1) % coords.length;
-        total += (coords[i][1] * 111320 * cosFactor * coords[j][0] * 111320) - (coords[j][1] * 111320 * cosFactor * coords[i][0] * 111320);
+      for (let i = 0; i < points.length; i++) {
+        let j = (i + 1) % points.length;
+        total += (points[i].x * points[j].y) - (points[j].x * points[i].y);
       }
       return Math.round(Math.abs(total) / 2);
     }
 
-    function ccw(A, B, C) { return (C[0] - A[0]) * (B[1] - A[1]) > (B[0] - A[0]) * (C[1] - A[1]); }
-    function lineIntersects(A, B, C, D) { return (ccw(A, C, D) !== ccw(B, C, D)) && (ccw(A, B, C) !== ccw(A, B, D)); }
-
-    function isPointInPolygon(point, polygon) {
-      const lat = point[0], lng = point[1];
+    function isPointInPolygon(pt, polygon) {
       let inside = false;
       for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-        const xi = polygon[i][0], yi = polygon[i][1];
-        const xj = polygon[j][0], yj = polygon[j][1];
-        const intersect = ((yi > lng) !== (yj > lng)) && (lat < (xj - xi) * (lng - yi) / (yj - yi) + xi);
+        let xi = polygon[i].x, yi = polygon[i].y;
+        let xj = polygon[j].x, yj = polygon[j].y;
+        let intersect = ((yi > pt.y) !== (yj > pt.y)) && (pt.x < (xj - xi) * (pt.y - yi) / (yj - yi) + xi);
         if (intersect) inside = !inside;
       }
       return inside;
     }
 
-    function isPointInPlayerTerritory(point) {
-      for (let o of outpostList) {
-        if (getDistanceMeters(point, o.coords) <= (o.radius + 5)) return true;
-      }
-      for (let p of playerTerritoryPolygons) {
-        if (isPointInPolygon(point, p)) return true;
-      }
-      return false;
-    }
-
-    function checkCut(runnerPos, trail) {
-      if (trail.length < 3) return false;
-      for (let i = 0; i < trail.length - 2; i++) {
-        if (getDistanceMeters(runnerPos, trail[i]) < 12) return true;
+    function isPointInPlayerTerritory(pt) {
+      // In der Startbasis (Zentrum 0,0)
+      if (Math.hypot(pt.x, pt.y) <= baseRadiusMeters) return true;
+      // In eigenen eroberten Territorien
+      for (let t of territories) {
+        if (isPointInPolygon(pt, t.points)) return true;
       }
       return false;
     }
 
     /* ========================================================
-       3. RADAR MINIMAP RENDERING
-       ======================================================== */
-    const radarCanvas = document.getElementById('radarCanvas');
-    const rCtx = radarCanvas.getContext('2d');
-    const RADAR_RADIUS_METERS = 360;
-
-    function updateRadar() {
-      if (!rCtx) return;
-      rCtx.clearRect(0, 0, 100, 100);
-      const center = 50;
-
-      rCtx.strokeStyle = 'rgba(0, 243, 255, 0.25)';
-      rCtx.lineWidth = 1;
-      rCtx.beginPath();
-      rCtx.arc(center, center, 24, 0, Math.PI * 2);
-      rCtx.arc(center, center, 46, 0, Math.PI * 2);
-      rCtx.moveTo(center, 4); rCtx.lineTo(center, 96);
-      rCtx.moveTo(4, center); rCtx.lineTo(96, center);
-      rCtx.stroke();
-
-      function plotRadarPoint(targetPos, color, size, isDiamond = false) {
-        const dLat = targetPos[0] - playerPos[0];
-        const dLng = targetPos[1] - playerPos[1];
-        const my = dLat * 111320;
-        const mx = dLng * (111320 * Math.cos(playerPos[0] * Math.PI / 180));
-        const dist = Math.hypot(mx, my);
-
-        if (dist <= RADAR_RADIUS_METERS) {
-          const rx = center + (mx / RADAR_RADIUS_METERS) * 44;
-          const ry = center - (my / RADAR_RADIUS_METERS) * 44;
-          rCtx.fillStyle = color;
-
-          if (isDiamond) {
-            rCtx.beginPath();
-            rCtx.moveTo(rx, ry - size);
-            rCtx.lineTo(rx + size, ry);
-            rCtx.lineTo(rx, ry + size);
-            rCtx.lineTo(rx - size, ry);
-            rCtx.closePath();
-            rCtx.fill();
-          } else {
-            rCtx.beginPath();
-            rCtx.arc(rx, ry, size, 0, Math.PI * 2);
-            rCtx.fill();
-          }
-        }
-      }
-
-      cityMonuments.forEach(m => {
-        const color = m.owner === 'PLAYER' ? playerCustomColor : MONUMENT_NEUTRAL;
-        plotRadarPoint(m.pos, color, 3.5, true);
-      });
-
-      plotRadarPoint(botCrimson.pos, botCrimson.color, 3);
-      plotRadarPoint(botVolt.pos, botVolt.color, 3);
-
-      rCtx.fillStyle = playerCustomColor;
-      rCtx.beginPath();
-      rCtx.arc(center, center, 4, 0, Math.PI * 2);
-      rCtx.fill();
-    }
-
-    /* ========================================================
-       4. DISTRIKT-ERKENNUNG & UMSCHALT-LOGIK
-       ======================================================== */
-    let lastDistrictCheckTime = 0;
-    let isCheckingDistrict = false;
-    let pendingOutpostData = null;
-
-    async function fetchDistrictName(lat, lng) {
-      try {
-        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`;
-        const resp = await fetch(url, { headers: { 'Accept-Language': 'de' } });
-        const data = await resp.json();
-        if (data && data.address) {
-          return data.address.suburb || data.address.neighbourhood || data.address.quarter || data.address.city_district || data.address.village || data.address.town || "Neuer Distrikt";
-        }
-      } catch(e){}
-      return "Neuer Distrikt";
-    }
-
-    async function checkDistrictBoundary(lat, lng) {
-      const now = Date.now();
-      if (now - lastDistrictCheckTime < 10000 || isCheckingDistrict) return;
-      lastDistrictCheckTime = now;
-      isCheckingDistrict = true;
-
-      const detected = await fetchDistrictName(lat, lng);
-      isCheckingDistrict = false;
-
-      const alreadyHas = outpostList.some(o => o.districtName.toLowerCase() === detected.toLowerCase());
-      const outpostModal = document.getElementById('outpostModal');
-
-      if (!alreadyHas && outpostModal && outpostModal.style.display !== 'flex') {
-        pendingOutpostData = { districtName: detected, coords: [lat, lng] };
-        document.getElementById('detectedDistrictName').textContent = detected;
-        outpostModal.style.display = 'flex';
-      }
-    }
-
-    document.getElementById('confirmNewOutpostBtn').addEventListener('click', () => {
-      ensureAudioContext();
-      if (pendingOutpostData) {
-        const newOp = {
-          id: outpostList.length + 1,
-          districtName: pendingOutpostData.districtName,
-          coords: [...pendingOutpostData.coords],
-          radius: 35
-        };
-        outpostList.push(newOp);
-        localStorage.setItem('pc_outposts', JSON.stringify(outpostList));
-        currentOutpostIdx = outpostList.length - 1;
-        playerSpawn = [...newOp.coords];
-        baseRadius = newOp.radius;
-
-        renderAllTerritories();
-        updateOutpostBtnUI();
-        showBanner(`OUTPOST // ${newOp.districtName.toUpperCase()} GEGRÜNDET!`, false);
-        speakEva(`Neuer Außenposten gegründet: ${newOp.districtName}`);
-      }
-      document.getElementById('outpostModal').style.display = 'none';
-      pendingOutpostData = null;
-    });
-
-    document.getElementById('cancelNewOutpostBtn').addEventListener('click', () => {
-      document.getElementById('outpostModal').style.display = 'none';
-      pendingOutpostData = null;
-    });
-
-    document.getElementById('cycleOutpostBtn').addEventListener('click', () => {
-      ensureAudioContext();
-      if (outpostList.length > 1) {
-        currentOutpostIdx = (currentOutpostIdx + 1) % outpostList.length;
-        const target = outpostList[currentOutpostIdx];
-        playerSpawn = [...target.coords];
-        baseRadius = target.radius;
-        playerPos = [...playerSpawn];
-        playerMarker.setLatLng(playerPos);
-        map.setView(playerPos, 17);
-        updateOutpostBtnUI();
-        showBanner(`ZU ${target.districtName.toUpperCase()} GEWECHSELT!`, false);
-        speakEva(`Sektor gewechselt: ${target.districtName}`);
-      } else {
-        showBanner(`1 BASIS AKTIV // GEHE IN ANDERE VIERTEL!`, false);
-      }
-    });
-
-    function updateOutpostBtnUI() {
-      const btn = document.getElementById('cycleOutpostBtn');
-      if (btn && outpostList[currentOutpostIdx]) {
-        btn.textContent = `🏢 ${outpostList[currentOutpostIdx].districtName.toUpperCase()}`;
-      }
-    }
-
-    /* ========================================================
-       5. MONUMENTE (ZUVERLÄSSIGES LADEN)
-       ======================================================== */
-    async function fetchRealMonuments(center) {
-      monumentGroup.clearLayers();
-      cityMonuments = [];
-      const radius = 1000;
-      const query = `
-        [out:json][timeout:6];
-        (
-          node["historic"](around:${radius},${center[0]},${center[1]});
-          node["tourism"="artwork"](around:${radius},${center[0]},${center[1]});
-          node["amenity"="place_of_worship"](around:${radius},${center[0]},${center[1]});
-          node["amenity"="fountain"](around:${radius},${center[0]},${center[1]});
-        );
-        out body 8;
-      `;
-      try {
-        const resp = await fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: query });
-        const data = await resp.json();
-        if (data.elements && data.elements.length > 0) {
-          data.elements.forEach(el => {
-            addMonumentToMap(el.id, el.tags.name || "Cyber-Core", '🏛', [el.lat, el.lon]);
-          });
-          return;
-        }
-      } catch(e){}
-
-      [
-        { id: "local_1", name: "Alte Stadtkirche", pos: [center[0] + 0.0014, center[1] + 0.0012] },
-        { id: "local_2", name: "Marktbrunnen", pos: [center[0] - 0.0012, center[1] + 0.0015] },
-        { id: "local_3", name: "Bürgerpark-Skulptur", pos: [center[0] + 0.0010, center[1] - 0.0016] }
-      ].forEach(m => addMonumentToMap(m.id, m.name, '🏛', m.pos));
-    }
-
-    function addMonumentToMap(id, name, icon, pos) {
-      const marker = L.marker(pos, {
-        icon: L.divIcon({
-          className: 'monument-pin',
-          html: `
-            <div class="monument-pin-container" id="monument_${id}">
-              <div class="monument-icon-badge" style="border-color:#ffaa00; box-shadow:0 0 18px #ffaa00;">${icon}</div>
-              <div class="monument-label">${name}</div>
-            </div>
-          `,
-          iconSize: [80, 50],
-          iconAnchor: [40, 25]
-        })
-      }).addTo(monumentGroup);
-
-      cityMonuments.push({ id, name, pos, owner: 'NEUTRAL', marker });
-    }
-
-    /* ========================================================
-       6. HACKING & CORES
+       3. HACKING SYSTEM
        ======================================================== */
     let activeHackTarget = null;
     let hackInterval = null;
@@ -829,13 +494,13 @@
 
     function checkNearbyMonumentForHack() {
       if (isHackModalOpen && activeHackTarget) {
-        if (getDistanceMeters(playerPos, activeHackTarget.pos) > 32) cancelHack("Hack abgebrochen: Außer Reichweite!");
+        if (getDistance({x: worldX, y: worldY}, {x: activeHackTarget.x, y: activeHackTarget.y}) > 32) cancelHack("Außer Reichweite!");
         return;
       }
 
       let found = null;
-      for (let m of cityMonuments) {
-        if (getDistanceMeters(playerPos, m.pos) <= 28) { found = m; break; }
+      for (let m of monuments) {
+        if (getDistance({x: worldX, y: worldY}, {x: m.x, y: m.y}) <= 28) { found = m; break; }
       }
 
       const trigger = document.getElementById('hackHudTrigger');
@@ -880,13 +545,6 @@
 
       if (activeHackTarget) {
         activeHackTarget.owner = 'PLAYER';
-        const el = document.getElementById(`monument_${activeHackTarget.id}`);
-        if (el) {
-          const badge = el.querySelector('.monument-icon-badge');
-          badge.style.borderColor = playerCustomColor;
-          badge.style.color = playerCustomColor;
-          badge.style.boxShadow = `0 0 24px ${playerCustomColor}`;
-        }
         playFanfare();
         showBanner(`CORE // ${activeHackTarget.name.toUpperCase()} GEHACKT!`, false);
         speakEva("System-Override erfolgreich.");
@@ -907,149 +565,202 @@
     document.getElementById('cancelHackBtn').addEventListener('click', () => cancelHack());
 
     /* ========================================================
-       7. BEWEGUNG & ANKER-SCHLEIFENSCHLUSS (TRAIL IMMER AKTIV)
+       4. BEWEGUNG & CANVAS RENDERING LOOP
        ======================================================== */
-    const STILLSTAND_SPEED_THRESHOLD_KMH = 2.2;
-    const MIN_TRAIL_STEP_METERS = 8.0;
+    function handlePlayerMovement(dx, dy) {
+      worldX += dx;
+      worldY += dy;
 
-    function handlePlayerMovement(rawLat, rawLng, speedKmh = 0) {
-      try {
-        playerPos = [rawLat, rawLng];
-        playerMarker.setLatLng(playerPos);
+      checkNearbyMonumentForHack();
 
-        checkDistrictBoundary(rawLat, rawLng);
-        checkNearbyMonumentForHack();
+      const currentPt = { x: worldX, y: worldY };
+      const inTerritory = isPointInPlayerTerritory(currentPt);
+      const badge = document.getElementById('playerStatusBadge');
 
-        // 1. PVP: Gegnerische Trails zerstören
-        [botCrimson, botVolt].forEach(b => {
-          if (b.trail.length > 2 && checkCut(playerPos, b.trail)) {
-            b.trail = [];
-            b.trailLayer.setLatLngs([]);
-            b.pos = [...b.spawn];
-            b.marker.setLatLng(b.pos);
-            showBanner(`${b.name.toUpperCase()} TRAIL ZERSTÖRT! ⚔ +450 m²`, false);
-            speakEva(`Gegnerischer Trail von ${b.name} zerstört.`);
-            playFanfare();
-            playerTotalArea += 450;
-            addXP(400);
-            addCredits(60);
-            updateUI();
-          }
-        });
+      if (inTerritory) {
+        badge.textContent = 'IN GEBIET (GESICHERT)';
+        badge.className = 'status-badge';
 
-        // 2. SCHLEIFENSCHLUSS & ANKER-PRÜFUNG
-        const inTerritory = isPointInPlayerTerritory(playerPos);
-        const badge = document.getElementById('playerStatusBadge');
+        if (playerTrail.length >= 3 && !justCapturedCooldown) {
+          completeTerritory([...playerTrail, currentPt]);
+        } else if (playerTrail.length < 3) {
+          playerTrail = [];
+        }
+      } else {
+        badge.textContent = 'EXPEDITION (GEFAHR)';
+        badge.className = 'status-badge danger';
 
-        if (inTerritory) {
-          badge.textContent = 'IN GEBIET (GESICHERT)';
-          badge.className = 'status-badge';
+        const last = playerTrail[playerTrail.length - 1];
+        const dist = last ? getDistance(currentPt, last) : 999;
 
-          if (playerTrail.length >= 3 && !justCapturedCooldown) {
-            completeTerritory([...playerTrail, playerPos]);
-          } else if (playerTrail.length < 3) {
-            playerTrail = [];
-            playerTrailLayer.setLatLngs([]);
-          }
-        } else {
-          badge.textContent = 'EXPEDITION (GEFAHR)';
-          badge.className = 'status-badge danger';
-
-          const last = playerTrail[playerTrail.length - 1];
-          const distToLast = last ? getDistanceMeters(playerPos, last) : 999;
-
-          if (speedKmh < STILLSTAND_SPEED_THRESHOLD_KMH && distToLast < MIN_TRAIL_STEP_METERS && playerTrail.length > 0) {
-            badge.textContent = 'SIGNAL GEHALTEN // AMPEL-HALT';
-            badge.className = 'status-badge waiting';
-            return;
-          }
-
-          if (!justCapturedCooldown) {
-            const hitIdx = checkSelfIntersectionIndex(playerPos, playerTrail);
-            if (hitIdx !== -1) {
-              const loopPolygon = playerTrail.slice(hitIdx);
-              loopPolygon.push(playerPos);
-              completeTerritory(loopPolygon);
+        if (!justCapturedCooldown && playerTrail.length >= 4) {
+          // Eigene Spur gekreuzt?
+          for (let i = 0; i < playerTrail.length - 3; i++) {
+            if (getDistance(currentPt, playerTrail[i]) < 6) {
+              const polygon = playerTrail.slice(i);
+              polygon.push(currentPt);
+              completeTerritory(polygon);
               return;
             }
           }
-
-          if (!last || distToLast >= MIN_TRAIL_STEP_METERS) {
-            playerTrail.push(playerPos);
-            playerTrailLayer.setLatLngs(playerTrail);
-          }
         }
-      } catch(err){}
+
+        if (!last || dist >= 4.0) {
+          playerTrail.push(currentPt);
+        }
+      }
     }
 
     function completeTerritory(coords) {
-      try {
-        const area = calculatePolygonAreaM2(coords);
-        playerTotalArea += area;
+      const area = calculatePolygonArea(coords);
+      playerTotalArea += area;
+      territories.push({ points: coords });
 
-        L.polygon(coords, {
-          color: playerCustomColor,
-          fillColor: playerCustomColor,
-          fillOpacity: 0.45,
-          weight: 2
-        }).addTo(territoryGroup);
+      playerTrail = [{ x: worldX, y: worldY }];
+      justCapturedCooldown = true;
+      setTimeout(() => { justCapturedCooldown = false; }, 1200);
 
-        playerTerritoryPolygons.push(coords);
+      showBanner(`+${area.toLocaleString()} m² SEKTOR GESICHERT!`, false);
+      speakEva(`Sektor gesichert. Plus ${area} Quadratmeter.`);
+      playFanfare();
 
-        playerTrail = [playerPos];
-        playerTrailLayer.setLatLngs(playerTrail);
-
-        justCapturedCooldown = true;
-        setTimeout(() => { justCapturedCooldown = false; }, 1500);
-
-        showBanner(`+${area.toLocaleString()} m² SEKTOR GESICHERT!`, false);
-        speakEva(`Sektor gesichert. Plus ${area} Quadratmeter.`);
-        playFanfare();
-
-        addCredits(Math.max(10, Math.round(area * 0.03)));
-        addXP(Math.round(area * 0.5));
-        updateUI();
-      } catch(err){}
+      addCredits(Math.max(10, Math.round(area * 0.03)));
+      addXP(Math.round(area * 0.5));
+      updateUI();
     }
 
-    function updateRealisticBot(bot, deltaSec, turnIntervalSec, turnAngle) {
-      bot.timeSinceTurn += deltaSec;
-      if (bot.timeSinceTurn >= turnIntervalSec) {
-        bot.timeSinceTurn = 0;
-        bot.heading += (Math.random() > 0.5 ? turnAngle : -turnAngle);
-      }
-      const moveDistanceMeters = 20.0 * deltaSec;
-      const rad = bot.heading * (Math.PI / 180);
-      bot.pos = moveCoordsByMeters(bot.pos[0], bot.pos[1], Math.sin(rad) * moveDistanceMeters, Math.cos(rad) * moveDistanceMeters);
-      bot.marker.setLatLng(bot.pos);
+    // Haupt-Render-Schleife für die Pokémon-GO-ähnliche Cyber-Welt
+    function renderWorld() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      const inBase = getDistanceMeters(bot.pos, bot.spawn) <= 35;
-      if (!inBase) {
-        const last = bot.trail[bot.trail.length - 1];
-        if (!last || getDistanceMeters(bot.pos, last) >= 8) {
-          bot.trail.push(bot.pos);
-          bot.trailLayer.setLatLngs(bot.trail);
-        }
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
 
-        if (playerTrail.length > 2 && checkCut(bot.pos, playerTrail)) {
-          showBanner(`${bot.name} hat deinen Trail geschnitten!`, true);
-          speakEva("Achtung. Trail durchbrochen.");
-          playerTrail = [];
-          playerTrailLayer.setLatLngs([]);
-          playerPos = [...playerSpawn];
-          playerMarker.setLatLng(playerPos);
-        }
-      } else {
-        if (bot.trail.length >= 4) {
-          bot.area += Math.round(bot.trail.length * 40);
-          L.polygon([...bot.trail, bot.spawn], { color: bot.color, fillColor: bot.color, fillOpacity: 0.35, weight: 2 }).addTo(territoryGroup);
-          updateUI();
-        }
-        bot.trail = [];
-        bot.trailLayer.setLatLngs([]);
+      ctx.save();
+      // Kamera folgt dem Spieler
+      ctx.translate(centerX - worldX, centerY - worldY);
+
+      // 1. Neon-Grid (Boden-Raster wie Pokémon GO Wege)
+      ctx.strokeStyle = 'rgba(0, 243, 255, 0.08)';
+      ctx.lineWidth = 1.5;
+      const gridSize = 60;
+      const startX = Math.floor((worldX - centerX) / gridSize) * gridSize;
+      const startY = Math.floor((worldY - centerY) / gridSize) * gridSize;
+
+      for (let x = startX; x < startX + canvas.width + gridSize * 2; x += gridSize) {
+        ctx.beginPath(); ctx.moveTo(x, worldY - centerY - 100); ctx.lineTo(x, worldY + centerY + canvas.height); ctx.stroke();
       }
+      for (let y = startY; y < startY + canvas.height + gridSize * 2; y += gridSize) {
+        ctx.beginPath(); ctx.moveTo(worldX - centerX - 100, y); ctx.lineTo(worldX + centerX + canvas.width, y); ctx.stroke();
+      }
+
+      // 2. Startbasis (Heimat-Outpost)
+      ctx.beginPath();
+      ctx.arc(0, 0, baseRadiusMeters, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 243, 255, 0.25)';
+      ctx.fill();
+      ctx.strokeStyle = playerCustomColor;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // 3. Eroberte Territorien (Polygone)
+      territories.forEach(t => {
+        if (t.points.length < 3) return;
+        ctx.beginPath();
+        ctx.moveTo(t.points[0].x, t.points[0].y);
+        for (let i = 1; i < t.points.length; i++) ctx.lineTo(t.points[i].x, t.points[i].y);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(0, 243, 255, 0.35)';
+        ctx.fill();
+        ctx.strokeStyle = playerCustomColor;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      });
+
+      // 4. Spieler-Laser-Trail
+      if (playerTrail.length > 1) {
+        ctx.beginPath();
+        ctx.moveTo(playerTrail[0].x, playerTrail[0].y);
+        for (let i = 1; i < playerTrail.length; i++) ctx.lineTo(playerTrail[i].x, playerTrail[i].y);
+        ctx.strokeStyle = playerCustomColor;
+        ctx.lineWidth = 6;
+        ctx.shadowColor = playerCustomColor;
+        ctx.shadowBlur = 14;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
+
+      // 5. Monumente (Cores)
+      monuments.forEach(m => {
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, 18, 0, Math.PI * 2);
+        ctx.fillStyle = m.owner === 'PLAYER' ? playerCustomColor : '#ffaa00';
+        ctx.shadowColor = ctx.fillStyle;
+        ctx.shadowBlur = 18;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 12px Orbitron';
+        ctx.textAlign = 'center';
+        ctx.fillText(m.name, m.x, m.y - 24);
+      });
+
+      // 6. Spieler Avatar (Zentrum)
+      ctx.beginPath();
+      ctx.arc(worldX, worldY, 14, 0, Math.PI * 2);
+      ctx.fillStyle = playerCustomColor;
+      ctx.shadowColor = playerCustomColor;
+      ctx.shadowBlur = 20;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#ffffff';
+      ctx.stroke();
+
+      ctx.restore();
+      updateRadar();
     }
 
+    /* ========================================================
+       5. MINIMAP RADAR
+       ======================================================== */
+    const radarCanvas = document.getElementById('radarCanvas');
+    const rCtx = radarCanvas.getContext('2d');
+
+    function updateRadar() {
+      if (!rCtx) return;
+      rCtx.clearRect(0, 0, 100, 100);
+      const center = 50;
+
+      rCtx.strokeStyle = 'rgba(0, 243, 255, 0.3)';
+      rCtx.lineWidth = 1;
+      rCtx.beginPath();
+      rCtx.arc(center, center, 25, 0, Math.PI * 2);
+      rCtx.arc(center, center, 45, 0, Math.PI * 2);
+      rCtx.stroke();
+
+      monuments.forEach(m => {
+        let dx = m.x - worldX;
+        let dy = m.y - worldY;
+        let dist = Math.hypot(dx, dy);
+        if (dist < 300) {
+          rCtx.fillStyle = m.owner === 'PLAYER' ? playerCustomColor : '#ffaa00';
+          rCtx.beginPath();
+          rCtx.arc(center + (dx / 300) * 40, center + (dy / 300) * 40, 3, 0, Math.PI * 2);
+          rCtx.fill();
+        }
+      });
+
+      rCtx.fillStyle = playerCustomColor;
+      rCtx.beginPath();
+      rCtx.arc(center, center, 4, 0, Math.PI * 2);
+      rCtx.fill();
+    }
+
+    /* ========================================================
+       6. UI & SHOP CONTROLS
+       ======================================================== */
     function addCredits(amount) {
       savedCredits += amount;
       localStorage.setItem('pc_credits', savedCredits);
@@ -1080,23 +791,6 @@
 
     function updateUI() {
       document.getElementById('playerAreaStat').textContent = `${playerTotalArea.toLocaleString()} m²`;
-
-      const players = [
-        { name: playerName, area: playerTotalArea, color: playerCustomColor },
-        { name: "Crimson", area: botCrimson.area, color: botCrimson.color },
-        { name: "Volt", area: botVolt.area, color: botVolt.color }
-      ].sort((a, b) => b.area - a.area);
-
-      const listEl = document.getElementById('leaderboardList');
-      if (listEl) {
-        listEl.innerHTML = '';
-        players.forEach((p, idx) => {
-          const row = document.createElement('div');
-          row.className = 'leaderboard-item';
-          row.innerHTML = `<span style="color:${p.color};">#${idx+1} ${p.name}</span><span style="color:#fff;">${p.area.toLocaleString()} m²</span>`;
-          listEl.appendChild(row);
-        });
-      }
     }
 
     function showBanner(text, isDanger) {
@@ -1106,50 +800,19 @@
       setTimeout(() => banner.classList.remove('show'), 2400);
     }
 
-    /* ========================================================
-       8. SHOP & UPGRADES
-       ======================================================== */
-    const openShopBtn = document.getElementById('openShopBtn');
-    if (openShopBtn) openShopBtn.addEventListener('click', () => { document.getElementById('shopModal').style.display = 'flex'; });
-    const closeShopBtn = document.getElementById('closeShopBtn');
-    if (closeShopBtn) closeShopBtn.addEventListener('click', () => { document.getElementById('shopModal').style.display = 'none'; });
+    document.getElementById('openShopBtn').addEventListener('click', () => { document.getElementById('shopModal').style.display = 'flex'; });
+    document.getElementById('closeShopBtn').addEventListener('click', () => { document.getElementById('shopModal').style.display = 'none'; });
 
     function upgradeHackTool(level, cybCost, eurCost) {
       ensureAudioContext();
       if (hackToolLevel >= level) { showBanner("TOOL BEREITS INSTALLIERT!", false); return; }
-      if (eurCost > 0) {
-        if (confirm(`Für ${eurCost.toFixed(2)} € kaufen?`)) applyHackUpgrade(level);
-      } else if (savedCredits >= cybCost) {
-        savedCredits -= cybCost;
-        addCredits(0);
-        applyHackUpgrade(level);
-      } else {
-        showBanner("NICHT GENUG $CYB CREDITS!", true);
-      }
-    }
-
-    function applyHackUpgrade(level) {
-      hackToolLevel = level;
-      localStorage.setItem('pc_hack_tool_lvl', hackToolLevel);
-      document.getElementById('hudAgentTag').textContent = `HACK-RIG MK.${hackToolLevel} // 50 m/s`;
-      playFanfare();
-      showBanner(`HACK-RIG MK.${level} INSTALLIERT!`, false);
-      speakEva(`Rig Mark ${level} aktiv.`);
-    }
-
-    function buyBaseExpansion(cybCost, eurCost) {
-      ensureAudioContext();
-      if (baseRadius >= 45) { showBanner("BASIS BEREITS MAXIMAL AUSGEBAUT!", false); return; }
-      if (eurCost > 0 || savedCredits >= cybCost) {
+      if (savedCredits >= cybCost || eurCost > 0) {
         if (cybCost > 0) { savedCredits -= cybCost; addCredits(0); }
-        baseRadius = 45;
-        outpostList[currentOutpostIdx].radius = baseRadius;
-        localStorage.setItem('pc_outposts', JSON.stringify(outpostList));
-        renderAllTerritories();
+        hackToolLevel = level;
+        localStorage.setItem('pc_hack_tool_lvl', hackToolLevel);
         playFanfare();
-        showBanner("BASIS-KREIS AUF 45 METER ERWEITERT!", false);
-      } else {
-        showBanner("NICHT GENUG $CYB CREDITS!", true);
+        showBanner(`HACK-RIG MK.${level} INSTALLIERT!`, false);
+        speakEva(`Rig Mark ${level} aktiv.`);
       }
     }
 
@@ -1174,99 +837,21 @@
     });
 
     /* ========================================================
-       9. INITIALISIERUNG & START
+       7. START & JOYSTICK
        ======================================================== */
-    function renderAllTerritories() {
-      territoryGroup.clearLayers();
-      outpostList.forEach(op => {
-        L.circle(op.coords, {
-          radius: op.radius,
-          color: playerCustomColor,
-          fillColor: playerCustomColor,
-          fillOpacity: 0.55,
-          weight: 3
-        }).bindTooltip(`<b>${op.districtName.toUpperCase()}</b>`, { permanent: true, direction: 'center', className: 'monument-label' }).addTo(territoryGroup);
-      });
-      playerTerritoryPolygons.forEach(coords => {
-        L.polygon(coords, { color: playerCustomColor, fillColor: playerCustomColor, fillOpacity: 0.45, weight: 2 }).addTo(territoryGroup);
-      });
-    }
-
-    function initializeBaseAndMonuments(coords) {
-      playerSpawn = [...coords];
-      outpostList[currentOutpostIdx].coords = [...playerSpawn];
-      localStorage.setItem('pc_outposts', JSON.stringify(outpostList));
-      playerPos = [...playerSpawn];
-      playerMarker.setLatLng(playerPos);
-      map.setView(playerPos, 17);
-      renderAllTerritories();
-      fetchRealMonuments(playerSpawn);
-      updateOutpostBtnUI();
-    }
-
     document.getElementById('acceptSafetyBtn').addEventListener('click', () => {
-      const modal = document.getElementById('safetyModal');
-      if (modal) modal.remove();
-
-      initializeBaseAndMonuments(playerSpawn);
+      document.getElementById('safetyModal').remove();
       updateLevelUI();
       updateUI();
-
       try {
         ensureAudioContext();
         startSynthwaveMusic();
         speakEva("System online. Willkommen im Grid.");
       } catch(e){}
-
-      if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          pos => {
-            initializeBaseAndMonuments([pos.coords.latitude, pos.coords.longitude]);
-          },
-          err => {},
-          { enableHighAccuracy: true, timeout: 5000 }
-        );
-      }
-    });
-
-    const toggleGpsBtn = document.getElementById('toggleGpsBtn');
-    toggleGpsBtn.addEventListener('click', () => {
-      ensureAudioContext();
-      if (!isRealGpsActive) {
-        if ('geolocation' in navigator) {
-          document.getElementById('gpsBtnLabel').textContent = 'GPS STOP';
-          toggleGpsBtn.classList.add('active');
-          isRealGpsActive = true;
-          gpsWatchId = navigator.geolocation.watchPosition(pos => {
-            const speedKmh = pos.coords.speed !== null ? pos.coords.speed * 3.6 : 0;
-            handlePlayerMovement(pos.coords.latitude, pos.coords.longitude, speedKmh);
-            map.panTo(playerPos);
-          }, null, { enableHighAccuracy: true });
-        }
-      } else {
-        if (gpsWatchId) navigator.geolocation.clearWatch(gpsWatchId);
-        isRealGpsActive = false;
-        toggleGpsBtn.classList.remove('active');
-        document.getElementById('gpsBtnLabel').textContent = 'ECHT-GPS';
-      }
-    });
-
-    document.getElementById('relocateBtn').addEventListener('click', () => {
-      ensureAudioContext();
-      if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(pos => {
-          initializeBaseAndMonuments([pos.coords.latitude, pos.coords.longitude]);
-          showBanner("BASIS // RELOCATED!", false);
-          speakEva("Basis verlegt.");
-        });
-      }
     });
 
     document.getElementById('resetBtn').addEventListener('click', () => location.reload());
 
-    /* ========================================================
-       10. JOYSTICK & GAMELOOP
-       ======================================================== */
     const joystickZone = document.getElementById('joystickZone');
     const joystickHandle = document.getElementById('joystickHandle');
     let joyX = 0, joyY = 0, joyActive = false;
@@ -1307,16 +892,12 @@
         const dt = (t - lastTime) / 1000;
         lastTime = t;
 
-        if (!isRealGpsActive && (joyX !== 0 || joyY !== 0)) {
-          const move = 50.0 * dt;
-          const newPos = moveCoordsByMeters(playerPos[0], playerPos[1], joyX * move, -joyY * move);
-          handlePlayerMovement(newPos[0], newPos[1], 15);
-          map.panTo(playerPos, { animate: false });
+        if (joyX !== 0 || joyY !== 0) {
+          const moveSpeed = 45; // Meter pro Sekunde
+          handlePlayerMovement(joyX * moveSpeed * dt, joyY * moveSpeed * dt);
         }
 
-        updateRealisticBot(botCrimson, dt, 3.2, 85);
-        updateRealisticBot(botVolt, dt, 2.6, 110);
-        updateRadar();
+        renderWorld();
       } catch(e){}
       requestAnimationFrame(loop);
     }
