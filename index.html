@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // NEON GRID - FULLY RESTORED STABLE</title>
+  <title>PaperCity // NEON GRID - PVP CUT & OPEN LOOP MASTER</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#00f3ff" />
@@ -42,6 +42,9 @@
 
     #map { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; background: #05080e; }
     #fxCanvas { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 450; }
+
+    .leaflet-pane > svg path.crimson-laser { stroke: var(--cyber-crimson); filter: drop-shadow(0 0 8px #ff0055) drop-shadow(0 0 14px rgba(255, 0, 85, 0.7)); }
+    .leaflet-pane > svg path.volt-laser { stroke: var(--cyber-volt); filter: drop-shadow(0 0 8px #ffee00) drop-shadow(0 0 14px rgba(255, 238, 0, 0.7)); }
 
     .hud-top {
       position: absolute; top: 10px; left: 10px; right: 10px; z-index: 1000; display: flex; justify-content: space-between; gap: 10px; pointer-events: none;
@@ -151,7 +154,6 @@
     }
     .monument-label { background: rgba(6, 12, 22, 0.9); border: 1px solid rgba(255, 170, 0, 0.5); color: #fff; font-family: var(--font-tech); font-size: 0.6rem; font-weight: 800; letter-spacing: 1px; padding: 3px 8px; border-radius: 4px; margin-top: 5px; white-space: nowrap; }
 
-    /* Radar Minimap Styling */
     .radar-container {
       position: absolute; bottom: 20px; left: 15px; width: 100px; height: 100px; border-radius: 50%;
       background: radial-gradient(circle, rgba(0, 243, 255, 0.15) 0%, rgba(6, 10, 18, 0.95) 85%); border: 2px solid var(--cyber-cyan);
@@ -243,11 +245,11 @@
         <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Fully Restored Master</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // PvP Cut & Open Loop</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem;">
-        <li><i class="fa-solid fa-person-walking" style="color:var(--cyber-volt);"></i> Nutze nur öffentliche Straßen, Gehwege & Parks.</li>
-        <li><i class="fa-solid fa-radar" style="color:var(--cyber-cyan);"></i> <b>Minimap & Shop aktiv:</b> Alle HUD-Systeme voll funktionsfähig!</li>
+        <li><i class="fa-solid fa-crosshairs" style="color:var(--cyber-crimson);"></i> <b>Gegner-Trails zerstören:</b> Kreuzst du die Laser-Spur eines Bots, explodiert sie!</li>
+        <li><i class="fa-solid fa-draw-polygon" style="color:var(--cyber-green);"></i> <b>Offene Schleifen:</b> Schließe Sektoren frei im Gelände oder in jeder Basis.</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
     </div>
@@ -307,7 +309,7 @@
         <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
         <div>
           <div class="agent-name-label" id="hudAgentName">AGENT V</div>
-          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">HACK-RIG MK.1 // 50 m/s</div>
+          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">PVP RUNNER // 50 m/s</div>
         </div>
       </div>
 
@@ -344,7 +346,6 @@
     </div>
   </div>
 
-  <!-- Radar Minimap -->
   <div class="radar-container" title="Radar">
     <canvas id="radarCanvas" class="radar-canvas" width="100" height="100"></canvas>
     <div class="radar-sweep"></div>
@@ -520,8 +521,8 @@
     const monumentGroup = L.featureGroup().addTo(map);
     const playerTrailLayer = L.polyline([], { color: playerCustomColor, weight: 6, opacity: 0.95 }).addTo(map);
 
-    botCrimson.trailLayer = L.polyline([], { color: botCrimson.color, weight: 6, opacity: 0.95 }).addTo(map);
-    botVolt.trailLayer = L.polyline([], { color: botVolt.color, weight: 6, opacity: 0.95 }).addTo(map);
+    botCrimson.trailLayer = L.polyline([], { color: botCrimson.color, className: 'crimson-laser', weight: 6, opacity: 0.95 }).addTo(map);
+    botVolt.trailLayer = L.polyline([], { color: botVolt.color, className: 'volt-laser', weight: 6, opacity: 0.95 }).addTo(map);
 
     const playerMarker = L.marker(playerPos, {
       icon: L.divIcon({
@@ -591,6 +592,15 @@
     function isPointInPlayerBases(point) {
       for (let o of outpostList) {
         if (getDistanceMeters(point, o.coords) <= (o.radius + 5)) return true;
+      }
+      return false;
+    }
+
+    // Prüft, ob der Spieler die Trail-Spur eines Bots geschnitten hat
+    function checkCut(runnerPos, trail) {
+      if (trail.length < 3) return false;
+      for (let i = 0; i < trail.length - 2; i++) {
+        if (getDistanceMeters(runnerPos, trail[i]) < 12) return true;
       }
       return false;
     }
@@ -891,7 +901,7 @@
     document.getElementById('cancelHackBtn').addEventListener('click', () => cancelHack());
 
     /* ========================================================
-       7. BEWEGUNG & FLÜSSIGER WEITERLAUF
+       7. BEWEGUNG & PVP-CUT SCHLEIFENSCHLUSS
        ======================================================== */
     const STILLSTAND_SPEED_THRESHOLD_KMH = 2.2;
     const MIN_TRAIL_STEP_METERS = 8.0;
@@ -904,6 +914,24 @@
         checkDistrictBoundary(rawLat, rawLng);
         checkNearbyMonumentForHack();
 
+        // 1. PVP-CHECK: Hast du einen Bot-Trail geschnitten?
+        [botCrimson, botVolt].forEach(b => {
+          if (b.trail.length > 2 && checkCut(playerPos, b.trail)) {
+            b.trail = [];
+            b.trailLayer.setLatLngs([]);
+            b.pos = [...b.spawn];
+            b.marker.setLatLng(b.pos);
+            showBanner(`${b.name.toUpperCase()} TRAIL ZERSTÖRT! ⚔ +450 m²`, false);
+            speakEva(`Gegnerischer Trail von ${b.name} zerstört.`);
+            playFanfare();
+            playerTotalArea += 450;
+            addXP(400);
+            addCredits(60);
+            updateUI();
+          }
+        });
+
+        // 2. SCHLEIFENSCHLUSS: Entweder in einer Basis ODER per eigenem Spur-Schnitt
         const inSafeZone = isPointInPlayerBases(playerPos);
         const badge = document.getElementById('playerStatusBadge');
 
@@ -930,6 +958,7 @@
           badge.textContent = 'EXPEDITION (GEFAHR)';
           badge.className = 'status-badge danger';
 
+          // Freier Schleifenschluss (Spur-Schnitt im Gelände)
           if (!justCapturedCooldown) {
             const hitIdx = checkSelfIntersectionIndex(playerPos, playerTrail);
             if (hitIdx !== -1) {
@@ -993,6 +1022,16 @@
         if (!last || getDistanceMeters(bot.pos, last) >= 8) {
           bot.trail.push(bot.pos);
           bot.trailLayer.setLatLngs(bot.trail);
+        }
+
+        // Wenn Bot den Spieler-Trail schneidet -> Tod/Reset für Spieler
+        if (playerTrail.length > 2 && checkCut(bot.pos, playerTrail)) {
+          showBanner(`${bot.name} hat deinen Trail geschnitten!`, true);
+          speakEva("Achtung. Trail durchbrochen.");
+          playerTrail = [];
+          playerTrailLayer.setLatLngs([]);
+          playerPos = [...playerSpawn];
+          playerMarker.setLatLng(playerPos);
         }
       } else {
         if (bot.trail.length >= 4) {
@@ -1062,7 +1101,7 @@
     }
 
     /* ========================================================
-       8. SHOP & TOOL UPGRADES
+       8. SHOP & UPGRADES
        ======================================================== */
     const openShopBtn = document.getElementById('openShopBtn');
     if (openShopBtn) openShopBtn.addEventListener('click', () => { document.getElementById('shopModal').style.display = 'flex'; });
