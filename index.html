@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // NEON GRID - CHROME FIX</title>
+  <title>PaperCity // NEON GRID - FREE HACK & MOVEMENT FIX</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#00f3ff" />
@@ -94,22 +94,10 @@
       letter-spacing: 1px; cursor: pointer; margin-top: 10px; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
     }
 
-    .shop-section-title {
-      font-family: var(--font-tech); font-size: 0.75rem; color: var(--cyber-gold); letter-spacing: 1.5px; margin: 16px 0 8px 0; border-bottom: 1px solid rgba(255, 170, 0, 0.3); padding-bottom: 4px; display: flex; justify-content: space-between;
+    /* Freier Hack Trigger Button im HUD */
+    .hack-hud-trigger {
+      position: absolute; top: 110px; left: 50%; transform: translateX(-50%); z-index: 1500; display: none; pointer-events: auto;
     }
-    .shop-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.07); }
-    .shop-row:last-child { border-bottom: none; }
-    .shop-item-desc { font-size: 0.72rem; color: #8fa5ba; }
-    .shop-action-box { display: flex; gap: 6px; }
-
-    .buy-btn-cyb {
-      background: rgba(255, 170, 0, 0.15); border: 1px solid var(--cyber-gold); color: var(--cyber-gold); padding: 5px 9px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 800; cursor: pointer; border-radius: 4px;
-    }
-    .buy-btn-eur {
-      background: rgba(0, 255, 102, 0.15); border: 1px solid var(--cyber-green); color: var(--cyber-green); padding: 5px 9px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 800; cursor: pointer; border-radius: 4px;
-    }
-
-    .hack-hud-trigger { position: absolute; top: 90px; left: 50%; transform: translateX(-50%); z-index: 1500; display: none; pointer-events: auto; }
     .hack-action-btn {
       background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-green)); color: #03060a; border: 2px solid #fff; font-family: var(--font-tech);
       font-weight: 900; font-size: 0.85rem; padding: 10px 22px; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
@@ -176,23 +164,26 @@
   <div class="cyber-overlay"></div>
   <canvas id="fxCanvas"></canvas>
 
+  <!-- Freiwilliger Hack-Button im HUD: Nur sichtbar, wenn in Reichweite -->
   <div class="hack-hud-trigger" id="hackHudTrigger">
     <button class="hack-action-btn" id="startHackBtn">
       <i class="fa-solid fa-terminal"></i> ⚡ CORE HACKEN
     </button>
   </div>
 
+  <!-- Hack Modal mit Abbrechen / Schließen-Button -->
   <div class="modal-overlay" id="hackModal">
     <div class="cyber-modal-card" style="text-align:center;">
       <div class="modal-header" style="color:var(--cyber-green);">
         <span><i class="fa-solid fa-terminal"></i> OVERRIDE // CORE HACK</span>
+        <button class="close-modal-btn" id="closeHackBtn"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div style="font-size: 0.85rem; color: #bad3eb;" id="hackTargetTitle">INFILTRIERE KERN...</div>
       <div class="hack-progress-bar-bg">
         <div class="hack-progress-fill" id="hackProgressFill"></div>
       </div>
       <div style="font-family:var(--font-tech); font-size:0.75rem; color:var(--cyber-cyan);" id="hackTimerTxt">0%</div>
-      <p style="font-size:0.7rem; color:#888; margin-top:10px;">Bleibe im Umkreis von 28 Metern des Monuments!</p>
+      <button class="save-profile-btn" id="cancelHackBtn" style="background:#222; color:#ff3366; border:1px solid #ff3366; margin-top:14px;">ABBRECHEN & WEITERLAUFEN</button>
     </div>
   </div>
 
@@ -207,53 +198,10 @@
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem;">
         <li><i class="fa-solid fa-person-walking" style="color:var(--cyber-volt);"></i> Nutze nur öffentliche Straßen, Gehwege & Parks.</li>
-        <li><i class="fa-solid fa-headphones" style="color:var(--cyber-cyan);"></i> Kopfhörer empfohlen für Synthwave & Sound.</li>
+        <li><i class="fa-solid fa-hand" style="color:var(--cyber-green);"></i> <b>Freies Hacken:</b> Du entscheidest selbst, ob du Monumente einnimmst oder einfach weiterläufst.</li>
         <li><i class="fa-solid fa-traffic-light" style="color:var(--cyber-gold);"></i> Ampel-Puffer schützt deine Spur vor GPS-Jitter.</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
-    </div>
-  </div>
-
-  <!-- SHOP MODAL -->
-  <div class="modal-overlay" id="shopModal">
-    <div class="cyber-modal-card">
-      <div class="modal-header" style="color:var(--cyber-gold);">
-        <span><i class="fa-solid fa-cart-shopping"></i> CYBER-STORE</span>
-        <button class="close-modal-btn" id="closeShopBtn"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <div class="shop-section-title"><span>HACK-TOOL UPGRADES</span><span>CORE OVERRIDE</span></div>
-      <div class="shop-row">
-        <div>
-          <div style="font-family:var(--font-tech); font-weight:700;">CYBERDECK MK.II (6s HACK)</div>
-          <div class="shop-item-desc">Reduziert Hack-Zeit auf 6 Sekunden</div>
-        </div>
-        <div class="shop-action-box">
-          <button class="buy-btn-cyb" onclick="upgradeHackTool(2, 1800, 0)">1.800 $CYB</button>
-          <button class="buy-btn-eur" onclick="upgradeHackTool(2, 0, 1.49)">1,49 €</button>
-        </div>
-      </div>
-      <div class="shop-row">
-        <div>
-          <div style="font-family:var(--font-tech); font-weight:700;">QUANTUM RIG MK.III (3s HACK)</div>
-          <div class="shop-item-desc">High-End Rig: Hackt in 3 Sekunden</div>
-        </div>
-        <div class="shop-action-box">
-          <button class="buy-btn-cyb" onclick="upgradeHackTool(3, 4000, 0)">4.000 $CYB</button>
-          <button class="buy-btn-eur" onclick="upgradeHackTool(3, 0, 2.99)">2,99 €</button>
-        </div>
-      </div>
-
-      <div class="shop-section-title"><span>CREDIT DEPOTS</span><span>SOFORT-BOOST</span></div>
-      <div class="shop-row">
-        <div>
-          <div style="font-family:var(--font-tech); font-weight:700; color:var(--cyber-gold);">+2.500 $CYB CREDITS</div>
-          <div class="shop-item-desc">Starter Pack</div>
-        </div>
-        <div class="shop-action-box">
-          <button class="buy-btn-eur" onclick="buyCreditPack(2500, 1.99)">1,99 €</button>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -269,7 +217,7 @@
         <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
         <div>
           <div class="agent-name-label" id="hudAgentName">AGENT V</div>
-          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">HACK-RIG MK.1 // 50 m/s</div>
+          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">LIVE // 50 m/s</div>
         </div>
       </div>
 
@@ -292,7 +240,6 @@
 
     <div class="top-right-col">
       <div class="quick-toolbar">
-        <button class="tool-btn" id="openShopBtn" style="color:var(--cyber-gold); border-color:var(--cyber-gold);"><i class="fa-solid fa-cart-shopping"></i> SHOP</button>
         <button class="tool-btn active" id="synthMusicBtn"><i class="fa-solid fa-music"></i> SYNTH</button>
         <button class="tool-btn active" id="voiceToggleBtn"><i class="fa-solid fa-headset"></i> EVA</button>
         <button class="tool-btn active" id="soundToggleBtn"><i class="fa-solid fa-volume-high"></i></button>
@@ -327,7 +274,7 @@
 
   <script>
     /* ========================================================
-       1. ROBUSTE AUDIO- & EVA-SYNTHESE (KEIN CHROME-CRASH)
+       1. AUDIO & SOUND ENGINE
        ======================================================== */
     let audioCtx = null;
     let isSynthMusicActive = true;
@@ -353,9 +300,7 @@
           utt.rate = 1.05;
           window.speechSynthesis.speak(utt);
         }
-      } catch(e) {
-        // Schützt Chrome zuverlässig vor Abstürzen
-      }
+      } catch(e){}
     }
 
     let synthTimer = null;
@@ -381,7 +326,7 @@
           filter.frequency.setValueAtTime(650, ctx.currentTime);
           filter.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.22);
 
-          gain.gain.setValueAtTime(0.05, ctx.currentTime);
+          gain.gain.setValueAtTime(0.04, ctx.currentTime);
           gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
 
           osc.connect(filter);
@@ -565,54 +510,50 @@
     }
 
     /* ========================================================
-       4. HACKING & CORES
+       4. FREIWILLIGES HACKEN (OHNE BLOCKIEREN)
        ======================================================== */
     let activeHackTarget = null;
     let hackInterval = null;
     let hackProgress = 0;
-    let hasAnnouncedCoreNearby = false;
-
-    function getHackDurationSeconds() {
-      return hackToolLevel === 3 ? 3.0 : (hackToolLevel === 2 ? 6.0 : 10.0);
-    }
+    let isHackModalOpen = false;
 
     function checkNearbyMonumentForHack() {
-      const trigger = document.getElementById('hackHudTrigger');
+      // Wenn das Hack-Modal offen ist, prüfen ob Spieler noch in Reichweite ist
+      if (isHackModalOpen && activeHackTarget) {
+        if (getDistanceMeters(playerPos, activeHackTarget.pos) > 32) {
+          cancelHack("Hack abgebrochen: Außer Reichweite!");
+        }
+        return;
+      }
+
       let found = null;
       for (let m of cityMonuments) {
         if (getDistanceMeters(playerPos, m.pos) <= 28) { found = m; break; }
       }
 
+      const trigger = document.getElementById('hackHudTrigger');
       if (found && found.owner !== 'PLAYER') {
         activeHackTarget = found;
-        trigger.style.display = 'block';
-        if (!hasAnnouncedCoreNearby) {
-          hasAnnouncedCoreNearby = true;
-          speakEva("Achtung. Monument in Reichweite.");
-        }
+        trigger.style.display = 'block'; // Nur Button anzeigen, Spieler läuft normal weiter
       } else {
         trigger.style.display = 'none';
-        hasAnnouncedCoreNearby = false;
-        if (hackInterval && activeHackTarget && getDistanceMeters(playerPos, activeHackTarget.pos) > 30) {
-          clearInterval(hackInterval);
-          hackInterval = null;
-          document.getElementById('hackModal').style.display = 'none';
-          showBanner("HACK ABGEBROCHEN: SIGNAL VERLOREN!", true);
-          speakEva("Signal verloren.");
-        }
+        if (!isHackModalOpen) activeHackTarget = null;
       }
     }
 
-    document.getElementById('startHackBtn').addEventListener('click', () => {
+    // Spieler klickt freiwillig auf "Core Hacken"
+    document.getElementById('startHackBtn').addEventListener('click', (e) => {
+      e.stopPropagation();
       ensureAudioContext();
       if (!activeHackTarget) return;
 
+      isHackModalOpen = true;
       document.getElementById('hackModal').style.display = 'flex';
       document.getElementById('hackTargetTitle').textContent = `INFILTRIERE: ${activeHackTarget.name.toUpperCase()}`;
       speakEva("Infiltriere Kern.");
 
       hackProgress = 0;
-      const durationSec = getHackDurationSeconds();
+      const durationSec = hackToolLevel === 3 ? 3.0 : (hackToolLevel === 2 ? 6.0 : 10.0);
       const increment = (100 / (durationSec * 10));
 
       hackInterval = setInterval(() => {
@@ -624,30 +565,54 @@
         if (Math.random() > 0.6) playTone(300 + Math.random() * 400, 800, 'sawtooth', 0.05);
 
         if (hackProgress >= 100) {
-          clearInterval(hackInterval);
-          hackInterval = null;
-          document.getElementById('hackModal').style.display = 'none';
-          activeHackTarget.owner = 'PLAYER';
-
-          const el = document.getElementById(`monument_${activeHackTarget.id}`);
-          if (el) {
-            const badge = el.querySelector('.monument-icon-badge');
-            badge.style.borderColor = playerCustomColor;
-            badge.style.color = playerCustomColor;
-            badge.style.boxShadow = `0 0 24px ${playerCustomColor}`;
-          }
-
-          playFanfare();
-          showBanner(`CORE // ${activeHackTarget.name.toUpperCase()} GEHACKT!`, false);
-          speakEva("System-Override erfolgreich.");
-          addCredits(75);
-          addXP(450);
+          finishHackSuccess();
         }
       }, 100);
     });
 
+    function finishHackSuccess() {
+      if (hackInterval) { clearInterval(hackInterval); hackInterval = null; }
+      isHackModalOpen = false;
+      document.getElementById('hackModal').style.display = 'none';
+
+      if (activeHackTarget) {
+        activeHackTarget.owner = 'PLAYER';
+        const el = document.getElementById(`monument_${activeHackTarget.id}`);
+        if (el) {
+          const badge = el.querySelector('.monument-icon-badge');
+          badge.style.borderColor = playerCustomColor;
+          badge.style.color = playerCustomColor;
+          badge.style.boxShadow = `0 0 24px ${playerCustomColor}`;
+        }
+        playFanfare();
+        showBanner(`CORE // ${activeHackTarget.name.toUpperCase()} GEHACKT!`, false);
+        speakEva("System-Override erfolgreich.");
+        addCredits(75);
+        addXP(450);
+      }
+
+      document.getElementById('hackHudTrigger').style.display = 'none';
+      resetJoystickState();
+    }
+
+    function cancelHack(reasonMsg) {
+      if (hackInterval) { clearInterval(hackInterval); hackInterval = null; }
+      isHackModalOpen = false;
+      document.getElementById('hackModal').style.display = 'none';
+      if (reasonMsg) showBanner(reasonMsg, true);
+      resetJoystickState();
+    }
+
+    document.getElementById('closeHackBtn').addEventListener('click', () => cancelHack());
+    document.getElementById('cancelHackBtn').addEventListener('click', () => cancelHack());
+
+    function resetJoystickState() {
+      joyX = 0; joyY = 0; joyActive = false;
+      joystickHandle.style.transform = 'translate(0px, 0px)';
+    }
+
     /* ========================================================
-       5. BEWEGUNG & SCHLEIFEN-SCHLUSS
+       5. BEWEGUNG & FLÜSSIGE SCHLEIFEN
        ======================================================== */
     const STILLSTAND_SPEED_THRESHOLD_KMH = 2.2;
     const MIN_TRAIL_STEP_METERS = 8.0;
@@ -755,52 +720,8 @@
     }
 
     /* ========================================================
-       6. SHOP & UPGRADES
+       6. AUDIO CONTROLS
        ======================================================== */
-    document.getElementById('openShopBtn').addEventListener('click', () => {
-      document.getElementById('shopModal').style.display = 'flex';
-    });
-    document.getElementById('closeShopBtn').addEventListener('click', () => {
-      document.getElementById('shopModal').style.display = 'none';
-    });
-
-    function upgradeHackTool(level, cybCost, eurCost) {
-      ensureAudioContext();
-      if (hackToolLevel >= level) {
-        showBanner("TOOL BEREITS INSTALLIERT!", false);
-        return;
-      }
-      if (eurCost > 0) {
-        if (confirm(`Für ${eurCost.toFixed(2)} € kaufen?`)) applyHackUpgrade(level);
-      } else if (savedCredits >= cybCost) {
-        savedCredits -= cybCost;
-        addCredits(0);
-        applyHackUpgrade(level);
-      } else {
-        showBanner("NICHT GENUG $CYB CREDITS!", true);
-      }
-    }
-
-    function applyHackUpgrade(level) {
-      hackToolLevel = level;
-      localStorage.setItem('pc_hack_tool_lvl', hackToolLevel);
-      document.getElementById('hudAgentTag').textContent = `HACK-RIG MK.${hackToolLevel} // 50 m/s`;
-      playFanfare();
-      showBanner(`HACK-RIG MK.${level} INSTALLIERT!`, false);
-      speakEva(`Rig Mark ${level} aktiv.`);
-    }
-
-    function buyCreditPack(credits, eur) {
-      ensureAudioContext();
-      if (confirm(`+${credits} $CYB für ${eur.toFixed(2)} € aufladen?`)) {
-        addCredits(credits);
-        playFanfare();
-        showBanner(`+${credits.toLocaleString()} $CYB AUFGELADEN!`, false);
-        speakEva("Konto aufgeladen.");
-      }
-    }
-
-    // Audio-Controls
     document.getElementById('synthMusicBtn').addEventListener('click', function() {
       ensureAudioContext();
       isSynthMusicActive = !isSynthMusicActive;
@@ -822,7 +743,7 @@
     });
 
     /* ========================================================
-       7. INITIALISIERUNG & INSTANT-START (CHROME-PROOF)
+       7. START & BEWEGUNGS-INITIALISIERUNG
        ======================================================== */
     function initializeBaseAndMonuments(coords) {
       playerSpawn = [...coords];
@@ -834,33 +755,26 @@
       fetchRealMonuments(playerSpawn);
     }
 
-    // Beim Klick auf den Start-Button
     document.getElementById('acceptSafetyBtn').addEventListener('click', () => {
-      // 1. Modal SOFORT aus dem DOM löschen (hängt niemals mehr!)
       const modal = document.getElementById('safetyModal');
       if (modal) modal.remove();
 
-      // 2. Basis & Map direkt rendern
       initializeBaseAndMonuments(playerSpawn);
       updateLevelUI();
       updateUI();
 
-      // 3. Audio & Voice in try/catch (stürzt niemals ab, falls Chrome zickt)
       try {
         ensureAudioContext();
         startSynthwaveMusic();
         speakEva("System online. Willkommen im Grid.");
       } catch(e){}
 
-      // 4. GPS unaufdringlich im Hintergrund abfragen
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
           pos => {
             initializeBaseAndMonuments([pos.coords.latitude, pos.coords.longitude]);
           },
-          err => {
-            console.log("GPS-Hinweis: Nutze Standardort", err);
-          },
+          err => {},
           { enableHighAccuracy: true, timeout: 5000 }
         );
       }
@@ -900,38 +814,57 @@
       }
     });
 
-    document.getElementById('resetBtn').addEventListener('click', () => {
-      location.reload();
-    });
+    document.getElementById('resetBtn').addEventListener('click', () => location.reload());
 
-    // Joystick Simulation
+    /* ========================================================
+       8. JOYSTICK (100% UNBLOCKIERT)
+       ======================================================== */
     const joystickZone = document.getElementById('joystickZone');
     const joystickHandle = document.getElementById('joystickHandle');
     let joyX = 0, joyY = 0, joyActive = false;
 
-    joystickZone.addEventListener('pointerdown', e => { ensureAudioContext(); joyActive = true; joystickZone.setPointerCapture(e.pointerId); });
-    window.addEventListener('pointermove', e => {
-      if (!joyActive) return;
+    function handleJoyMove(clientX, clientY) {
       const rect = joystickZone.getBoundingClientRect();
-      let dx = e.clientX - (rect.left + rect.width / 2);
-      let dy = e.clientY - (rect.top + rect.height / 2);
+      let dx = clientX - (rect.left + rect.width / 2);
+      let dy = clientY - (rect.top + rect.height / 2);
       const dist = Math.hypot(dx, dy);
       if (dist > 34) { dx = (dx / dist) * 34; dy = (dy / dist) * 34; }
       joyX = dx / 34; joyY = dy / 34;
       joystickHandle.style.transform = `translate(${dx}px, ${dy}px)`;
+    }
+
+    joystickZone.addEventListener('pointerdown', e => {
+      ensureAudioContext();
+      joyActive = true;
+      joystickZone.setPointerCapture(e.pointerId);
+      handleJoyMove(e.clientX, e.clientY);
     });
-    window.addEventListener('pointerup', () => { joyActive = false; joyX = 0; joyY = 0; joystickHandle.style.transform = 'translate(0, 0)'; });
+
+    window.addEventListener('pointermove', e => {
+      if (!joyActive) return;
+      handleJoyMove(e.clientX, e.clientY);
+    });
+
+    function joyRelease() {
+      joyActive = false; joyX = 0; joyY = 0;
+      joystickHandle.style.transform = 'translate(0px, 0px)';
+    }
+
+    window.addEventListener('pointerup', joyRelease);
+    window.addEventListener('pointercancel', joyRelease);
 
     let lastTime = performance.now();
     function loop(t) {
       const dt = (t - lastTime) / 1000;
       lastTime = t;
+
       if (!isRealGpsActive && (joyX !== 0 || joyY !== 0)) {
         const move = 50.0 * dt;
         const newPos = moveCoordsByMeters(playerPos[0], playerPos[1], joyX * move, -joyY * move);
         handlePlayerMovement(newPos[0], newPos[1], 15);
         map.panTo(playerPos, { animate: false });
       }
+
       requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);
