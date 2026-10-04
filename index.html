@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // NEON GRID - TRAIL FIX MASTER</title>
+  <title>PaperCity // NEON GRID - FULL MASTER VERIFIED</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#00f3ff" />
@@ -245,11 +245,11 @@
         <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Trail & Anchor Master</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Anchor & Monuments Fixed</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem;">
-        <li><i class="fa-solid fa-route" style="color:var(--cyber-cyan);"></i> <b>Neon-Trails:</b> Zeichne deine Spur und erobere Sektoren.</li>
-        <li><i class="fa-solid fa-anchor" style="color:var(--cyber-volt);"></i> <b>Anbindungspfad:</b> Schleifen müssen an deinen Basen oder eroberten Zonen enden!</li>
+        <li><i class="fa-solid fa-anchor" style="color:var(--cyber-volt);"></i> <b>Anker-Zwang:</b> Verbinde deine Laserspur mit deinen Basen oder eroberten Zonen!</li>
+        <li><i class="fa-solid fa-landmark" style="color:var(--cyber-gold);"></i> <b>Monumente:</b> Cyber-Cores geladen und aktiv.</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
     </div>
@@ -309,7 +309,7 @@
         <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
         <div>
           <div class="agent-name-label" id="hudAgentName">AGENT V</div>
-          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">TRAIL FIX // 50 m/s</div>
+          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">ANCHOR MASTER // 50 m/s</div>
         </div>
       </div>
 
@@ -907,7 +907,7 @@
     document.getElementById('cancelHackBtn').addEventListener('click', () => cancelHack());
 
     /* ========================================================
-       7. BEWEGUNG & ANKER-SCHLEIFENSCHLUSS (TRAIL SICHER GESCHALTET)
+       7. BEWEGUNG & ANKER-SCHLEIFENSCHLUSS (TRAIL IMMER AKTIV)
        ======================================================== */
     const STILLSTAND_SPEED_THRESHOLD_KMH = 2.2;
     const MIN_TRAIL_STEP_METERS = 8.0;
@@ -945,7 +945,6 @@
           badge.textContent = 'IN GEBIET (GESICHERT)';
           badge.className = 'status-badge';
 
-          // Wenn wir eine Expedition gemacht haben (mindestens 3 Punkte) und in einem eigenen Gebiet anbinden
           if (playerTrail.length >= 3 && !justCapturedCooldown) {
             completeTerritory([...playerTrail, playerPos]);
           } else if (playerTrail.length < 3) {
@@ -953,7 +952,9 @@
             playerTrailLayer.setLatLngs([]);
           }
         } else {
-          // Im feindlichen oder ungesicherten Raum: Trail unbedingt zeichnen!
+          badge.textContent = 'EXPEDITION (GEFAHR)';
+          badge.className = 'status-badge danger';
+
           const last = playerTrail[playerTrail.length - 1];
           const distToLast = last ? getDistanceMeters(playerPos, last) : 999;
 
@@ -962,9 +963,6 @@
             badge.className = 'status-badge waiting';
             return;
           }
-
-          badge.textContent = 'EXPEDITION (GEFAHR)';
-          badge.className = 'status-badge danger';
 
           if (!justCapturedCooldown) {
             const hitIdx = checkSelfIntersectionIndex(playerPos, playerTrail);
