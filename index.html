@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // NEON GRID - PVP CUT & OPEN LOOP MASTER</title>
+  <title>PaperCity // NEON GRID - SECURE ANCHOR LOOP & MONUMENTS</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#00f3ff" />
@@ -245,11 +245,11 @@
         <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // PvP Cut & Open Loop</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Anchor Loop & Monuments</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem;">
-        <li><i class="fa-solid fa-crosshairs" style="color:var(--cyber-crimson);"></i> <b>Gegner-Trails zerstören:</b> Kreuzst du die Laser-Spur eines Bots, explodiert sie!</li>
-        <li><i class="fa-solid fa-draw-polygon" style="color:var(--cyber-green);"></i> <b>Offene Schleifen:</b> Schließe Sektoren frei im Gelände oder in jeder Basis.</li>
+        <li><i class="fa-solid fa-anchor" style="color:var(--cyber-volt);"></i> <b>Anker-Zwang:</b> Schleifen müssen an deinen Basen oder eroberten Gebieten anbinden!</li>
+        <li><i class="fa-solid fa-landmark" style="color:var(--cyber-gold);"></i> <b>Monumente:</b> Cyber-Cores sind aktiv und bereit zum Hacken.</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
     </div>
@@ -309,7 +309,7 @@
         <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
         <div>
           <div class="agent-name-label" id="hudAgentName">AGENT V</div>
-          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">PVP RUNNER // 50 m/s</div>
+          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">ANCHOR LOOP // 50 m/s</div>
         </div>
       </div>
 
@@ -502,6 +502,7 @@
     let isRealGpsActive = false;
     let gpsWatchId = null;
     let playerTrail = [];
+    let playerTerritoryPolygons = []; // Gespeicherte eroberte Polygone als Anker
     let cityMonuments = [];
     let justCapturedCooldown = false;
 
@@ -579,24 +580,30 @@
 
     function ccw(A, B, C) { return (C[0] - A[0]) * (B[1] - A[1]) > (B[0] - A[0]) * (C[1] - A[1]); }
     function lineIntersects(A, B, C, D) { return (ccw(A, C, D) !== ccw(B, C, D)) && (ccw(A, B, C) !== ccw(A, B, D)); }
-    function checkSelfIntersectionIndex(pos, trail) {
-      if (trail.length < 5) return -1;
-      const p1 = trail[trail.length - 1];
-      const p2 = pos;
-      for (let i = 0; i < trail.length - 3; i++) {
-        if (lineIntersects(p1, p2, trail[i], trail[i + 1])) return i;
+
+    function isPointInPolygon(point, polygon) {
+      const lat = point[0], lng = point[1];
+      let inside = false;
+      for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const xi = polygon[i][0], yi = polygon[i][1];
+        const xj = polygon[j][0], yj = polygon[j][1];
+        const intersect = ((yi > lng) !== (yj > lng)) && (lat < (xj - xi) * (lng - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
       }
-      return -1;
+      return inside;
     }
 
-    function isPointInPlayerBases(point) {
+    // Prüft, ob ein Punkt in IRGENDEINEM eigenen Bereich (Base oder erobertes Polygon) liegt
+    function isPointInPlayerTerritory(point) {
       for (let o of outpostList) {
         if (getDistanceMeters(point, o.coords) <= (o.radius + 5)) return true;
+      }
+      for (let p of playerTerritoryPolygons) {
+        if (isPointInPolygon(point, p)) return true;
       }
       return false;
     }
 
-    // Prüft, ob der Spieler die Trail-Spur eines Bots geschnitten hat
     function checkCut(runnerPos, trail) {
       if (trail.length < 3) return false;
       for (let i = 0; i < trail.length - 2; i++) {
@@ -761,12 +768,12 @@
     }
 
     /* ========================================================
-       5. MONUMENTE (LADEN)
+       5. MONUMENTE (ZUVERLÄSSIGES LADEN)
        ======================================================== */
     async function fetchRealMonuments(center) {
       monumentGroup.clearLayers();
       cityMonuments = [];
-      const radius = 800;
+      const radius = 1000;
       const query = `
         [out:json][timeout:6];
         (
@@ -775,7 +782,7 @@
           node["amenity"="place_of_worship"](around:${radius},${center[0]},${center[1]});
           node["amenity"="fountain"](around:${radius},${center[0]},${center[1]});
         );
-        out body 6;
+        out body 8;
       `;
       try {
         const resp = await fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: query });
@@ -788,6 +795,7 @@
         }
       } catch(e){}
 
+      // Garantiertes Fallback
       [
         { id: "local_1", name: "Alte Stadtkirche", pos: [center[0] + 0.0014, center[1] + 0.0012] },
         { id: "local_2", name: "Marktbrunnen", pos: [center[0] - 0.0012, center[1] + 0.0015] },
@@ -901,7 +909,7 @@
     document.getElementById('cancelHackBtn').addEventListener('click', () => cancelHack());
 
     /* ========================================================
-       7. BEWEGUNG & PVP-CUT SCHLEIFENSCHLUSS
+       7. BEWEGUNG & ANKER-SCHLEIFENSCHLUSS (EIGENE BEREICHE)
        ======================================================== */
     const STILLSTAND_SPEED_THRESHOLD_KMH = 2.2;
     const MIN_TRAIL_STEP_METERS = 8.0;
@@ -914,7 +922,7 @@
         checkDistrictBoundary(rawLat, rawLng);
         checkNearbyMonumentForHack();
 
-        // 1. PVP-CHECK: Hast du einen Bot-Trail geschnitten?
+        // 1. PVP: Gegnerische Trails zerstören
         [botCrimson, botVolt].forEach(b => {
           if (b.trail.length > 2 && checkCut(playerPos, b.trail)) {
             b.trail = [];
@@ -931,14 +939,15 @@
           }
         });
 
-        // 2. SCHLEIFENSCHLUSS: Entweder in einer Basis ODER per eigenem Spur-Schnitt
-        const inSafeZone = isPointInPlayerBases(playerPos);
+        // 2. SCHLEIFENSCHLUSS: Muss in einem eigenen Bereich (Basis oder Polygon) anbinden
+        const inTerritory = isPointInPlayerTerritory(playerPos);
         const badge = document.getElementById('playerStatusBadge');
 
-        if (inSafeZone) {
-          badge.textContent = 'IN BASIS (GESICHERT)';
+        if (inTerritory) {
+          badge.textContent = 'IN GEBIET (GESICHERT)';
           badge.className = 'status-badge';
 
+          // Wenn wir eine Expedition gemacht haben (mindestens 3 Punkte) und nicht im Cooldown sind
           if (playerTrail.length >= 3 && !justCapturedCooldown) {
             completeTerritory([...playerTrail, playerPos]);
           } else if (playerTrail.length < 3) {
@@ -958,7 +967,7 @@
           badge.textContent = 'EXPEDITION (GEFAHR)';
           badge.className = 'status-badge danger';
 
-          // Freier Schleifenschluss (Spur-Schnitt im Gelände)
+          // Alternativ: Eigene Spur im Gelände schneiden
           if (!justCapturedCooldown) {
             const hitIdx = checkSelfIntersectionIndex(playerPos, playerTrail);
             if (hitIdx !== -1) {
@@ -982,12 +991,15 @@
         const area = calculatePolygonAreaM2(coords);
         playerTotalArea += area;
 
-        L.polygon(coords, {
+        const poly = L.polygon(coords, {
           color: playerCustomColor,
           fillColor: playerCustomColor,
           fillOpacity: 0.45,
           weight: 2
         }).addTo(territoryGroup);
+
+        // Polygon für den Anker-Check speichern
+        playerTerritoryPolygons.push(coords);
 
         playerTrail = [playerPos];
         playerTrailLayer.setLatLngs(playerTrail);
@@ -1024,7 +1036,6 @@
           bot.trailLayer.setLatLngs(bot.trail);
         }
 
-        // Wenn Bot den Spieler-Trail schneidet -> Tod/Reset für Spieler
         if (playerTrail.length > 2 && checkCut(bot.pos, playerTrail)) {
           showBanner(`${bot.name} hat deinen Trail geschnitten!`, true);
           speakEva("Achtung. Trail durchbrochen.");
@@ -1180,6 +1191,10 @@
           fillOpacity: 0.55,
           weight: 3
         }).bindTooltip(`<b>${op.districtName.toUpperCase()}</b>`, { permanent: true, direction: 'center', className: 'monument-label' }).addTo(territoryGroup);
+      });
+      // Bisher eroberte Polygone ebenfalls neu zeichnen
+      playerTerritoryPolygons.forEach(coords => {
+        L.polygon(coords, { color: playerCustomColor, fillColor: playerCustomColor, fillOpacity: 0.45, weight: 2 }).addTo(territoryGroup);
       });
     }
 
