@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // NEON GRID - STABLE RELEASE</title>
+  <title>PaperCity // NEON GRID - FAST START</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#00f3ff" />
@@ -90,7 +90,7 @@
     .close-modal-btn { background: none; border: none; color: var(--cyber-crimson); font-size: 1.4rem; cursor: pointer; }
 
     .save-profile-btn {
-      width: 100%; background: var(--cyber-cyan); color: #03060a; border: none; padding: 12px; font-family: var(--font-tech); font-size: 0.85rem; font-weight: 900;
+      width: 100%; background: var(--cyber-cyan); color: #03060a; border: none; padding: 14px; font-family: var(--font-tech); font-size: 0.9rem; font-weight: 900;
       letter-spacing: 1px; cursor: pointer; margin-top: 10px; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
     }
 
@@ -196,20 +196,21 @@
     </div>
   </div>
 
+  <!-- START MODAL -->
   <div class="modal-overlay" id="safetyModal" style="display:flex;">
     <div class="cyber-modal-card">
       <div class="modal-header">
         <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Stable Release</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Neon Grid</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem;">
         <li><i class="fa-solid fa-person-walking" style="color:var(--cyber-volt);"></i> Nutze nur öffentliche Straßen, Gehwege & Parks.</li>
-        <li><i class="fa-solid fa-headphones" style="color:var(--cyber-cyan);"></i> Kopfhörer empfohlen für Synthwave & EVA-Sprachausgabe!</li>
-        <li><i class="fa-solid fa-traffic-light" style="color:var(--cyber-gold);"></i> Ampel-Puffer schützt deine Spur im Stillstand vor Rauschen.</li>
+        <li><i class="fa-solid fa-headphones" style="color:var(--cyber-cyan);"></i> Synthwave-Sound & EVA-Sprachausgabe aktiv.</li>
+        <li><i class="fa-solid fa-traffic-light" style="color:var(--cyber-gold);"></i> Ampel-Puffer schützt deine Spur vor GPS-Jitter.</li>
       </ul>
-      <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & AUDIO AKTIVIEREN</button>
+      <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
     </div>
   </div>
 
@@ -264,8 +265,8 @@
 
   <div class="hud-top">
     <div class="cyber-panel">
-      <div class="hud-profile-row" id="hudProfileTrigger">
-        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" id="hudAvatarImg" class="hud-avatar" alt="Avatar" />
+      <div class="hud-profile-row">
+        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
         <div>
           <div class="agent-name-label" id="hudAgentName">AGENT V</div>
           <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">HACK-RIG MK.1 // 50 m/s</div>
@@ -326,7 +327,7 @@
 
   <script>
     /* ========================================================
-       1. AUDIO- & EVA-SYNTHESE
+       1. AUDIO- & EVA-SYSTEM
        ======================================================== */
     let audioCtx = null;
     let isSynthMusicActive = true;
@@ -343,12 +344,14 @@
 
     function speakEva(text) {
       if (!isVoiceActive || !('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
-      const utt = new SpeechSynthesisUtterance(text);
-      utt.lang = 'de-DE';
-      utt.pitch = 0.85;
-      utt.rate = 1.05;
-      window.speechSynthesis.speak(utt);
+      try {
+        window.speechSynthesis.cancel();
+        const utt = new SpeechSynthesisUtterance(text);
+        utt.lang = 'de-DE';
+        utt.pitch = 0.85;
+        utt.rate = 1.05;
+        window.speechSynthesis.speak(utt);
+      } catch(e){}
     }
 
     let synthTimer = null;
@@ -426,7 +429,6 @@
     let playerName = localStorage.getItem('pc_agent_name') || 'AGENT V';
     let playerSpawn = [52.1738, 7.5312];
     let baseRadius = 35;
-    let currentDistrict = "Zentrum";
 
     let savedLevel = parseInt(localStorage.getItem('pc_level') || '1');
     let savedXP = parseInt(localStorage.getItem('pc_xp') || '0');
@@ -438,7 +440,6 @@
     let isRealGpsActive = false;
     let gpsWatchId = null;
     let playerTrail = [];
-    let playerTerritoryPolygons = [];
     let cityMonuments = [];
 
     const map = L.map('map', { zoomControl: false, attributionControl: false }).setView(playerPos, 17);
@@ -507,7 +508,7 @@
     }
 
     /* ========================================================
-       3. MONUMENTE (LADEN & PLATZIEREN)
+       3. MONUMENTE
        ======================================================== */
     async function fetchRealMonuments(center) {
       monumentGroup.clearLayers();
@@ -534,7 +535,7 @@
         }
       } catch(e){}
 
-      // Fallback-Monumente
+      // Fallback
       [
         { id: "local_1", name: "Alte Stadtkirche", pos: [center[0] + 0.0014, center[1] + 0.0012] },
         { id: "local_2", name: "Marktbrunnen", pos: [center[0] - 0.0012, center[1] + 0.0015] },
@@ -584,7 +585,7 @@
         trigger.style.display = 'block';
         if (!hasAnnouncedCoreNearby) {
           hasAnnouncedCoreNearby = true;
-          speakEva("Achtung. Monument in Hack-Reichweite.");
+          speakEva("Achtung. Monument in Reichweite.");
         }
       } else {
         trigger.style.display = 'none';
@@ -594,7 +595,7 @@
           hackInterval = null;
           document.getElementById('hackModal').style.display = 'none';
           showBanner("HACK ABGEBROCHEN: SIGNAL VERLOREN!", true);
-          speakEva("Signal verloren. Hack abgebrochen.");
+          speakEva("Signal verloren.");
         }
       }
     }
@@ -680,7 +681,6 @@
         badge.textContent = 'EXPEDITION (GEFAHR)';
         badge.className = 'status-badge danger';
 
-        // Schleifenschluss im Freien (Spur kreuzen)
         const hitIdx = checkSelfIntersectionIndex(playerPos, playerTrail);
         if (hitIdx !== -1) {
           const loopPolygon = playerTrail.slice(hitIdx);
@@ -724,7 +724,7 @@
       if (savedXP >= neededXP) {
         savedXP -= neededXP;
         savedLevel++;
-        speakEva(`Level Up. Du hast Level ${savedLevel} erreicht.`);
+        speakEva(`Level Up. Level ${savedLevel}.`);
         showBanner(`🎉 LEVEL UP! // LEVEL ${savedLevel}!`, false);
       }
       localStorage.setItem('pc_level', savedLevel);
@@ -752,7 +752,7 @@
     }
 
     /* ========================================================
-       6. SHOP & UPGRADES
+       6. SHOP & EVENTS
        ======================================================== */
     document.getElementById('openShopBtn').addEventListener('click', () => {
       document.getElementById('shopModal').style.display = 'flex';
@@ -784,7 +784,7 @@
       document.getElementById('hudAgentTag').textContent = `HACK-RIG MK.${hackToolLevel} // 50 m/s`;
       playFanfare();
       showBanner(`HACK-RIG MK.${level} INSTALLIERT!`, false);
-      speakEva(`Hardware Upgrade installiert. Rig Mark ${level} aktiv.`);
+      speakEva(`Rig Mark ${level} aktiv.`);
     }
 
     function buyCreditPack(credits, eur) {
@@ -797,7 +797,6 @@
       }
     }
 
-    // Audio-Controls
     document.getElementById('synthMusicBtn').addEventListener('click', function() {
       ensureAudioContext();
       isSynthMusicActive = !isSynthMusicActive;
@@ -818,27 +817,45 @@
       this.innerHTML = isSfxActive ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark" style="color:#ff0055;"></i>';
     });
 
-    // Start
+    /* ========================================================
+       7. INITIALISIERUNG & START (SOFORTIGES SCHLIESSEN)
+       ======================================================== */
+    function initializeBaseAndMonuments(coords) {
+      playerSpawn = [...coords];
+      playerPos = [...playerSpawn];
+      playerMarker.setLatLng(playerPos);
+      map.setView(playerPos, 17);
+      territoryGroup.clearLayers();
+      L.circle(playerSpawn, { radius: baseRadius, color: playerCustomColor, fillColor: playerCustomColor, fillOpacity: 0.55, weight: 3 }).addTo(territoryGroup);
+      fetchRealMonuments(playerSpawn);
+    }
+
     document.getElementById('acceptSafetyBtn').addEventListener('click', () => {
+      // 1. Fenster SOFORT und ohne jede Bedingung ausblenden
+      document.getElementById('safetyModal').style.display = 'none';
+
+      // 2. Audio-Kontext und Musik starten
       ensureAudioContext();
       startSynthwaveMusic();
-      document.getElementById('safetyModal').style.display = 'none';
-      speakEva("System online. Willkommen im Grid, Agent.");
+      speakEva("System online.");
 
-      if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(pos => {
-          playerSpawn = [pos.coords.latitude, pos.coords.longitude];
-          playerPos = [...playerSpawn];
-          playerMarker.setLatLng(playerPos);
-          map.setView(playerPos, 17);
-          L.circle(playerSpawn, { radius: baseRadius, color: playerCustomColor, fillColor: playerCustomColor, fillOpacity: 0.55, weight: 3 }).addTo(territoryGroup);
-          fetchRealMonuments(playerSpawn);
-        }, () => fetchRealMonuments(playerSpawn));
-      } else {
-        fetchRealMonuments(playerSpawn);
-      }
+      // 3. Erstes Rendern mit Default-Koordinaten
+      initializeBaseAndMonuments(playerSpawn);
       updateLevelUI();
       updateUI();
+
+      // 4. GPS im Hintergrund abfragen, ohne das Interface zu blockieren
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            initializeBaseAndMonuments([pos.coords.latitude, pos.coords.longitude]);
+          },
+          err => {
+            console.log("GPS-Hinweis: Nutze Standardkoordinaten", err);
+          },
+          { enableHighAccuracy: true, timeout: 6000 }
+        );
+      }
     });
 
     // GPS & Relocate
@@ -868,13 +885,9 @@
       ensureAudioContext();
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(pos => {
-          playerSpawn = [pos.coords.latitude, pos.coords.longitude];
-          playerPos = [...playerSpawn];
-          playerMarker.setLatLng(playerPos);
-          territoryGroup.clearLayers();
-          L.circle(playerSpawn, { radius: baseRadius, color: playerCustomColor, fillColor: playerCustomColor, fillOpacity: 0.55, weight: 3 }).addTo(territoryGroup);
-          fetchRealMonuments(playerSpawn);
+          initializeBaseAndMonuments([pos.coords.latitude, pos.coords.longitude]);
           showBanner("BASIS // RELOCATED!", false);
+          speakEva("Basis verlegt.");
         });
       }
     });
