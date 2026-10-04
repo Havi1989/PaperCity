@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // CYBER-GRID // POKEMON GO STYLE</title>
+  <title>PaperCity // CYBER-STREETS & AI RIVALS</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#03060a" />
@@ -169,8 +169,6 @@
 <body>
 
   <div class="cyber-overlay"></div>
-  
-  <!-- Pokémon GO Style Cyber Canvas Map -->
   <canvas id="worldCanvas"></canvas>
 
   <div class="hack-hud-trigger" id="hackHudTrigger">
@@ -200,11 +198,11 @@
         <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Cyber-Canvas Edition</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Cyber-Streets & AI Rivals</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem;">
-        <li><i class="fa-solid fa-globe" style="color:var(--cyber-cyan);"></i> <b>Offline-Ready Canvas:</b> Keine langsamen Kartenkacheln – flüssige Performance wie bei Pokémon GO!</li>
-        <li><i class="fa-solid fa-route" style="color:var(--cyber-volt);"></i> <b>Neon Trails:</b> Zeichne Spuren und erobere Sektoren.</li>
+        <li><i class="fa-solid fa-road" style="color:var(--cyber-cyan);"></i> <b>Echte Straßennetze:</b> Lädt reale Straßenzüge aus OpenStreetMap direkt aufs Canvas!</li>
+        <li><i class="fa-solid fa-robot" style="color:var(--cyber-crimson);"></i> <b>KI-Rivalen:</b> Crimson & Volt patrouillieren auf den Straßen und erobern Sektoren.</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
     </div>
@@ -228,16 +226,6 @@
           <button class="buy-btn-eur" onclick="upgradeHackTool(2, 0, 1.49)">1,49 €</button>
         </div>
       </div>
-      <div class="shop-row">
-        <div>
-          <div style="font-family:var(--font-tech); font-weight:700;">QUANTUM RIG MK.III (3s HACK)</div>
-          <div class="shop-item-desc">High-End Rig: Hackt in 3 Sekunden</div>
-        </div>
-        <div class="shop-action-box">
-          <button class="buy-btn-cyb" onclick="upgradeHackTool(3, 4000, 0)">4.000 $CYB</button>
-          <button class="buy-btn-eur" onclick="upgradeHackTool(3, 0, 2.99)">2,99 €</button>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -247,7 +235,7 @@
         <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
         <div>
           <div class="agent-name-label" id="hudAgentName">AGENT V</div>
-          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">CANVAS ENGINE // 50 m/s</div>
+          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">STREETS & AI // 50 m/s</div>
         </div>
       </div>
 
@@ -309,7 +297,7 @@
 
   <script>
     /* ========================================================
-       1. AUDIO- & EVA-SYSTEM
+       1. AUDIO & EVA SYSTEM
        ======================================================== */
     let audioCtx = null;
     let isSynthMusicActive = true;
@@ -406,7 +394,7 @@
     }
 
     /* ========================================================
-       2. CANVAS MAP ENGINE (POKEMON GO STYLE)
+       2. CANVAS MAP & STREET NETWORK ENGINE
        ======================================================== */
     const canvas = document.getElementById('worldCanvas');
     const ctx = canvas.getContext('2d');
@@ -418,7 +406,6 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Spieler-Weltkoordinaten (Meter relativ zum Startpunkt)
     let worldX = 0;
     let worldY = 0;
     let playerCustomColor = localStorage.getItem('pc_skin_color') || '#00f3ff';
@@ -431,17 +418,18 @@
     let savedCredits = parseInt(localStorage.getItem('pc_credits') || '250');
     let playerTotalArea = parseInt(localStorage.getItem('pc_total_area') || '1960');
 
-    let playerTrail = []; // Array von {x, y}
-    let territories = []; // Array von geschlossenen Polygonen [{points: [{x, y}, ...]}]
+    let playerTrail = [];
+    let territories = [];
+    let roadSegments = []; // Echte Straßennetz-Linien [{x1, y1, x2, y2}]
     let monuments = [
-      { id: 1, name: "Alte Stadtkirche", x: 60, y: -120, owner: 'NEUTRAL', icon: '⛪' },
-      { id: 2, name: "Marktbrunnen", x: -100, y: 150, owner: 'NEUTRAL', icon: '⛲' },
-      { id: 3, name: "Cyber-Monolith", x: 180, y: 100, owner: 'NEUTRAL', icon: '🏛' }
+      { id: 1, name: "Alte Stadtkirche", x: 80, y: -150, owner: 'NEUTRAL' },
+      { id: 2, name: "Marktbrunnen", x: -120, y: 160, owner: 'NEUTRAL' },
+      { id: 3, name: "Cyber-Monolith", x: 200, y: 120, owner: 'NEUTRAL' }
     ];
 
     let bots = [
-      { name: "Crimson", color: '#ff0055', x: 120, y: -80, trail: [], area: 1960, heading: 45 },
-      { name: "Volt", color: '#ffee00', x: -140, y: 120, trail: [], area: 1960, heading: 200 }
+      { name: "Crimson", color: '#ff0055', x: 140, y: -90, trail: [], area: 1960, heading: 45, speed: 22 },
+      { name: "Volt", color: '#ffee00', x: -160, y: 140, trail: [], area: 1960, heading: 210, speed: 20 }
     ];
 
     let baseRadiusMeters = 35;
@@ -449,9 +437,51 @@
     let isRealGpsActive = false;
     let gpsWatchId = null;
 
-    function getDistance(p1, p2) {
-      return Math.hypot(p2.x - p1.x, p2.y - p1.y);
+    // Lade echte Straßen aus OpenStreetMap (Overpass API) rund um Zentrum
+    async function loadRealStreets() {
+      // Zentrum Koordinaten als Referenz (z.B. Emsdetten / Default)
+      const lat = 52.1738, lon = 7.5312;
+      const query = `
+        [out:json][timeout:5];
+        (
+          way["highway"~"primary|secondary|tertiary|residential|living_street|pedestrian"](around:1000,${lat},${lon});
+        );
+        out geom 80;
+      `;
+      try {
+        const resp = await fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: query });
+        const data = await resp.json();
+        if (data.elements && data.elements.length > 0) {
+          const cosFactor = Math.cos(lat * Math.PI / 180);
+          data.elements.forEach(el => {
+            if (el.geometry && el.geometry.length > 1) {
+              for (let i = 0; i < el.geometry.length - 1; i++) {
+                // Konvertiere lat/lon in Meter relativ zum Zentrum
+                const x1 = (el.geometry[i].lon - lon) * 111320 * cosFactor;
+                const y1 = -(el.geometry[i].lat - lat) * 111320;
+                const x2 = (el.geometry[i+1].lon - lon) * 111320 * cosFactor;
+                const y2 = -(el.geometry[i+1].lat - lat) * 111320;
+                roadSegments.push({ x1, y1, x2, y2 });
+              }
+            }
+          });
+        }
+      } catch(e) {
+        // Fallback prozedurale Straßen, falls kein Netz
+        generateProceduralStreets();
+      }
+      if (roadSegments.length === 0) generateProceduralStreets();
     }
+
+    function generateProceduralStreets() {
+      for (let i = -500; i <= 500; i += 100) {
+        roadSegments.push({ x1: i, y1: -500, x2: i, y2: 500 });
+        roadSegments.push({ x1: -500, y1: i, x2: 500, y2: i });
+      }
+    }
+    loadRealStreets();
+
+    function getDistance(p1, p2) { return Math.hypot(p2.x - p1.x, p2.y - p1.y); }
 
     function calculatePolygonArea(points) {
       if (!points || points.length < 3) return 0;
@@ -475,9 +505,7 @@
     }
 
     function isPointInPlayerTerritory(pt) {
-      // In der Startbasis (Zentrum 0,0)
       if (Math.hypot(pt.x, pt.y) <= baseRadiusMeters) return true;
-      // In eigenen eroberten Territorien
       for (let t of territories) {
         if (isPointInPolygon(pt, t.points)) return true;
       }
@@ -485,7 +513,7 @@
     }
 
     /* ========================================================
-       3. HACKING SYSTEM
+       3. HACKING & CORES
        ======================================================== */
     let activeHackTarget = null;
     let hackInterval = null;
@@ -497,12 +525,10 @@
         if (getDistance({x: worldX, y: worldY}, {x: activeHackTarget.x, y: activeHackTarget.y}) > 32) cancelHack("Außer Reichweite!");
         return;
       }
-
       let found = null;
       for (let m of monuments) {
         if (getDistance({x: worldX, y: worldY}, {x: m.x, y: m.y}) <= 28) { found = m; break; }
       }
-
       const trigger = document.getElementById('hackHudTrigger');
       if (found && found.owner !== 'PLAYER') {
         activeHackTarget = found;
@@ -534,44 +560,56 @@
         document.getElementById('hackTimerTxt').textContent = `${Math.round(hackProgress)}%`;
 
         if (Math.random() > 0.6) playTone(300 + Math.random() * 400, 800, 'sawtooth', 0.05);
-        if (hackProgress >= 100) finishHackSuccess();
+        if (hackProgress >= 100) {
+          if (hackInterval) { clearInterval(hackInterval); hackInterval = null; }
+          isHackModalOpen = false;
+          document.getElementById('hackModal').style.display = 'none';
+          activeHackTarget.owner = 'PLAYER';
+          playFanfare();
+          showBanner(`CORE // ${activeHackTarget.name.toUpperCase()} GEHACKT!`, false);
+          speakEva("System-Override erfolgreich.");
+          addCredits(75);
+          addXP(450);
+          document.getElementById('hackHudTrigger').style.display = 'none';
+        }
       }, 100);
     });
 
-    function finishHackSuccess() {
+    function cancelHack(msg) {
       if (hackInterval) { clearInterval(hackInterval); hackInterval = null; }
       isHackModalOpen = false;
       document.getElementById('hackModal').style.display = 'none';
-
-      if (activeHackTarget) {
-        activeHackTarget.owner = 'PLAYER';
-        playFanfare();
-        showBanner(`CORE // ${activeHackTarget.name.toUpperCase()} GEHACKT!`, false);
-        speakEva("System-Override erfolgreich.");
-        addCredits(75);
-        addXP(450);
-      }
-      document.getElementById('hackHudTrigger').style.display = 'none';
+      if (msg) showBanner(msg, true);
     }
-
-    function cancelHack(reasonMsg) {
-      if (hackInterval) { clearInterval(hackInterval); hackInterval = null; }
-      isHackModalOpen = false;
-      document.getElementById('hackModal').style.display = 'none';
-      if (reasonMsg) showBanner(reasonMsg, true);
-    }
-
     document.getElementById('closeHackBtn').addEventListener('click', () => cancelHack());
     document.getElementById('cancelHackBtn').addEventListener('click', () => cancelHack());
 
     /* ========================================================
-       4. BEWEGUNG & CANVAS RENDERING LOOP
+       4. BEWEGUNG & KI-GEGNER LOOP
        ======================================================== */
     function handlePlayerMovement(dx, dy) {
       worldX += dx;
       worldY += dy;
 
       checkNearbyMonumentForHack();
+
+      // PVP: Bot-Trails durchtrennen
+      bots.forEach(b => {
+        if (b.trail.length > 2) {
+          for (let i = 0; i < b.trail.length - 1; i++) {
+            if (getDistance({x: worldX, y: worldY}, b.trail[i]) < 12) {
+              b.trail = [];
+              showBanner(`${b.name.toUpperCase()} TRAIL ZERSTÖRT! ⚔ +450 m²`, false);
+              speakEva(`Gegnerischer Trail von ${b.name} zerstört.`);
+              playFanfare();
+              playerTotalArea += 450;
+              addXP(400);
+              addCredits(60);
+              updateUI();
+            }
+          }
+        }
+      });
 
       const currentPt = { x: worldX, y: worldY };
       const inTerritory = isPointInPlayerTerritory(currentPt);
@@ -594,7 +632,6 @@
         const dist = last ? getDistance(currentPt, last) : 999;
 
         if (!justCapturedCooldown && playerTrail.length >= 4) {
-          // Eigene Spur gekreuzt?
           for (let i = 0; i < playerTrail.length - 3; i++) {
             if (getDistance(currentPt, playerTrail[i]) < 6) {
               const polygon = playerTrail.slice(i);
@@ -629,7 +666,33 @@
       updateUI();
     }
 
-    // Haupt-Render-Schleife für die Pokémon-GO-ähnliche Cyber-Welt
+    function updateBot(bot, dt) {
+      bot.heading += (Math.random() - 0.5) * 2.5;
+      const rad = bot.heading * (Math.PI / 180);
+      bot.x += Math.sin(rad) * bot.speed * dt;
+      bot.y -= Math.cos(rad) * bot.speed * dt;
+
+      const last = bot.trail[bot.trail.length - 1];
+      if (!last || getDistance({x: bot.x, y: bot.y}, last) >= 10) {
+        bot.trail.push({x: bot.x, y: bot.y});
+        if (bot.trail.length > 50) bot.trail.shift();
+      }
+
+      // Wenn Bot den Spieler-Trail schneidet
+      if (playerTrail.length > 2) {
+        for (let pt of playerTrail) {
+          if (getDistance({x: bot.x, y: bot.y}, pt) < 10) {
+            showBanner(`${bot.name} hat deinen Trail durchbrochen!`, true);
+            speakEva("Achtung. Trail durchbrochen.");
+            playerTrail = [];
+            worldX = 0; worldY = 0; // Zurück zur Basis
+            break;
+          }
+        }
+      }
+    }
+
+    // Canvas Rendering Loop (Pokémon GO Style Welt)
     function renderWorld() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -637,22 +700,17 @@
       const centerY = canvas.height / 2;
 
       ctx.save();
-      // Kamera folgt dem Spieler
       ctx.translate(centerX - worldX, centerY - worldY);
 
-      // 1. Neon-Grid (Boden-Raster wie Pokémon GO Wege)
-      ctx.strokeStyle = 'rgba(0, 243, 255, 0.08)';
-      ctx.lineWidth = 1.5;
-      const gridSize = 60;
-      const startX = Math.floor((worldX - centerX) / gridSize) * gridSize;
-      const startY = Math.floor((worldY - centerY) / gridSize) * gridSize;
-
-      for (let x = startX; x < startX + canvas.width + gridSize * 2; x += gridSize) {
-        ctx.beginPath(); ctx.moveTo(x, worldY - centerY - 100); ctx.lineTo(x, worldY + centerY + canvas.height); ctx.stroke();
-      }
-      for (let y = startY; y < startY + canvas.height + gridSize * 2; y += gridSize) {
-        ctx.beginPath(); ctx.moveTo(worldX - centerX - 100, y); ctx.lineTo(worldX + centerX + canvas.width, y); ctx.stroke();
-      }
+      // 1. Echte Straßennetz-Linien zeichnen
+      ctx.strokeStyle = 'rgba(0, 243, 255, 0.18)';
+      ctx.lineWidth = 10;
+      roadSegments.forEach(r => {
+        ctx.beginPath();
+        ctx.moveTo(r.x1, r.y1);
+        ctx.lineTo(r.x2, r.y2);
+        ctx.stroke();
+      });
 
       // 2. Startbasis (Heimat-Outpost)
       ctx.beginPath();
@@ -663,7 +721,7 @@
       ctx.lineWidth = 3;
       ctx.stroke();
 
-      // 3. Eroberte Territorien (Polygone)
+      // 3. Eroberte Territorien
       territories.forEach(t => {
         if (t.points.length < 3) return;
         ctx.beginPath();
@@ -690,23 +748,42 @@
         ctx.shadowBlur = 0;
       }
 
-      // 5. Monumente (Cores)
+      // 5. Bot Trails & Avatare
+      bots.forEach(b => {
+        if (b.trail.length > 1) {
+          ctx.beginPath();
+          ctx.moveTo(b.trail[0].x, b.trail[0].y);
+          for (let i = 1; i < b.trail.length; i++) ctx.lineTo(b.trail[i].x, b.trail[i].y);
+          ctx.strokeStyle = b.color;
+          ctx.lineWidth = 5;
+          ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, 12, 0, Math.PI * 2);
+        ctx.fillStyle = b.color;
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#fff';
+        ctx.stroke();
+      });
+
+      // 6. Monumente (Cores)
       monuments.forEach(m => {
         ctx.beginPath();
-        ctx.arc(m.x, m.y, 18, 0, Math.PI * 2);
+        ctx.arc(m.x, m.y, 16, 0, Math.PI * 2);
         ctx.fillStyle = m.owner === 'PLAYER' ? playerCustomColor : '#ffaa00';
         ctx.shadowColor = ctx.fillStyle;
-        ctx.shadowBlur = 18;
+        ctx.shadowBlur = 16;
         ctx.fill();
         ctx.shadowBlur = 0;
 
         ctx.fillStyle = '#fff';
-        ctx.font = 'bold 12px Orbitron';
+        ctx.font = 'bold 11px Orbitron';
         ctx.textAlign = 'center';
-        ctx.fillText(m.name, m.x, m.y - 24);
+        ctx.fillText(m.name, m.x, m.y - 22);
       });
 
-      // 6. Spieler Avatar (Zentrum)
+      // 7. Spieler Avatar (Zentrum)
       ctx.beginPath();
       ctx.arc(worldX, worldY, 14, 0, Math.PI * 2);
       ctx.fillStyle = playerCustomColor;
@@ -741,13 +818,21 @@
       rCtx.stroke();
 
       monuments.forEach(m => {
-        let dx = m.x - worldX;
-        let dy = m.y - worldY;
-        let dist = Math.hypot(dx, dy);
-        if (dist < 300) {
+        let dx = m.x - worldX, dy = m.y - worldY;
+        if (Math.hypot(dx, dy) < 300) {
           rCtx.fillStyle = m.owner === 'PLAYER' ? playerCustomColor : '#ffaa00';
           rCtx.beginPath();
           rCtx.arc(center + (dx / 300) * 40, center + (dy / 300) * 40, 3, 0, Math.PI * 2);
+          rCtx.fill();
+        }
+      });
+
+      bots.forEach(b => {
+        let dx = b.x - worldX, dy = b.y - worldY;
+        if (Math.hypot(dx, dy) < 300) {
+          rCtx.fillStyle = b.color;
+          rCtx.beginPath();
+          rCtx.arc(center + (dx / 300) * 40, center + (dy / 300) * 40, 2.5, 0, Math.PI * 2);
           rCtx.fill();
         }
       });
@@ -759,7 +844,7 @@
     }
 
     /* ========================================================
-       6. UI & SHOP CONTROLS
+       6. UI & SHOP
        ======================================================== */
     function addCredits(amount) {
       savedCredits += amount;
@@ -791,6 +876,23 @@
 
     function updateUI() {
       document.getElementById('playerAreaStat').textContent = `${playerTotalArea.toLocaleString()} m²`;
+
+      const players = [
+        { name: playerName, area: playerTotalArea, color: playerCustomColor },
+        { name: "Crimson", area: botCrimson.area, color: botCrimson.color },
+        { name: "Volt", area: botVolt.area, color: botVolt.color }
+      ].sort((a, b) => b.area - a.area);
+
+      const listEl = document.getElementById('leaderboardList');
+      if (listEl) {
+        listEl.innerHTML = '';
+        players.forEach((p, idx) => {
+          const row = document.createElement('div');
+          row.className = 'leaderboard-item';
+          row.innerHTML = `<span style="color:${p.color};">#${idx+1} ${p.name}</span><span style="color:#fff;">${p.area.toLocaleString()} m²</span>`;
+          listEl.appendChild(row);
+        });
+      }
     }
 
     function showBanner(text, isDanger) {
@@ -893,10 +995,11 @@
         lastTime = t;
 
         if (joyX !== 0 || joyY !== 0) {
-          const moveSpeed = 45; // Meter pro Sekunde
+          const moveSpeed = 50; // Meter / Sekunde
           handlePlayerMovement(joyX * moveSpeed * dt, joyY * moveSpeed * dt);
         }
 
+        bots.forEach(b => updateBot(b, dt));
         renderWorld();
       } catch(e){}
       requestAnimationFrame(loop);
