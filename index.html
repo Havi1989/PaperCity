@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // PURE STREET NETWORKS</title>
+  <title>PaperCity // AAA CINEMATIC EDITION</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#03060a" />
@@ -21,115 +21,119 @@
       --cyber-gold: #ffaa00;
       --cyber-green: #00ff66;
       --cyber-purple: #bd00ff;
-      --cyber-dark: rgba(6, 10, 18, 0.92);
-      --cyber-border: rgba(0, 243, 255, 0.45);
-      --cyber-glow: 0 0 15px rgba(0, 243, 255, 0.55);
+      --cyber-dark: rgba(4, 8, 15, 0.88);
+      --cyber-border: rgba(0, 243, 255, 0.55);
+      --cyber-glow: 0 0 20px rgba(0, 243, 255, 0.65);
       --font-tech: 'Orbitron', monospace, sans-serif;
       --font-hud: 'Rajdhani', sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
-    body, html { width: 100%; height: 100%; overflow: hidden; background: #03060a; font-family: var(--font-hud); color: #fff; }
+    body, html { width: 100%; height: 100%; overflow: hidden; background: #010307; font-family: var(--font-hud); color: #fff; }
 
     #worldCanvas {
-      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; background: #020408; display: block;
+      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; background: #010307; display: block;
     }
 
     .cyber-overlay {
       position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none !important; z-index: 400;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-                  linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.02));
-      background-size: 100% 3px, 6px 100%; opacity: 0.4;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%),
+                  linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.03));
+      background-size: 100% 2px, 4px 100%; opacity: 0.6;
     }
 
     .hud-top {
-      position: absolute; top: 10px; left: 10px; right: 10px; z-index: 1000; display: flex; justify-content: space-between; gap: 10px; pointer-events: none;
+      position: absolute; top: 12px; left: 12px; right: 12px; z-index: 1000; display: flex; justify-content: space-between; gap: 12px; pointer-events: none;
     }
 
     .cyber-panel {
-      background: var(--cyber-dark); backdrop-filter: blur(16px); border: 1px solid var(--cyber-border); padding: 9px 14px;
-      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
-      box-shadow: var(--cyber-glow), inset 0 0 15px rgba(0, 243, 255, 0.12); pointer-events: auto; position: relative;
+      background: var(--cyber-dark); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--cyber-border); padding: 10px 16px;
+      clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+      box-shadow: var(--cyber-glow), inset 0 0 20px rgba(0, 243, 255, 0.15); pointer-events: auto; position: relative;
     }
-    .cyber-panel::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 6px; background: var(--cyber-cyan); }
+    .cyber-panel::before { content: ''; position: absolute; top: 0; left: 0; width: 8px; height: 8px; background: var(--cyber-cyan); box-shadow: 0 0 10px var(--cyber-cyan); }
 
     .hud-profile-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-    .hud-avatar { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--cyber-cyan); box-shadow: 0 0 10px var(--cyber-cyan); object-fit: cover; background: #09121f; }
-    .agent-name-label { font-family: var(--font-tech); font-size: 0.75rem; font-weight: 900; color: #fff; }
+    .hud-avatar { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--cyber-cyan); box-shadow: 0 0 12px var(--cyber-cyan); object-fit: cover; background: #09121f; }
+    .agent-name-label { font-family: var(--font-tech); font-size: 0.78rem; font-weight: 900; color: #fff; letter-spacing: 1px; }
 
-    .stat-title { font-family: var(--font-tech); font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: #799bbb; }
-    .stat-value { font-family: var(--font-tech); font-size: 1.25rem; font-weight: 900; color: var(--cyber-cyan); text-shadow: 0 0 12px var(--cyber-cyan); letter-spacing: 1px; }
+    .stat-title { font-family: var(--font-tech); font-size: 0.58rem; letter-spacing: 2.5px; text-transform: uppercase; color: #8fb1d1; }
+    .stat-value { font-family: var(--font-tech); font-size: 1.3rem; font-weight: 900; color: var(--cyber-cyan); text-shadow: 0 0 15px var(--cyber-cyan); letter-spacing: 1.5px; }
 
     .credits-display {
-      font-family: var(--font-tech); color: var(--cyber-gold); font-size: 0.8rem; font-weight: 800; display: flex; align-items: center; gap: 5px; margin-top: 2px;
-      text-shadow: 0 0 8px rgba(255, 170, 0, 0.6);
+      font-family: var(--font-tech); color: var(--cyber-gold); font-size: 0.82rem; font-weight: 800; display: flex; align-items: center; gap: 6px; margin-top: 3px;
+      text-shadow: 0 0 10px rgba(255, 170, 0, 0.7);
     }
 
-    .level-container { margin-top: 4px; width: 145px; }
+    .level-container { margin-top: 5px; width: 150px; }
     .level-row { display: flex; justify-content: space-between; font-size: 0.72rem; font-weight: 700; font-family: var(--font-tech); margin-bottom: 3px; }
-    .xp-bar-bg { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.08); clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px)); overflow: hidden; border: 1px solid rgba(0, 243, 255, 0.3); }
-    .xp-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-green)); box-shadow: 0 0 10px var(--cyber-cyan); transition: width 0.3s ease; }
+    .xp-bar-bg { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.08); clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px)); overflow: hidden; border: 1px solid rgba(0, 243, 255, 0.4); }
+    .xp-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-green)); box-shadow: 0 0 12px var(--cyber-cyan); transition: width 0.3s ease; }
 
     .status-badge {
-      display: inline-block; margin-top: 4px; padding: 3px 8px; font-family: var(--font-tech); font-size: 0.62rem; font-weight: 800; letter-spacing: 1px;
+      display: inline-block; margin-top: 5px; padding: 3px 9px; font-family: var(--font-tech); font-size: 0.62rem; font-weight: 800; letter-spacing: 1.2px;
       background: rgba(0, 243, 255, 0.12); color: var(--cyber-cyan); border: 1px solid var(--cyber-cyan); clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
     }
-    .status-badge.danger { background: rgba(255, 0, 85, 0.2); color: var(--cyber-crimson); border-color: var(--cyber-crimson); text-shadow: 0 0 8px var(--cyber-crimson); }
-    .status-badge.waiting { background: rgba(255, 238, 0, 0.2); color: var(--cyber-volt); border-color: var(--cyber-volt); text-shadow: 0 0 8px var(--cyber-volt); }
+    .status-badge.danger { background: rgba(255, 0, 85, 0.2); color: var(--cyber-crimson); border-color: var(--cyber-crimson); text-shadow: 0 0 10px var(--cyber-crimson); box-shadow: 0 0 10px rgba(255, 0, 85, 0.4); }
+    .status-badge.waiting { background: rgba(255, 238, 0, 0.2); color: var(--cyber-volt); border-color: var(--cyber-volt); text-shadow: 0 0 10px var(--cyber-volt); }
 
     .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(3, 5, 10, 0.92); backdrop-filter: blur(16px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(1, 3, 7, 0.94); backdrop-filter: blur(20px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px;
     }
     .cyber-modal-card {
-      background: rgba(8, 14, 24, 0.98); border: 1px solid var(--cyber-cyan); clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
-      max-width: 480px; width: 100%; padding: 24px; box-shadow: 0 0 45px rgba(0, 243, 255, 0.4); max-height: 90vh; overflow-y: auto;
+      background: rgba(6, 12, 22, 0.98); border: 1px solid var(--cyber-cyan); clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+      max-width: 480px; width: 100%; padding: 26px; box-shadow: 0 0 50px rgba(0, 243, 255, 0.5); max-height: 90vh; overflow-y: auto;
     }
-    .modal-header { font-family: var(--font-tech); font-size: 1.15rem; color: var(--cyber-cyan); display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .close-modal-btn { background: none; border: none; color: var(--cyber-crimson); font-size: 1.4rem; cursor: pointer; }
+    .modal-header { font-family: var(--font-tech); font-size: 1.2rem; color: var(--cyber-cyan); display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; text-shadow: 0 0 10px var(--cyber-cyan); }
+    .close-modal-btn { background: none; border: none; color: var(--cyber-crimson); font-size: 1.4rem; cursor: pointer; text-shadow: 0 0 8px var(--cyber-crimson); }
 
     .save-profile-btn {
-      width: 100%; background: var(--cyber-cyan); color: #03060a; border: none; padding: 14px; font-family: var(--font-tech); font-size: 0.9rem; font-weight: 900;
-      letter-spacing: 1px; cursor: pointer; margin-top: 10px; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+      width: 100%; background: var(--cyber-cyan); color: #010307; border: none; padding: 14px; font-family: var(--font-tech); font-size: 0.9rem; font-weight: 900;
+      letter-spacing: 1.5px; cursor: pointer; margin-top: 12px; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.6); transition: all 0.2s ease;
     }
+    .save-profile-btn:hover { background: #fff; box-shadow: 0 0 30px #fff; }
 
-    .shop-section-title { font-family: var(--font-tech); font-size: 0.75rem; color: var(--cyber-gold); letter-spacing: 1.5px; margin: 16px 0 8px 0; border-bottom: 1px solid rgba(255, 170, 0, 0.3); padding-bottom: 4px; display: flex; justify-content: space-between; }
-    .shop-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.07); }
+    .shop-section-title { font-family: var(--font-tech); font-size: 0.75rem; color: var(--cyber-gold); letter-spacing: 1.5px; margin: 16px 0 8px 0; border-bottom: 1px solid rgba(255, 170, 0, 0.4); padding-bottom: 5px; display: flex; justify-content: space-between; text-shadow: 0 0 8px rgba(255, 170, 0, 0.5); }
+    .shop-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
     .shop-row:last-child { border-bottom: none; }
     .shop-item-desc { font-size: 0.72rem; color: #8fa5ba; }
     .shop-action-box { display: flex; gap: 6px; }
-    .buy-btn-cyb { background: rgba(255, 170, 0, 0.15); border: 1px solid var(--cyber-gold); color: var(--cyber-gold); padding: 5px 9px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 800; cursor: pointer; border-radius: 4px; }
-    .buy-btn-eur { background: rgba(0, 255, 102, 0.15); border: 1px solid var(--cyber-green); color: var(--cyber-green); padding: 5px 9px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 800; cursor: pointer; border-radius: 4px; }
+    .buy-btn-cyb { background: rgba(255, 170, 0, 0.18); border: 1px solid var(--cyber-gold); color: var(--cyber-gold); padding: 5px 10px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 800; cursor: pointer; border-radius: 4px; box-shadow: 0 0 10px rgba(255, 170, 0, 0.3); }
+    .buy-btn-eur { background: rgba(0, 255, 102, 0.18); border: 1px solid var(--cyber-green); color: var(--cyber-green); padding: 5px 10px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 800; cursor: pointer; border-radius: 4px; box-shadow: 0 0 10px rgba(0, 255, 102, 0.3); }
 
-    .hack-hud-trigger { position: absolute; top: 110px; left: 50%; transform: translateX(-50%); z-index: 1500; display: none; pointer-events: auto; }
+    .hack-hud-trigger { position: absolute; top: 115px; left: 50%; transform: translateX(-50%); z-index: 1500; display: none; pointer-events: auto; }
     .hack-action-btn {
-      background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-green)); color: #03060a; border: 2px solid #fff; font-family: var(--font-tech);
-      font-weight: 900; font-size: 0.85rem; padding: 10px 22px; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
-      box-shadow: 0 0 25px var(--cyber-cyan); cursor: pointer; display: flex; align-items: center; gap: 8px;
+      background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-green)); color: #010307; border: 2px solid #fff; font-family: var(--font-tech);
+      font-weight: 900; font-size: 0.88rem; padding: 11px 24px; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+      box-shadow: 0 0 30px var(--cyber-cyan); cursor: pointer; display: flex; align-items: center; gap: 8px;
     }
-    .hack-progress-bar-bg { width: 100%; height: 14px; background: rgba(255, 255, 255, 0.1); border: 1px solid var(--cyber-cyan); margin: 15px 0; overflow: hidden; }
-    .hack-progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--cyber-gold), var(--cyber-green)); box-shadow: 0 0 15px var(--cyber-green); transition: width 0.1s linear; }
+    .hack-progress-bar-bg { width: 100%; height: 14px; background: rgba(255, 255, 255, 0.1); border: 1px solid var(--cyber-cyan); margin: 15px 0; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,243,255,0.2); }
+    .hack-progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--cyber-gold), var(--cyber-green)); box-shadow: 0 0 18px var(--cyber-green); transition: width 0.1s linear; }
 
     .top-right-col { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; pointer-events: auto; }
     .quick-toolbar { display: flex; gap: 6px; }
     .tool-btn {
-      background: var(--cyber-dark); backdrop-filter: blur(14px); border: 1px solid var(--cyber-border); color: #fff; padding: 0 10px; height: 36px;
+      background: var(--cyber-dark); backdrop-filter: blur(14px); border: 1px solid var(--cyber-border); color: #fff; padding: 0 11px; height: 38px;
       clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); display: flex; align-items: center; justify-content: center;
-      gap: 6px; cursor: pointer; font-family: var(--font-tech); font-size: 0.72rem; font-weight: 700; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      gap: 6px; cursor: pointer; font-family: var(--font-tech); font-size: 0.72rem; font-weight: 700; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6); transition: all 0.2s ease;
     }
-    .tool-btn.active { border-color: var(--cyber-cyan); color: var(--cyber-cyan); box-shadow: 0 0 14px var(--cyber-cyan); }
+    .tool-btn:hover, .tool-btn.active { border-color: var(--cyber-cyan); color: var(--cyber-cyan); box-shadow: 0 0 18px var(--cyber-cyan); }
 
-    .leaderboard-list { display: flex; flex-direction: column; gap: 4px; margin-top: 5px; font-size: 0.8rem; font-weight: 700; }
-    .leaderboard-item { display: flex; justify-content: space-between; gap: 12px; font-family: var(--font-tech); font-size: 0.68rem; }
+    .leaderboard-list { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; font-size: 0.8rem; font-weight: 700; }
+    .leaderboard-item { display: flex; justify-content: space-between; gap: 14px; font-family: var(--font-tech); font-size: 0.68rem; }
 
     .radar-container {
       position: absolute; bottom: 20px; left: 15px; width: 100px; height: 100px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(0, 243, 255, 0.15) 0%, rgba(6, 10, 18, 0.95) 85%); border: 2px solid var(--cyber-cyan);
-      box-shadow: 0 0 25px rgba(0, 243, 255, 0.45); z-index: 1000; overflow: hidden; pointer-events: auto;
+      background: radial-gradient(circle, rgba(0, 243, 255, 0.18) 0%, rgba(4, 8, 15, 0.95) 85%); border: 2px solid var(--cyber-cyan);
+      box-shadow: 0 0 30px rgba(0, 243, 255, 0.55); z-index: 1000; overflow: hidden; pointer-events: auto;
     }
     .radar-canvas { width: 100%; height: 100%; display: block; }
     .radar-sweep {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%;
-      background: conic-gradient(from 0deg, rgba(0, 243, 255, 0.4) 0deg, transparent 65deg, transparent 360deg);
+      background: conic-gradient(from 0deg, rgba(0, 243, 255, 0.5) 0deg, transparent 65deg, transparent 360deg);
       animation: radarScan 2.4s linear infinite; pointer-events: none;
     }
     @keyframes radarScan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -138,26 +142,27 @@
     .control-actions { display: flex; flex-direction: column; gap: 8px; pointer-events: auto; }
 
     .neon-btn {
-      background: var(--cyber-dark); backdrop-filter: blur(14px); border: 1px solid var(--cyber-border); color: #fff; padding: 10px 14px;
+      background: var(--cyber-dark); backdrop-filter: blur(14px); border: 1px solid var(--cyber-border); color: #fff; padding: 11px 15px;
       clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); font-family: var(--font-tech);
-      font-size: 0.72rem; font-weight: 800; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; gap: 7px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.6);
+      font-size: 0.72rem; font-weight: 800; letter-spacing: 1.2px; cursor: pointer; display: flex; align-items: center; gap: 7px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.7); transition: all 0.2s ease;
     }
-    .neon-btn.active { background: var(--cyber-cyan); color: #03060a; box-shadow: 0 0 20px var(--cyber-cyan); }
+    .neon-btn.active { background: var(--cyber-cyan); color: #010307; box-shadow: 0 0 25px var(--cyber-cyan); }
 
     .joystick-panel {
-      pointer-events: auto; width: 110px; height: 110px; background: rgba(6, 10, 18, 0.75); backdrop-filter: blur(14px);
+      pointer-events: auto; width: 115px; height: 115px; background: rgba(4, 8, 15, 0.78); backdrop-filter: blur(14px);
       border: 2px dashed var(--cyber-border); border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; touch-action: none;
+      box-shadow: 0 0 25px rgba(0, 243, 255, 0.2);
     }
-    .joystick-stick { width: 44px; height: 44px; background: radial-gradient(circle at 35% 35%, #ffffff, var(--cyber-cyan)); border-radius: 50%; position: absolute; box-shadow: 0 0 22px var(--cyber-cyan); pointer-events: none; transform: translate(0px, 0px); }
+    .joystick-stick { width: 46px; height: 46px; background: radial-gradient(circle at 35% 35%, #ffffff, var(--cyber-cyan)); border-radius: 50%; position: absolute; box-shadow: 0 0 25px var(--cyber-cyan); pointer-events: none; transform: translate(0px, 0px); }
 
     .banner-notification {
-      position: absolute; top: 85px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(6, 10, 18, 0.95); backdrop-filter: blur(16px);
+      position: absolute; top: 90px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(4, 8, 15, 0.96); backdrop-filter: blur(18px);
       border: 1px solid var(--cyber-cyan); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
-      padding: 10px 24px; font-family: var(--font-tech); font-size: 0.85rem; font-weight: 900; letter-spacing: 1px; color: #fff; z-index: 2000;
-      opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); box-shadow: 0 0 30px rgba(0, 243, 255, 0.5); white-space: nowrap;
+      padding: 11px 26px; font-family: var(--font-tech); font-size: 0.88rem; font-weight: 900; letter-spacing: 1.2px; color: #fff; z-index: 2000;
+      opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); box-shadow: 0 0 35px rgba(0, 243, 255, 0.6); white-space: nowrap;
     }
-    .banner-notification.danger { border-color: var(--cyber-crimson); box-shadow: 0 0 30px rgba(255, 0, 85, 0.7); color: #ff99bb; }
+    .banner-notification.danger { border-color: var(--cyber-crimson); box-shadow: 0 0 35px rgba(255, 0, 85, 0.8); color: #ff99bb; }
     .banner-notification.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
@@ -193,11 +198,11 @@
         <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Pure Street Networks</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // AAA Cinematic Edition</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem;">
-        <li><i class="fa-solid fa-road" style="color:var(--cyber-cyan);"></i> <b>Echte Straßenzüge:</b> Organisches Straßensystem ohne starres Gitter.</li>
-        <li><i class="fa-solid fa-robot" style="color:var(--cyber-crimson);"></i> <b>KI-Gegner:</b> Crimson & Volt patrouillieren auf den Straßen.</li>
+        <li><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--cyber-cyan);"></i> <b>Cinematic Engine:</b> Mehrschichtiges Neon-Bloom & Echtzeit-Partikeleffekte.</li>
+        <li><i class="fa-solid fa-road" style="color:var(--cyber-volt);"></i> <b>Organische Straßen:</b> Fließende Vektor-Highways aus OpenStreetMap.</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
     </div>
@@ -230,7 +235,7 @@
         <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
         <div>
           <div class="agent-name-label" id="hudAgentName">AGENT V</div>
-          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">STREET NETS // 50 m/s</div>
+          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">AAA ENGINE // 50 m/s</div>
         </div>
       </div>
 
@@ -292,7 +297,7 @@
 
   <script>
     /* ========================================================
-       1. HIGH-DEFINITION EVA VOICE SYNTHESIS
+       1. HD EVA VOICE SYNTHESIS
        ======================================================== */
     let audioCtx = null;
     let isSynthMusicActive = true;
@@ -400,7 +405,7 @@
     }
 
     /* ========================================================
-       2. CANVAS MAP & STREETS ENGINE (OHNE GITTER)
+       2. AAA CANVAS CINEMATIC ENGINE
        ======================================================== */
     const canvas = document.getElementById('worldCanvas');
     const ctx = canvas.getContext('2d');
@@ -413,6 +418,9 @@
     resizeCanvas();
 
     let worldX = 0, worldY = 0;
+    // Smoother Camera Interpolation (Lerp) für AAA-Gefühl
+    let cameraX = 0, cameraY = 0;
+
     let playerCustomColor = localStorage.getItem('pc_skin_color') || '#00f3ff';
     let hackToolLevel = parseInt(localStorage.getItem('pc_hack_tool_lvl') || '1');
     let playerName = localStorage.getItem('pc_agent_name') || 'AGENT V';
@@ -429,6 +437,7 @@
     let cityMonuments = [];
     let baseRadius = 35;
     let justCapturedCooldown = false;
+    let particles = []; // AAA Partikel-System
 
     let botCrimson = { name: "Crimson", color: '#ff0055', x: 120, y: -90, trail: [], area: 1960, heading: 45, speed: 20 };
     let botVolt = { name: "Volt", color: '#ffee00', x: -130, y: 140, trail: [], area: 1960, heading: 210, speed: 18 };
@@ -469,7 +478,6 @@
         }
       } catch(e){}
 
-      // Organisches Fallback-Straßennetz, falls API offline
       if (roadSegments.length === 0) {
         for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 6) {
           for (let r = 100; r <= 800; r += 150) {
@@ -485,6 +493,21 @@
           { id: 2, name: "Marktbrunnen", x: -150, y: 190, owner: 'NEUTRAL' },
           { id: 3, name: "Cyber-Monolith", x: 220, y: 140, owner: 'NEUTRAL' }
         ];
+      }
+    }
+
+    function spawnParticles(x, y, color, count = 25) {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 80 + 30;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          color,
+          alpha: 1.0,
+          life: Math.random() * 0.6 + 0.4
+        });
       }
     }
 
@@ -620,6 +643,7 @@
           isHackModalOpen = false;
           document.getElementById('hackModal').style.display = 'none';
           activeHackTarget.owner = 'PLAYER';
+          spawnParticles(activeHackTarget.x, activeHackTarget.y, playerCustomColor, 40);
           playFanfare();
           showBanner(`CORE // ${activeHackTarget.name.toUpperCase()} GEHACKT!`, false);
           speakEva("System-Override erfolgreich.");
@@ -652,6 +676,7 @@
         [botCrimson, botVolt].forEach(b => {
           if (b.trail.length > 2 && checkCut({x: worldX, y: worldY}, b.trail)) {
             b.trail = [];
+            spawnParticles(worldX, worldY, b.color, 30);
             showBanner(`${b.name.toUpperCase()} TRAIL ZERSTÖRT! ⚔ +450 m²`, false);
             speakEva(`Gegnerischer Trail von ${b.name} zerstört.`);
             playFanfare();
@@ -705,6 +730,7 @@
       playerTotalArea += area;
       territories.push({ points: coords });
 
+      spawnParticles(worldX, worldY, playerCustomColor, 50);
       playerTrail = [{ x: worldX, y: worldY }];
       justCapturedCooldown = true;
       setTimeout(() => { justCapturedCooldown = false; }, 1200);
@@ -733,6 +759,7 @@
       if (playerTrail.length > 2) {
         for (let pt of playerTrail) {
           if (getDistance({x: bot.x, y: bot.y}, pt) < 10) {
+            spawnParticles(worldX, worldY, bot.color, 35);
             showBanner(`${bot.name} hat deinen Trail durchbrochen!`, true);
             speakEva("Achtung. Trail durchbrochen.");
             playerTrail = [];
@@ -748,29 +775,36 @@
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
 
-      ctx.save();
-      ctx.translate(centerX - worldX, centerY - worldY);
+      // Smoother Camera Lerp (Cinematic Feel)
+      cameraX += (worldX - cameraX) * 0.12;
+      cameraY += (worldY - cameraY) * 0.12;
 
-      // 1. Echte Straßenzüge (Organisch & Ohne Gitter)
-      ctx.strokeStyle = 'rgba(0, 243, 255, 0.22)';
-      ctx.lineWidth = 14;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
+      ctx.save();
+      ctx.translate(centerX - cameraX, centerY - cameraY);
+
+      // 1. Echte Straßenzüge (Multi-Pass Neon Glow)
       roadSegments.forEach(r => {
-        ctx.beginPath();
-        ctx.moveTo(r.x1, r.y1);
-        ctx.lineTo(r.x2, r.y2);
-        ctx.stroke();
+        ctx.strokeStyle = 'rgba(0, 243, 255, 0.08)';
+        ctx.lineWidth = 18;
+        ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(r.x1, r.y1); ctx.lineTo(r.x2, r.y2); ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(0, 243, 255, 0.28)';
+        ctx.lineWidth = 10;
+        ctx.beginPath(); ctx.moveTo(r.x1, r.y1); ctx.lineTo(r.x2, r.y2); ctx.stroke();
       });
 
-      // 2. Heimatbasis
+      // 2. Heimatbasis (Outpost mit Aura)
       ctx.beginPath();
       ctx.arc(0, 0, baseRadius, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0, 243, 255, 0.25)';
+      ctx.fillStyle = 'rgba(0, 243, 255, 0.22)';
       ctx.fill();
       ctx.strokeStyle = playerCustomColor;
       ctx.lineWidth = 3;
+      ctx.shadowColor = playerCustomColor;
+      ctx.shadowBlur = 20;
       ctx.stroke();
+      ctx.shadowBlur = 0;
 
       // 3. Eroberte Territorien
       territories.forEach(t => {
@@ -779,14 +813,17 @@
         ctx.moveTo(t.points[0].x, t.points[0].y);
         for (let i = 1; i < t.points.length; i++) ctx.lineTo(t.points[i].x, t.points[i].y);
         ctx.closePath();
-        ctx.fillStyle = 'rgba(0, 243, 255, 0.35)';
+        ctx.fillStyle = 'rgba(0, 243, 255, 0.38)';
         ctx.fill();
         ctx.strokeStyle = playerCustomColor;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = playerCustomColor;
+        ctx.shadowBlur = 12;
         ctx.stroke();
+        ctx.shadowBlur = 0;
       });
 
-      // 4. Spieler Trail
+      // 4. Spieler Trail (Neon Laser mit Glow)
       if (playerTrail.length > 1) {
         ctx.beginPath();
         ctx.moveTo(playerTrail[0].x, playerTrail[0].y);
@@ -794,7 +831,7 @@
         ctx.strokeStyle = playerCustomColor;
         ctx.lineWidth = 6;
         ctx.shadowColor = playerCustomColor;
-        ctx.shadowBlur = 14;
+        ctx.shadowBlur = 22;
         ctx.stroke();
         ctx.shadowBlur = 0;
       }
@@ -807,7 +844,10 @@
           for (let i = 1; i < b.trail.length; i++) ctx.lineTo(b.trail[i].x, b.trail[i].y);
           ctx.strokeStyle = b.color;
           ctx.lineWidth = 5;
+          ctx.shadowColor = b.color;
+          ctx.shadowBlur = 15;
           ctx.stroke();
+          ctx.shadowBlur = 0;
         }
         ctx.beginPath();
         ctx.arc(b.x, b.y, 12, 0, Math.PI * 2);
@@ -824,7 +864,7 @@
         ctx.arc(m.x, m.y, 16, 0, Math.PI * 2);
         ctx.fillStyle = m.owner === 'PLAYER' ? playerCustomColor : '#ffaa00';
         ctx.shadowColor = ctx.fillStyle;
-        ctx.shadowBlur = 16;
+        ctx.shadowBlur = 25;
         ctx.fill();
         ctx.shadowBlur = 0;
 
@@ -834,24 +874,53 @@
         ctx.fillText(m.name, m.x, m.y - 22);
       });
 
-      // 7. Spieler Avatar
+      // 7. Partikel-Effekte (AAA VFX)
+      for (let i = particles.length - 1; i >= 0; i--) {
+        let p = particles[i];
+        p.x += p.vx * 0.016;
+        p.y += p.vy * 0.016;
+        p.alpha -= 0.016 / p.life;
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = 1.0;
+      }
+
+      // 8. Spieler Avatar (Cinematic Glow)
       ctx.beginPath();
-      ctx.arc(worldX, worldY, 14, 0, Math.PI * 2);
+      ctx.arc(worldX, worldY, 15, 0, Math.PI * 2);
       ctx.fillStyle = playerCustomColor;
       ctx.shadowColor = playerCustomColor;
-      ctx.shadowBlur = 20;
+      ctx.shadowBlur = 30;
       ctx.fill();
       ctx.shadowBlur = 0;
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 3.5;
       ctx.strokeStyle = '#ffffff';
       ctx.stroke();
 
       ctx.restore();
+
+      // 9. Cinematic Vignette Overlay (Dunkler Rand für Tiefe)
+      const grad = ctx.createRadialGradient(centerX, centerY, canvas.width * 0.3, centerX, centerY, canvas.width * 0.75);
+      grad.addColorStop(0, 'rgba(1, 3, 7, 0)');
+      grad.addColorStop(1, 'rgba(1, 3, 7, 0.85)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
       updateRadar();
     }
 
     /* ========================================================
-       6. UI & SHOP
+       7. UI & SHOP
        ======================================================== */
     function addCredits(amount) {
       savedCredits += amount;
@@ -933,7 +1002,7 @@
     });
 
     /* ========================================================
-       7. START & JOYSTICK
+       8. START & JOYSTICK
        ======================================================== */
     document.getElementById('acceptSafetyBtn').addEventListener('click', () => {
       document.getElementById('safetyModal').remove();
