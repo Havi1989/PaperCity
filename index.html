@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // NEON GRID - SECURE ANCHOR LOOP & MONUMENTS</title>
+  <title>PaperCity // NEON GRID - TRAIL FIX MASTER</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#00f3ff" />
@@ -245,11 +245,11 @@
         <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Anchor Loop & Monuments</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Trail & Anchor Master</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem;">
-        <li><i class="fa-solid fa-anchor" style="color:var(--cyber-volt);"></i> <b>Anker-Zwang:</b> Schleifen müssen an deinen Basen oder eroberten Gebieten anbinden!</li>
-        <li><i class="fa-solid fa-landmark" style="color:var(--cyber-gold);"></i> <b>Monumente:</b> Cyber-Cores sind aktiv und bereit zum Hacken.</li>
+        <li><i class="fa-solid fa-route" style="color:var(--cyber-cyan);"></i> <b>Neon-Trails:</b> Zeichne deine Spur und erobere Sektoren.</li>
+        <li><i class="fa-solid fa-anchor" style="color:var(--cyber-volt);"></i> <b>Anbindungspfad:</b> Schleifen müssen an deinen Basen oder eroberten Zonen enden!</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
     </div>
@@ -309,7 +309,7 @@
         <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
         <div>
           <div class="agent-name-label" id="hudAgentName">AGENT V</div>
-          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">ANCHOR LOOP // 50 m/s</div>
+          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">TRAIL FIX // 50 m/s</div>
         </div>
       </div>
 
@@ -502,7 +502,7 @@
     let isRealGpsActive = false;
     let gpsWatchId = null;
     let playerTrail = [];
-    let playerTerritoryPolygons = []; // Gespeicherte eroberte Polygone als Anker
+    let playerTerritoryPolygons = [];
     let cityMonuments = [];
     let justCapturedCooldown = false;
 
@@ -593,7 +593,6 @@
       return inside;
     }
 
-    // Prüft, ob ein Punkt in IRGENDEINEM eigenen Bereich (Base oder erobertes Polygon) liegt
     function isPointInPlayerTerritory(point) {
       for (let o of outpostList) {
         if (getDistanceMeters(point, o.coords) <= (o.radius + 5)) return true;
@@ -795,7 +794,6 @@
         }
       } catch(e){}
 
-      // Garantiertes Fallback
       [
         { id: "local_1", name: "Alte Stadtkirche", pos: [center[0] + 0.0014, center[1] + 0.0012] },
         { id: "local_2", name: "Marktbrunnen", pos: [center[0] - 0.0012, center[1] + 0.0015] },
@@ -909,7 +907,7 @@
     document.getElementById('cancelHackBtn').addEventListener('click', () => cancelHack());
 
     /* ========================================================
-       7. BEWEGUNG & ANKER-SCHLEIFENSCHLUSS (EIGENE BEREICHE)
+       7. BEWEGUNG & ANKER-SCHLEIFENSCHLUSS (TRAIL SICHER GESCHALTET)
        ======================================================== */
     const STILLSTAND_SPEED_THRESHOLD_KMH = 2.2;
     const MIN_TRAIL_STEP_METERS = 8.0;
@@ -939,7 +937,7 @@
           }
         });
 
-        // 2. SCHLEIFENSCHLUSS: Muss in einem eigenen Bereich (Basis oder Polygon) anbinden
+        // 2. SCHLEIFENSCHLUSS & ANKER-PRÜFUNG
         const inTerritory = isPointInPlayerTerritory(playerPos);
         const badge = document.getElementById('playerStatusBadge');
 
@@ -947,7 +945,7 @@
           badge.textContent = 'IN GEBIET (GESICHERT)';
           badge.className = 'status-badge';
 
-          // Wenn wir eine Expedition gemacht haben (mindestens 3 Punkte) und nicht im Cooldown sind
+          // Wenn wir eine Expedition gemacht haben (mindestens 3 Punkte) und in einem eigenen Gebiet anbinden
           if (playerTrail.length >= 3 && !justCapturedCooldown) {
             completeTerritory([...playerTrail, playerPos]);
           } else if (playerTrail.length < 3) {
@@ -955,6 +953,7 @@
             playerTrailLayer.setLatLngs([]);
           }
         } else {
+          // Im feindlichen oder ungesicherten Raum: Trail unbedingt zeichnen!
           const last = playerTrail[playerTrail.length - 1];
           const distToLast = last ? getDistanceMeters(playerPos, last) : 999;
 
@@ -967,7 +966,6 @@
           badge.textContent = 'EXPEDITION (GEFAHR)';
           badge.className = 'status-badge danger';
 
-          // Alternativ: Eigene Spur im Gelände schneiden
           if (!justCapturedCooldown) {
             const hitIdx = checkSelfIntersectionIndex(playerPos, playerTrail);
             if (hitIdx !== -1) {
@@ -991,14 +989,13 @@
         const area = calculatePolygonAreaM2(coords);
         playerTotalArea += area;
 
-        const poly = L.polygon(coords, {
+        L.polygon(coords, {
           color: playerCustomColor,
           fillColor: playerCustomColor,
           fillOpacity: 0.45,
           weight: 2
         }).addTo(territoryGroup);
 
-        // Polygon für den Anker-Check speichern
         playerTerritoryPolygons.push(coords);
 
         playerTrail = [playerPos];
@@ -1192,7 +1189,6 @@
           weight: 3
         }).bindTooltip(`<b>${op.districtName.toUpperCase()}</b>`, { permanent: true, direction: 'center', className: 'monument-label' }).addTo(territoryGroup);
       });
-      // Bisher eroberte Polygone ebenfalls neu zeichnen
       playerTerritoryPolygons.forEach(coords => {
         L.polygon(coords, { color: playerCustomColor, fillColor: playerCustomColor, fillOpacity: 0.45, weight: 2 }).addTo(territoryGroup);
       });
