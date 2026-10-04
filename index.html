@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // NEON GRID - FULL MASTER STABLE</title>
+  <title>PaperCity // NEON GRID - FULLY RESTORED STABLE</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#00f3ff" />
@@ -23,7 +23,6 @@
       --cyber-gold: #ffaa00;
       --cyber-green: #00ff66;
       --cyber-purple: #bd00ff;
-      --cyber-orange: #ff6600;
       --cyber-dark: rgba(6, 10, 18, 0.88);
       --cyber-border: rgba(0, 243, 255, 0.45);
       --cyber-glow: 0 0 15px rgba(0, 243, 255, 0.55);
@@ -152,6 +151,20 @@
     }
     .monument-label { background: rgba(6, 12, 22, 0.9); border: 1px solid rgba(255, 170, 0, 0.5); color: #fff; font-family: var(--font-tech); font-size: 0.6rem; font-weight: 800; letter-spacing: 1px; padding: 3px 8px; border-radius: 4px; margin-top: 5px; white-space: nowrap; }
 
+    /* Radar Minimap Styling */
+    .radar-container {
+      position: absolute; bottom: 20px; left: 15px; width: 100px; height: 100px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 243, 255, 0.15) 0%, rgba(6, 10, 18, 0.95) 85%); border: 2px solid var(--cyber-cyan);
+      box-shadow: 0 0 25px rgba(0, 243, 255, 0.45); z-index: 1000; overflow: hidden; pointer-events: auto;
+    }
+    .radar-canvas { width: 100%; height: 100%; display: block; }
+    .radar-sweep {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%;
+      background: conic-gradient(from 0deg, rgba(0, 243, 255, 0.4) 0deg, transparent 65deg, transparent 360deg);
+      animation: radarScan 2.4s linear infinite; pointer-events: none;
+    }
+    @keyframes radarScan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
     .hud-bottom { position: absolute; bottom: 20px; left: 130px; right: 15px; z-index: 1000; display: flex; justify-content: space-between; align-items: flex-end; pointer-events: none; }
     .control-actions { display: flex; flex-direction: column; gap: 8px; pointer-events: auto; }
 
@@ -230,12 +243,11 @@
         <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Master Stable</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Fully Restored Master</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem;">
         <li><i class="fa-solid fa-person-walking" style="color:var(--cyber-volt);"></i> Nutze nur öffentliche Straßen, Gehwege & Parks.</li>
-        <li><i class="fa-solid fa-map-location-dot" style="color:var(--cyber-cyan);"></i> <b>Distrikt-Netzwerk:</b> Erobere Stadtteile Viertel für Viertel!</li>
-        <li><i class="fa-solid fa-traffic-light" style="color:var(--cyber-gold);"></i> Ampel-Puffer schützt deine Spur vor GPS-Jitter.</li>
+        <li><i class="fa-solid fa-radar" style="color:var(--cyber-cyan);"></i> <b>Minimap & Shop aktiv:</b> Alle HUD-Systeme voll funktionsfähig!</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
     </div>
@@ -292,7 +304,7 @@
   <div class="hud-top">
     <div class="cyber-panel">
       <div class="hud-profile-row">
-        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" id="hudAvatarImg" class="hud-avatar" alt="Avatar" />
+        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
         <div>
           <div class="agent-name-label" id="hudAgentName">AGENT V</div>
           <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">HACK-RIG MK.1 // 50 m/s</div>
@@ -330,6 +342,12 @@
         <div class="leaderboard-list" id="leaderboardList"></div>
       </div>
     </div>
+  </div>
+
+  <!-- Radar Minimap -->
+  <div class="radar-container" title="Radar">
+    <canvas id="radarCanvas" class="radar-canvas" width="100" height="100"></canvas>
+    <div class="radar-sweep"></div>
   </div>
 
   <div class="hud-bottom">
@@ -486,7 +504,6 @@
     let cityMonuments = [];
     let justCapturedCooldown = false;
 
-    // Die Rivalen-Bots
     let botCrimson = {
       name: "Crimson", color: '#ff0055', spawn: [playerSpawn[0] + 0.0018, playerSpawn[1] + 0.0022], pos: [playerSpawn[0] + 0.0018, playerSpawn[1] + 0.0022],
       trail: [], area: 1960, heading: 45, timeSinceTurn: 0, marker: null, trailLayer: null
@@ -571,7 +588,6 @@
       return -1;
     }
 
-    // Prüft, ob ein Punkt in IRGENDEINEM eigenen Außenposten liegt
     function isPointInPlayerBases(point) {
       for (let o of outpostList) {
         if (getDistanceMeters(point, o.coords) <= (o.radius + 5)) return true;
@@ -580,7 +596,70 @@
     }
 
     /* ========================================================
-       3. DISTRIKT-ERKENNUNG & UMSCHALT-LOGIK
+       3. RADAR MINIMAP RENDERING
+       ======================================================== */
+    const radarCanvas = document.getElementById('radarCanvas');
+    const rCtx = radarCanvas.getContext('2d');
+    const RADAR_RADIUS_METERS = 360;
+
+    function updateRadar() {
+      if (!rCtx) return;
+      rCtx.clearRect(0, 0, 100, 100);
+      const center = 50;
+
+      rCtx.strokeStyle = 'rgba(0, 243, 255, 0.25)';
+      rCtx.lineWidth = 1;
+      rCtx.beginPath();
+      rCtx.arc(center, center, 24, 0, Math.PI * 2);
+      rCtx.arc(center, center, 46, 0, Math.PI * 2);
+      rCtx.moveTo(center, 4); rCtx.lineTo(center, 96);
+      rCtx.moveTo(4, center); rCtx.lineTo(96, center);
+      rCtx.stroke();
+
+      function plotRadarPoint(targetPos, color, size, isDiamond = false) {
+        const dLat = targetPos[0] - playerPos[0];
+        const dLng = targetPos[1] - playerPos[1];
+        const my = dLat * 111320;
+        const mx = dLng * (111320 * Math.cos(playerPos[0] * Math.PI / 180));
+        const dist = Math.hypot(mx, my);
+
+        if (dist <= RADAR_RADIUS_METERS) {
+          const rx = center + (mx / RADAR_RADIUS_METERS) * 44;
+          const ry = center - (my / RADAR_RADIUS_METERS) * 44;
+          rCtx.fillStyle = color;
+
+          if (isDiamond) {
+            rCtx.beginPath();
+            rCtx.moveTo(rx, ry - size);
+            rCtx.lineTo(rx + size, ry);
+            rCtx.lineTo(rx, ry + size);
+            rCtx.lineTo(rx - size, ry);
+            rCtx.closePath();
+            rCtx.fill();
+          } else {
+            rCtx.beginPath();
+            rCtx.arc(rx, ry, size, 0, Math.PI * 2);
+            rCtx.fill();
+          }
+        }
+      }
+
+      cityMonuments.forEach(m => {
+        const color = m.owner === 'PLAYER' ? playerCustomColor : MONUMENT_NEUTRAL;
+        plotRadarPoint(m.pos, color, 3.5, true);
+      });
+
+      plotRadarPoint(botCrimson.pos, botCrimson.color, 3);
+      plotRadarPoint(botVolt.pos, botVolt.color, 3);
+
+      rCtx.fillStyle = playerCustomColor;
+      rCtx.beginPath();
+      rCtx.arc(center, center, 4, 0, Math.PI * 2);
+      rCtx.fill();
+    }
+
+    /* ========================================================
+       4. DISTRIKT-ERKENNUNG & UMSCHALT-LOGIK
        ======================================================== */
     let lastDistrictCheckTime = 0;
     let isCheckingDistrict = false;
@@ -672,7 +751,7 @@
     }
 
     /* ========================================================
-       4. MONUMENTE (LADEN)
+       5. MONUMENTE (LADEN)
        ======================================================== */
     async function fetchRealMonuments(center) {
       monumentGroup.clearLayers();
@@ -725,7 +804,7 @@
     }
 
     /* ========================================================
-       5. FREIWILLIGES HACKEN (UNBLOCKIERT)
+       6. HACKING & CORES
        ======================================================== */
     let activeHackTarget = null;
     let hackInterval = null;
@@ -812,7 +891,7 @@
     document.getElementById('cancelHackBtn').addEventListener('click', () => cancelHack());
 
     /* ========================================================
-       6. BEWEGUNG, SCHLEIFENSCHLUSS & BOTS
+       7. BEWEGUNG & FLÜSSIGER WEITERLAUF
        ======================================================== */
     const STILLSTAND_SPEED_THRESHOLD_KMH = 2.2;
     const MIN_TRAIL_STEP_METERS = 8.0;
@@ -957,7 +1036,6 @@
     function updateUI() {
       document.getElementById('playerAreaStat').textContent = `${playerTotalArea.toLocaleString()} m²`;
 
-      // Live Leaderboard mit Bots
       const players = [
         { name: playerName, area: playerTotalArea, color: playerCustomColor },
         { name: "Crimson", area: botCrimson.area, color: botCrimson.color },
@@ -984,7 +1062,7 @@
     }
 
     /* ========================================================
-       7. SHOP & TOOL UPGRADES
+       8. SHOP & TOOL UPGRADES
        ======================================================== */
     const openShopBtn = document.getElementById('openShopBtn');
     if (openShopBtn) openShopBtn.addEventListener('click', () => { document.getElementById('shopModal').style.display = 'flex'; });
@@ -1030,7 +1108,6 @@
       }
     }
 
-    // Audio-Controls
     document.getElementById('synthMusicBtn').addEventListener('click', function() {
       ensureAudioContext();
       isSynthMusicActive = !isSynthMusicActive;
@@ -1052,7 +1129,7 @@
     });
 
     /* ========================================================
-       8. INITIALISIERUNG & INSTANT-START
+       9. INITIALISIERUNG & START
        ======================================================== */
     function renderAllTerritories() {
       territoryGroup.clearLayers();
@@ -1140,7 +1217,7 @@
     document.getElementById('resetBtn').addEventListener('click', () => location.reload());
 
     /* ========================================================
-       9. JOYSTICK & GAMELOOP
+       10. JOYSTICK & GAMELOOP
        ======================================================== */
     const joystickZone = document.getElementById('joystickZone');
     const joystickHandle = document.getElementById('joystickHandle');
@@ -1189,9 +1266,9 @@
           map.panTo(playerPos, { animate: false });
         }
 
-        // Bots bewegen
         updateRealisticBot(botCrimson, dt, 3.2, 85);
         updateRealisticBot(botVolt, dt, 2.6, 110);
+        updateRadar();
       } catch(e){}
       requestAnimationFrame(loop);
     }
