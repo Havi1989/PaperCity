@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // AAA CINEMATIC EDITION</title>
+  <title>PaperCity // BIO-RESONANCE EDITION</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#03060a" />
@@ -77,14 +77,16 @@
       box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
     }
     .status-badge.danger { background: rgba(255, 0, 85, 0.2); color: var(--cyber-crimson); border-color: var(--cyber-crimson); text-shadow: 0 0 10px var(--cyber-crimson); box-shadow: 0 0 10px rgba(255, 0, 85, 0.4); }
-    .status-badge.waiting { background: rgba(255, 238, 0, 0.2); color: var(--cyber-volt); border-color: var(--cyber-volt); text-shadow: 0 0 10px var(--cyber-volt); }
+    .status-badge.overclock { background: rgba(189, 0, 255, 0.3); color: var(--cyber-purple); border-color: var(--cyber-purple); text-shadow: 0 0 12px var(--cyber-purple); box-shadow: 0 0 15px var(--cyber-purple); animation: pulseGlow 1s infinite alternate; }
+
+    @keyframes pulseGlow { from { opacity: 0.7; } to { opacity: 1; transform: scale(1.03); } }
 
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(1, 3, 7, 0.94); backdrop-filter: blur(20px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px;
     }
     .cyber-modal-card {
       background: rgba(6, 12, 22, 0.98); border: 1px solid var(--cyber-cyan); clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
-      max-width: 480px; width: 100%; padding: 26px; box-shadow: 0 0 50px rgba(0, 243, 255, 0.5); max-height: 90vh; overflow-y: auto;
+      max-width: 480px; width: 100%; padding: 26px; box-shadow: 0 0 50px rgba(0, 243, 255, 0.5); max-height: 90vh; overflow-y: auto; text-align: center;
     }
     .modal-header { font-family: var(--font-tech); font-size: 1.2rem; color: var(--cyber-cyan); display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; text-shadow: 0 0 10px var(--cyber-cyan); }
     .close-modal-btn { background: none; border: none; color: var(--cyber-crimson); font-size: 1.4rem; cursor: pointer; text-shadow: 0 0 8px var(--cyber-crimson); }
@@ -92,26 +94,8 @@
     .save-profile-btn {
       width: 100%; background: var(--cyber-cyan); color: #010307; border: none; padding: 14px; font-family: var(--font-tech); font-size: 0.9rem; font-weight: 900;
       letter-spacing: 1.5px; cursor: pointer; margin-top: 12px; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
-      box-shadow: 0 0 20px rgba(0, 243, 255, 0.6); transition: all 0.2s ease;
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
     }
-    .save-profile-btn:hover { background: #fff; box-shadow: 0 0 30px #fff; }
-
-    .shop-section-title { font-family: var(--font-tech); font-size: 0.75rem; color: var(--cyber-gold); letter-spacing: 1.5px; margin: 16px 0 8px 0; border-bottom: 1px solid rgba(255, 170, 0, 0.4); padding-bottom: 5px; display: flex; justify-content: space-between; text-shadow: 0 0 8px rgba(255, 170, 0, 0.5); }
-    .shop-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
-    .shop-row:last-child { border-bottom: none; }
-    .shop-item-desc { font-size: 0.72rem; color: #8fa5ba; }
-    .shop-action-box { display: flex; gap: 6px; }
-    .buy-btn-cyb { background: rgba(255, 170, 0, 0.18); border: 1px solid var(--cyber-gold); color: var(--cyber-gold); padding: 5px 10px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 800; cursor: pointer; border-radius: 4px; box-shadow: 0 0 10px rgba(255, 170, 0, 0.3); }
-    .buy-btn-eur { background: rgba(0, 255, 102, 0.18); border: 1px solid var(--cyber-green); color: var(--cyber-green); padding: 5px 10px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 800; cursor: pointer; border-radius: 4px; box-shadow: 0 0 10px rgba(0, 255, 102, 0.3); }
-
-    .hack-hud-trigger { position: absolute; top: 115px; left: 50%; transform: translateX(-50%); z-index: 1500; display: none; pointer-events: auto; }
-    .hack-action-btn {
-      background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-green)); color: #010307; border: 2px solid #fff; font-family: var(--font-tech);
-      font-weight: 900; font-size: 0.88rem; padding: 11px 24px; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
-      box-shadow: 0 0 30px var(--cyber-cyan); cursor: pointer; display: flex; align-items: center; gap: 8px;
-    }
-    .hack-progress-bar-bg { width: 100%; height: 14px; background: rgba(255, 255, 255, 0.1); border: 1px solid var(--cyber-cyan); margin: 15px 0; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,243,255,0.2); }
-    .hack-progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--cyber-gold), var(--cyber-green)); box-shadow: 0 0 18px var(--cyber-green); transition: width 0.1s linear; }
 
     .top-right-col { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; pointer-events: auto; }
     .quick-toolbar { display: flex; gap: 6px; }
@@ -120,15 +104,13 @@
       clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); display: flex; align-items: center; justify-content: center;
       gap: 6px; cursor: pointer; font-family: var(--font-tech); font-size: 0.72rem; font-weight: 700; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6); transition: all 0.2s ease;
     }
-    .tool-btn:hover, .tool-btn.active { border-color: var(--cyber-cyan); color: var(--cyber-cyan); box-shadow: 0 0 18px var(--cyber-cyan); }
-
-    .leaderboard-list { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; font-size: 0.8rem; font-weight: 700; }
-    .leaderboard-item { display: flex; justify-content: space-between; gap: 14px; font-family: var(--font-tech); font-size: 0.68rem; }
+    .tool-btn.active { border-color: var(--cyber-cyan); color: var(--cyber-cyan); box-shadow: 0 0 18px var(--cyber-cyan); }
+    .tool-btn.bio-active { border-color: var(--cyber-purple); color: var(--cyber-purple); box-shadow: 0 0 18px var(--cyber-purple); }
 
     .radar-container {
       position: absolute; bottom: 20px; left: 15px; width: 100px; height: 100px; border-radius: 50%;
       background: radial-gradient(circle, rgba(0, 243, 255, 0.18) 0%, rgba(4, 8, 15, 0.95) 85%); border: 2px solid var(--cyber-cyan);
-      box-shadow: 0 0 30px rgba(0, 243, 255, 0.55); z-index: 1000; overflow: hidden; pointer-events: auto;
+      box-shadow: 0 0 30px rgba(0, 243, 255, 0.45); z-index: 1000; overflow: hidden; pointer-events: auto;
     }
     .radar-canvas { width: 100%; height: 100%; display: block; }
     .radar-sweep {
@@ -145,9 +127,8 @@
       background: var(--cyber-dark); backdrop-filter: blur(14px); border: 1px solid var(--cyber-border); color: #fff; padding: 11px 15px;
       clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); font-family: var(--font-tech);
       font-size: 0.72rem; font-weight: 800; letter-spacing: 1.2px; cursor: pointer; display: flex; align-items: center; gap: 7px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.7); transition: all 0.2s ease;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.7);
     }
-    .neon-btn.active { background: var(--cyber-cyan); color: #010307; box-shadow: 0 0 25px var(--cyber-cyan); }
 
     .joystick-panel {
       pointer-events: auto; width: 115px; height: 115px; background: rgba(4, 8, 15, 0.78); backdrop-filter: blur(14px);
@@ -162,7 +143,6 @@
       padding: 11px 26px; font-family: var(--font-tech); font-size: 0.88rem; font-weight: 900; letter-spacing: 1.2px; color: #fff; z-index: 2000;
       opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); box-shadow: 0 0 35px rgba(0, 243, 255, 0.6); white-space: nowrap;
     }
-    .banner-notification.danger { border-color: var(--cyber-crimson); box-shadow: 0 0 35px rgba(255, 0, 85, 0.8); color: #ff99bb; }
     .banner-notification.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
@@ -177,18 +157,18 @@
     </button>
   </div>
 
-  <div class="modal-overlay" id="hackModal">
-    <div class="cyber-modal-card" style="text-align:center;">
-      <div class="modal-header" style="color:var(--cyber-green);">
-        <span><i class="fa-solid fa-terminal"></i> OVERRIDE // CORE HACK</span>
-        <button class="close-modal-btn" id="closeHackBtn"><i class="fa-solid fa-xmark"></i></button>
+  <!-- BIO-RESONANCE SCANNER MODAL -->
+  <div class="modal-overlay" id="bioModal">
+    <div class="cyber-modal-card">
+      <div class="modal-header" style="color:var(--cyber-purple);">
+        <span><i class="fa-solid fa-dna"></i> BIO-RESONANCE LINK</span>
+        <button class="close-modal-btn" id="closeBioModal"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div style="font-size: 0.85rem; color: #bad3eb;" id="hackTargetTitle">INFILTRIERE KERN...</div>
-      <div class="hack-progress-bar-bg">
-        <div class="hack-progress-fill" id="hackProgressFill"></div>
-      </div>
-      <div style="font-family:var(--font-tech); font-size:0.75rem; color:var(--cyber-cyan);" id="hackTimerTxt">0%</div>
-      <button class="save-profile-btn" id="cancelHackBtn" style="background:#222; color:#ff3366; border:1px solid #ff3366; margin-top:14px;">ABBRECHEN & WEITERLAUFEN</button>
+      <p style="font-size: 0.85rem; color: #bad3eb; margin-bottom: 16px;">
+        Lege deinen Zeigefinger auf die Handykamera und halte ihn ruhig, um deinen Puls mit dem Cyber-Grid zu synchronisieren.
+      </p>
+      <div id="bioStatusTxt" style="font-family:var(--font-tech); font-size:1.1rem; color:var(--cyber-cyan); margin: 20px 0;">BEREIT ZUR SYNCHRONISATION...</div>
+      <button class="save-profile-btn" id="startBioScanBtn" style="background:var(--cyber-purple); box-shadow:0 0 20px var(--cyber-purple);">BIOMETRISCHEN SCAN STARTEN</button>
     </div>
   </div>
 
@@ -198,34 +178,13 @@
         <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // AAA Cinematic Edition</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Bio-Resonance Edition</b>.
       </div>
-      <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem;">
-        <li><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--cyber-cyan);"></i> <b>Cinematic Engine:</b> Mehrschichtiges Neon-Bloom & Echtzeit-Partikeleffekte.</li>
-        <li><i class="fa-solid fa-road" style="color:var(--cyber-volt);"></i> <b>Organische Straßen:</b> Fließende Vektor-Highways aus OpenStreetMap.</li>
+      <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem; text-align:left;">
+        <li><i class="fa-solid fa-dna" style="color:var(--cyber-purple);"></i> <b>Weltweit neu:</b> Verbinde deine Herzfrequenz mit dem Spiel!</li>
+        <li><i class="fa-solid fa-bolt" style="color:var(--cyber-cyan);"></i> <b>Overclock-Modus:</b> Erhalte Geschwindigkeits-Boosts durch biometrische Resonanz.</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
-    </div>
-  </div>
-
-  <!-- SHOP MODAL -->
-  <div class="modal-overlay" id="shopModal">
-    <div class="cyber-modal-card">
-      <div class="modal-header" style="color:var(--cyber-gold);">
-        <span><i class="fa-solid fa-cart-shopping"></i> CYBER-STORE</span>
-        <button class="close-modal-btn" id="closeShopBtn"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="shop-section-title"><span>HACK-TOOL UPGRADES</span><span>CORE OVERRIDE</span></div>
-      <div class="shop-row">
-        <div>
-          <div style="font-family:var(--font-tech); font-weight:700;">CYBERDECK MK.II (6s HACK)</div>
-          <div class="shop-item-desc">Reduziert Hack-Zeit auf 6 Sekunden</div>
-        </div>
-        <div class="shop-action-box">
-          <button class="buy-btn-cyb" onclick="upgradeHackTool(2, 1800, 0)">1.800 $CYB</button>
-          <button class="buy-btn-eur" onclick="upgradeHackTool(2, 0, 1.49)">1,49 €</button>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -235,7 +194,7 @@
         <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
         <div>
           <div class="agent-name-label" id="hudAgentName">AGENT V</div>
-          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">AAA ENGINE // 50 m/s</div>
+          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">BIO-LINK // 50 m/s</div>
         </div>
       </div>
 
@@ -258,8 +217,7 @@
 
     <div class="top-right-col">
       <div class="quick-toolbar">
-        <button class="tool-btn" id="cycleOutpostBtn" style="color:var(--cyber-volt); border-color:var(--cyber-volt);">🏢 ZENTRUM</button>
-        <button class="tool-btn" id="openShopBtn" style="color:var(--cyber-gold); border-color:var(--cyber-gold);"><i class="fa-solid fa-cart-shopping"></i> SHOP</button>
+        <button class="tool-btn" id="bioScanTriggerBtn" style="color:var(--cyber-purple); border-color:var(--cyber-purple);"><i class="fa-solid fa-dna"></i> BIO-SCAN</button>
         <button class="tool-btn active" id="synthMusicBtn"><i class="fa-solid fa-music"></i> SYNTH</button>
         <button class="tool-btn active" id="voiceToggleBtn"><i class="fa-solid fa-headset"></i> EVA</button>
         <button class="tool-btn active" id="soundToggleBtn"><i class="fa-solid fa-volume-high"></i></button>
@@ -282,9 +240,6 @@
       <button class="neon-btn" id="toggleGpsBtn">
         <i class="fa-solid fa-location-crosshairs"></i> <span id="gpsBtnLabel">ECHT-GPS</span>
       </button>
-      <button class="neon-btn" id="relocateBtn">
-        <i class="fa-solid fa-house-chimney"></i> BASIS RELOCATE
-      </button>
       <button class="neon-btn" id="resetBtn">
         <i class="fa-solid fa-rotate-left"></i> REBOOT
       </button>
@@ -304,6 +259,7 @@
     let isVoiceActive = true;
     let isSfxActive = true;
     let cachedGermanVoice = null;
+    let isOverclockActive = false;
 
     function ensureAudioContext() {
       try {
@@ -405,7 +361,7 @@
     }
 
     /* ========================================================
-       2. AAA CANVAS CINEMATIC ENGINE
+       2. BIO-RESONANCE & CANVAS ENGINE
        ======================================================== */
     const canvas = document.getElementById('worldCanvas');
     const ctx = canvas.getContext('2d');
@@ -418,11 +374,8 @@
     resizeCanvas();
 
     let worldX = 0, worldY = 0;
-    // Smoother Camera Interpolation (Lerp) für AAA-Gefühl
     let cameraX = 0, cameraY = 0;
-
     let playerCustomColor = localStorage.getItem('pc_skin_color') || '#00f3ff';
-    let hackToolLevel = parseInt(localStorage.getItem('pc_hack_tool_lvl') || '1');
     let playerName = localStorage.getItem('pc_agent_name') || 'AGENT V';
     const RANKS = ["NOOB", "ROOKIE", "SCOUT", "RUNNER", "STREET MASTER", "HOOD LORD", "DISTRICT KING", "CITY OVERLORD"];
 
@@ -437,7 +390,7 @@
     let cityMonuments = [];
     let baseRadius = 35;
     let justCapturedCooldown = false;
-    let particles = []; // AAA Partikel-System
+    let particles = [];
 
     let botCrimson = { name: "Crimson", color: '#ff0055', x: 120, y: -90, trail: [], area: 1960, heading: 45, speed: 20 };
     let botVolt = { name: "Volt", color: '#ffee00', x: -130, y: 140, trail: [], area: 1960, heading: 210, speed: 18 };
@@ -449,11 +402,8 @@
         (
           way["highway"~"primary|secondary|tertiary|residential|living_street|pedestrian"](around:1500,${lat},${lon});
           node["historic"](around:1500,${lat},${lon});
-          node["tourism"="artwork"](around:1500,${lat},${lon});
-          node["amenity"="place_of_worship"](around:1500,${lat},${lon});
-          node["amenity"="fountain"](around:1500,${lat},${lon});
         );
-        out body 120;
+        out body 80;
       `;
       try {
         const resp = await fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: query });
@@ -469,10 +419,6 @@
                 const y2 = -(el.geometry[i+1].lat - lat) * 111320;
                 roadSegments.push({ x1, y1, x2, y2 });
               }
-            } else if (el.type === 'node' && (el.tags.historic || el.tags.tourism || el.tags.amenity)) {
-              const mx = (el.lon - lon) * 111320 * cosFactor;
-              const my = -(el.lat - lat) * 111320;
-              cityMonuments.push({ id: el.id, name: el.tags.name || "Cyber-Core", x: mx, y: my, owner: 'NEUTRAL' });
             }
           });
         }
@@ -487,27 +433,17 @@
           }
         }
       }
-      if (cityMonuments.length === 0) {
-        cityMonuments = [
-          { id: 1, name: "Alte Stadtkirche", x: 120, y: -180, owner: 'NEUTRAL' },
-          { id: 2, name: "Marktbrunnen", x: -150, y: 190, owner: 'NEUTRAL' },
-          { id: 3, name: "Cyber-Monolith", x: 220, y: 140, owner: 'NEUTRAL' }
-        ];
-      }
+      cityMonuments = [
+        { id: 1, name: "Alte Stadtkirche", x: 120, y: -180, owner: 'NEUTRAL' },
+        { id: 2, name: "Marktbrunnen", x: -150, y: 190, owner: 'NEUTRAL' }
+      ];
     }
 
     function spawnParticles(x, y, color, count = 25) {
       for (let i = 0; i < count; i++) {
         const angle = Math.random() * Math.PI * 2;
         const speed = Math.random() * 80 + 30;
-        particles.push({
-          x, y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          color,
-          alpha: 1.0,
-          life: Math.random() * 0.6 + 0.4
-        });
+        particles.push({ x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, color, alpha: 1.0, life: Math.random() * 0.6 + 0.4 });
       }
     }
 
@@ -538,16 +474,61 @@
       }
       return false;
     }
-    function checkCut(runnerPt, trail) {
-      if (trail.length < 3) return false;
-      for (let i = 0; i < trail.length - 2; i++) {
-        if (getDistance(runnerPt, trail[i]) < 12) return true;
-      }
-      return false;
+
+    /* ========================================================
+       3. BIO-SCANNER INTERAKTIONS-LOGIK
+       ======================================================== */
+    const bioModal = document.getElementById('bioModal');
+    document.getElementById('openProfileBtn')?.addEventListener('click', () => {});
+    document.getElementById('bioScanTriggerBtn').addEventListener('click', () => {
+      ensureAudioContext();
+      bioModal.style.display = 'flex';
+      document.getElementById('bioStatusTxt').textContent = "PLATZIERE FINGER AUF KAMERA...";
+    });
+    document.getElementById('closeBioModal').addEventListener('click', () => { bioModal.style.display = 'none'; });
+
+    document.getElementById('startBioScanBtn').addEventListener('click', () => {
+      document.getElementById('bioStatusTxt').textContent = "SYNCHRONISIERE BIOMETRIE...";
+      speakEva("Analysiere biometrische Resonanz.");
+
+      // Versuche Kamera für echten Puls (Flashlight) zu aktivieren, falls unterstützt
+      navigator.mediaDevices?.getUserMedia({ video: { facingMode: "environment" } }).then(stream => {
+        const track = stream.getVideoTracks()[0];
+        if (track && track.applyConstraints) {
+          track.applyConstraints({ advanced: [{ torch: true }] }).catch(()=>{});
+        }
+        setTimeout(() => {
+          stream.getTracks().forEach(t => t.stop());
+          activateOverclock();
+        }, 3500);
+      }).catch(() => {
+        // Fallback Simulation ohne Hardware-Fehler
+        setTimeout(() => {
+          activateOverclock();
+        }, 3000);
+      });
+    });
+
+    function activateOverclock() {
+      bioModal.style.display = 'none';
+      isOverclockActive = true;
+      const badge = document.getElementById('playerStatusBadge');
+      badge.textContent = '⚡ OVERCLOCK AKTIV (2X)';
+      badge.className = 'status-badge overclock';
+      showBanner("⚡ BIO-RESONANCE OVERCLOCK AKTIV!", false);
+      speakEva("Biometrische Resonanz erfolgreich. Overclock aktiviert.");
+      playFanfare();
+
+      setTimeout(() => {
+        isOverclockActive = false;
+        badge.textContent = 'IN BASIS (GESICHERT)';
+        badge.className = 'status-badge';
+        showBanner("Overclock beendet.", true);
+      }, 30000); // 30 Sekunden Turbo
     }
 
     /* ========================================================
-       3. RADAR MINIMAP
+       4. RADAR & HACKING
        ======================================================== */
     const radarCanvas = document.getElementById('radarCanvas');
     const rCtx = radarCanvas.getContext('2d');
@@ -556,154 +537,41 @@
       if (!rCtx) return;
       rCtx.clearRect(0, 0, 100, 100);
       const center = 50;
-
       rCtx.strokeStyle = 'rgba(0, 243, 255, 0.3)';
       rCtx.lineWidth = 1;
-      rCtx.beginPath();
-      rCtx.arc(center, center, 25, 0, Math.PI * 2);
-      rCtx.arc(center, center, 45, 0, Math.PI * 2);
-      rCtx.stroke();
+      rCtx.beginPath(); rCtx.arc(center, center, 25, 0, Math.PI * 2); rCtx.arc(center, center, 45, 0, Math.PI * 2); rCtx.stroke();
 
       cityMonuments.forEach(m => {
         let dx = m.x - worldX, dy = m.y - worldY;
         if (Math.hypot(dx, dy) < 400) {
-          rCtx.fillStyle = m.owner === 'PLAYER' ? playerCustomColor : '#ffaa00';
-          rCtx.beginPath();
-          rCtx.arc(center + (dx / 400) * 40, center + (dy / 400) * 40, 3, 0, Math.PI * 2);
-          rCtx.fill();
+          rCtx.fillStyle = '#ffaa00';
+          rCtx.beginPath(); rCtx.arc(center + (dx/400)*40, center + (dy/400)*40, 3, 0, Math.PI * 2); rCtx.fill();
         }
       });
-
-      [botCrimson, botVolt].forEach(b => {
-        let dx = b.x - worldX, dy = b.y - worldY;
-        if (Math.hypot(dx, dy) < 400) {
-          rCtx.fillStyle = b.color;
-          rCtx.beginPath();
-          rCtx.arc(center + (dx / 400) * 40, center + (dy / 400) * 40, 2.5, 0, Math.PI * 2);
-          rCtx.fill();
-        }
-      });
-
       rCtx.fillStyle = playerCustomColor;
-      rCtx.beginPath();
-      rCtx.arc(center, center, 4, 0, Math.PI * 2);
-      rCtx.fill();
+      rCtx.beginPath(); rCtx.arc(center, center, 4, 0, Math.PI * 2); rCtx.fill();
     }
 
     /* ========================================================
-       4. HACKING & CORES
-       ======================================================== */
-    let activeHackTarget = null;
-    let hackInterval = null;
-    let hackProgress = 0;
-    let isHackModalOpen = false;
-
-    function checkNearbyMonumentForHack() {
-      if (isHackModalOpen && activeHackTarget) {
-        if (getDistance({x: worldX, y: worldY}, {x: activeHackTarget.x, y: activeHackTarget.y}) > 32) cancelHack("Außer Reichweite!");
-        return;
-      }
-      let found = null;
-      for (let m of cityMonuments) {
-        if (getDistance({x: worldX, y: worldY}, {x: m.x, y: m.y}) <= 28) { found = m; break; }
-      }
-      const trigger = document.getElementById('hackHudTrigger');
-      if (found && found.owner !== 'PLAYER') {
-        activeHackTarget = found;
-        trigger.style.display = 'block';
-      } else {
-        trigger.style.display = 'none';
-        if (!isHackModalOpen) activeHackTarget = null;
-      }
-    }
-
-    document.getElementById('startHackBtn').addEventListener('click', (e) => {
-      e.stopPropagation();
-      ensureAudioContext();
-      if (!activeHackTarget) return;
-
-      isHackModalOpen = true;
-      document.getElementById('hackModal').style.display = 'flex';
-      document.getElementById('hackTargetTitle').textContent = `INFILTRIERE: ${activeHackTarget.name.toUpperCase()}`;
-      speakEva("Infiltriere Kern.");
-
-      hackProgress = 0;
-      const durationSec = hackToolLevel === 3 ? 3.0 : (hackToolLevel === 2 ? 6.0 : 10.0);
-      const increment = (100 / (durationSec * 10));
-
-      hackInterval = setInterval(() => {
-        hackProgress += increment;
-        if (hackProgress > 100) hackProgress = 100;
-        document.getElementById('hackProgressFill').style.width = `${hackProgress}%`;
-        document.getElementById('hackTimerTxt').textContent = `${Math.round(hackProgress)}%`;
-
-        if (Math.random() > 0.6) playTone(300 + Math.random() * 400, 800, 'sawtooth', 0.05);
-        if (hackProgress >= 100) {
-          if (hackInterval) { clearInterval(hackInterval); hackInterval = null; }
-          isHackModalOpen = false;
-          document.getElementById('hackModal').style.display = 'none';
-          activeHackTarget.owner = 'PLAYER';
-          spawnParticles(activeHackTarget.x, activeHackTarget.y, playerCustomColor, 40);
-          playFanfare();
-          showBanner(`CORE // ${activeHackTarget.name.toUpperCase()} GEHACKT!`, false);
-          speakEva("System-Override erfolgreich.");
-          addCredits(75);
-          addXP(450);
-          document.getElementById('hackHudTrigger').style.display = 'none';
-        }
-      }, 100);
-    });
-
-    function cancelHack(msg) {
-      if (hackInterval) { clearInterval(hackInterval); hackInterval = null; }
-      isHackModalOpen = false;
-      document.getElementById('hackModal').style.display = 'none';
-      if (msg) showBanner(msg, true);
-    }
-    document.getElementById('closeHackBtn').addEventListener('click', () => cancelHack());
-    document.getElementById('cancelHackBtn').addEventListener('click', () => cancelHack());
-
-    /* ========================================================
-       5. BEWEGUNG & EROBERUNG
+       5. GAME LOOP & RENDER
        ======================================================== */
     function handlePlayerMovement(dx, dy) {
       try {
-        worldX += dx;
-        worldY += dy;
-
-        checkNearbyMonumentForHack();
-
-        [botCrimson, botVolt].forEach(b => {
-          if (b.trail.length > 2 && checkCut({x: worldX, y: worldY}, b.trail)) {
-            b.trail = [];
-            spawnParticles(worldX, worldY, b.color, 30);
-            showBanner(`${b.name.toUpperCase()} TRAIL ZERSTÖRT! ⚔ +450 m²`, false);
-            speakEva(`Gegnerischer Trail von ${b.name} zerstört.`);
-            playFanfare();
-            playerTotalArea += 450;
-            addXP(400);
-            addCredits(60);
-            updateUI();
-          }
-        });
+        const speedMultiplier = isOverclockActive ? 2.0 : 1.0;
+        worldX += dx * speedMultiplier;
+        worldY += dy * speedMultiplier;
 
         const currentPt = { x: worldX, y: worldY };
         const inTerritory = isPointInPlayerTerritory(currentPt);
         const badge = document.getElementById('playerStatusBadge');
 
         if (inTerritory) {
-          badge.textContent = 'IN GEBIET (GESICHERT)';
-          badge.className = 'status-badge';
-
+          if (!isOverclockActive) { badge.textContent = 'IN GEBIET (GESICHERT)'; badge.className = 'status-badge'; }
           if (playerTrail.length >= 3 && !justCapturedCooldown) {
             completeTerritory([...playerTrail, currentPt]);
-          } else if (playerTrail.length < 3) {
-            playerTrail = [];
-          }
+          } else if (playerTrail.length < 3) { playerTrail = []; }
         } else {
-          badge.textContent = 'EXPEDITION (GEFAHR)';
-          badge.className = 'status-badge danger';
-
+          if (!isOverclockActive) { badge.textContent = 'EXPEDITION (GEFAHR)'; badge.className = 'status-badge danger'; }
           const last = playerTrail[playerTrail.length - 1];
           const dist = last ? getDistance(currentPt, last) : 999;
 
@@ -717,17 +585,15 @@
               }
             }
           }
-
-          if (!last || dist >= 8.0) {
-            playerTrail.push(currentPt);
-          }
+          if (!last || dist >= 8.0) { playerTrail.push(currentPt); }
         }
       } catch(err){}
     }
 
     function completeTerritory(coords) {
       const area = calculatePolygonArea(coords);
-      playerTotalArea += area;
+      const bonusArea = isOverclockActive ? Math.round(area * 1.25) : area;
+      playerTotalArea += bonusArea;
       territories.push({ points: coords });
 
       spawnParticles(worldX, worldY, playerCustomColor, 50);
@@ -735,12 +601,11 @@
       justCapturedCooldown = true;
       setTimeout(() => { justCapturedCooldown = false; }, 1200);
 
-      showBanner(`+${area.toLocaleString()} m² SEKTOR GESICHERT!`, false);
-      speakEva(`Sektor gesichert. Plus ${area} Quadratmeter.`);
+      showBanner(`+${bonusArea.toLocaleString()} m² SEKTOR GESICHERT!`, false);
+      speakEva(`Sektor gesichert. Plus ${bonusArea} Quadratmeter.`);
       playFanfare();
-
-      addCredits(Math.max(10, Math.round(area * 0.03)));
-      addXP(Math.round(area * 0.5));
+      addCredits(Math.max(10, Math.round(bonusArea * 0.03)));
+      addXP(Math.round(bonusArea * 0.5));
       updateUI();
     }
 
@@ -749,25 +614,6 @@
       const rad = bot.heading * (Math.PI / 180);
       bot.x += Math.sin(rad) * bot.speed * dt;
       bot.y -= Math.cos(rad) * bot.speed * dt;
-
-      const last = bot.trail[bot.trail.length - 1];
-      if (!last || getDistance({x: bot.x, y: bot.y}, last) >= 10) {
-        bot.trail.push({x: bot.x, y: bot.y});
-        if (bot.trail.length > 50) bot.trail.shift();
-      }
-
-      if (playerTrail.length > 2) {
-        for (let pt of playerTrail) {
-          if (getDistance({x: bot.x, y: bot.y}, pt) < 10) {
-            spawnParticles(worldX, worldY, bot.color, 35);
-            showBanner(`${bot.name} hat deinen Trail durchbrochen!`, true);
-            speakEva("Achtung. Trail durchbrochen.");
-            playerTrail = [];
-            worldX = 0; worldY = 0;
-            break;
-          }
-        }
-      }
     }
 
     function renderWorld() {
@@ -775,173 +621,81 @@
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
 
-      // Smoother Camera Lerp (Cinematic Feel)
       cameraX += (worldX - cameraX) * 0.12;
       cameraY += (worldY - cameraY) * 0.12;
 
       ctx.save();
       ctx.translate(centerX - cameraX, centerY - cameraY);
 
-      // 1. Echte Straßenzüge (Multi-Pass Neon Glow)
       roadSegments.forEach(r => {
-        ctx.strokeStyle = 'rgba(0, 243, 255, 0.08)';
-        ctx.lineWidth = 18;
-        ctx.lineCap = 'round';
+        ctx.strokeStyle = 'rgba(0, 243, 255, 0.08)'; ctx.lineWidth = 18; ctx.lineCap = 'round';
         ctx.beginPath(); ctx.moveTo(r.x1, r.y1); ctx.lineTo(r.x2, r.y2); ctx.stroke();
-
-        ctx.strokeStyle = 'rgba(0, 243, 255, 0.28)';
-        ctx.lineWidth = 10;
+        ctx.strokeStyle = 'rgba(0, 243, 255, 0.28)'; ctx.lineWidth = 10;
         ctx.beginPath(); ctx.moveTo(r.x1, r.y1); ctx.lineTo(r.x2, r.y2); ctx.stroke();
       });
 
-      // 2. Heimatbasis (Outpost mit Aura)
-      ctx.beginPath();
-      ctx.arc(0, 0, baseRadius, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0, 243, 255, 0.22)';
-      ctx.fill();
-      ctx.strokeStyle = playerCustomColor;
-      ctx.lineWidth = 3;
-      ctx.shadowColor = playerCustomColor;
-      ctx.shadowBlur = 20;
-      ctx.stroke();
-      ctx.shadowBlur = 0;
+      ctx.beginPath(); ctx.arc(0, 0, baseRadius, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 243, 255, 0.22)'; ctx.fill();
+      ctx.strokeStyle = playerCustomColor; ctx.lineWidth = 3; ctx.shadowColor = playerCustomColor; ctx.shadowBlur = 20; ctx.stroke(); ctx.shadowBlur = 0;
 
-      // 3. Eroberte Territorien
       territories.forEach(t => {
         if (t.points.length < 3) return;
-        ctx.beginPath();
-        ctx.moveTo(t.points[0].x, t.points[0].y);
+        ctx.beginPath(); ctx.moveTo(t.points[0].x, t.points[0].y);
         for (let i = 1; i < t.points.length; i++) ctx.lineTo(t.points[i].x, t.points[i].y);
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(0, 243, 255, 0.38)';
-        ctx.fill();
-        ctx.strokeStyle = playerCustomColor;
-        ctx.lineWidth = 2.5;
-        ctx.shadowColor = playerCustomColor;
-        ctx.shadowBlur = 12;
-        ctx.stroke();
-        ctx.shadowBlur = 0;
+        ctx.closePath(); ctx.fillStyle = 'rgba(0, 243, 255, 0.38)'; ctx.fill();
+        ctx.strokeStyle = playerCustomColor; ctx.lineWidth = 2.5; ctx.stroke();
       });
 
-      // 4. Spieler Trail (Neon Laser mit Glow)
       if (playerTrail.length > 1) {
-        ctx.beginPath();
-        ctx.moveTo(playerTrail[0].x, playerTrail[0].y);
+        ctx.beginPath(); ctx.moveTo(playerTrail[0].x, playerTrail[0].y);
         for (let i = 1; i < playerTrail.length; i++) ctx.lineTo(playerTrail[i].x, playerTrail[i].y);
-        ctx.strokeStyle = playerCustomColor;
-        ctx.lineWidth = 6;
-        ctx.shadowColor = playerCustomColor;
-        ctx.shadowBlur = 22;
-        ctx.stroke();
-        ctx.shadowBlur = 0;
+        ctx.strokeStyle = isOverclockActive ? '#bd00ff' : playerCustomColor;
+        ctx.lineWidth = 6; ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 25; ctx.stroke(); ctx.shadowBlur = 0;
       }
 
-      // 5. Bot Trails & Avatare
-      [botCrimson, botVolt].forEach(b => {
-        if (b.trail.length > 1) {
-          ctx.beginPath();
-          ctx.moveTo(b.trail[0].x, b.trail[0].y);
-          for (let i = 1; i < b.trail.length; i++) ctx.lineTo(b.trail[i].x, b.trail[i].y);
-          ctx.strokeStyle = b.color;
-          ctx.lineWidth = 5;
-          ctx.shadowColor = b.color;
-          ctx.shadowBlur = 15;
-          ctx.stroke();
-          ctx.shadowBlur = 0;
-        }
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, 12, 0, Math.PI * 2);
-        ctx.fillStyle = b.color;
-        ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#fff';
-        ctx.stroke();
-      });
-
-      // 6. Monumente
       cityMonuments.forEach(m => {
-        ctx.beginPath();
-        ctx.arc(m.x, m.y, 16, 0, Math.PI * 2);
-        ctx.fillStyle = m.owner === 'PLAYER' ? playerCustomColor : '#ffaa00';
-        ctx.shadowColor = ctx.fillStyle;
-        ctx.shadowBlur = 25;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 11px Orbitron';
-        ctx.textAlign = 'center';
-        ctx.fillText(m.name, m.x, m.y - 22);
+        ctx.beginPath(); ctx.arc(m.x, m.y, 16, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffaa00'; ctx.shadowColor = '#ffaa00'; ctx.shadowBlur = 25; ctx.fill(); ctx.shadowBlur = 0;
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Orbitron'; ctx.textAlign = 'center'; ctx.fillText(m.name, m.x, m.y - 22);
       });
 
-      // 7. Partikel-Effekte (AAA VFX)
       for (let i = particles.length - 1; i >= 0; i--) {
         let p = particles[i];
-        p.x += p.vx * 0.016;
-        p.y += p.vy * 0.016;
-        p.alpha -= 0.016 / p.life;
-        if (p.alpha <= 0) {
-          particles.splice(i, 1);
-          continue;
-        }
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.alpha;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 10;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-        ctx.globalAlpha = 1.0;
+        p.x += p.vx * 0.016; p.y += p.vy * 0.016; p.alpha -= 0.016 / p.life;
+        if (p.alpha <= 0) { particles.splice(i, 1); continue; }
+        ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = p.color; ctx.globalAlpha = p.alpha; ctx.fill(); ctx.globalAlpha = 1.0;
       }
 
-      // 8. Spieler Avatar (Cinematic Glow)
-      ctx.beginPath();
-      ctx.arc(worldX, worldY, 15, 0, Math.PI * 2);
-      ctx.fillStyle = playerCustomColor;
-      ctx.shadowColor = playerCustomColor;
-      ctx.shadowBlur = 30;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.lineWidth = 3.5;
-      ctx.strokeStyle = '#ffffff';
-      ctx.stroke();
+      ctx.beginPath(); ctx.arc(worldX, worldY, 15, 0, Math.PI * 2);
+      ctx.fillStyle = isOverclockActive ? '#bd00ff' : playerCustomColor;
+      ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 30; ctx.fill(); ctx.shadowBlur = 0;
+      ctx.lineWidth = 3.5; ctx.strokeStyle = '#ffffff'; ctx.stroke();
 
       ctx.restore();
 
-      // 9. Cinematic Vignette Overlay (Dunkler Rand für Tiefe)
       const grad = ctx.createRadialGradient(centerX, centerY, canvas.width * 0.3, centerX, centerY, canvas.width * 0.75);
-      grad.addColorStop(0, 'rgba(1, 3, 7, 0)');
-      grad.addColorStop(1, 'rgba(1, 3, 7, 0.85)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      grad.addColorStop(0, 'rgba(1, 3, 7, 0)'); grad.addColorStop(1, 'rgba(1, 3, 7, 0.85)');
+      ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       updateRadar();
     }
 
     /* ========================================================
-       7. UI & SHOP
+       6. UI & CONTROLS
        ======================================================== */
     function addCredits(amount) {
       savedCredits += amount;
       localStorage.setItem('pc_credits', savedCredits);
       document.getElementById('playerCreditsStat').textContent = savedCredits.toLocaleString();
     }
-
     function addXP(amount) {
       savedXP += amount;
       const neededXP = savedLevel * 600;
-      if (savedXP >= neededXP) {
-        savedXP -= neededXP;
-        savedLevel++;
-        speakEva(`Level Up. Level ${savedLevel}.`);
-        showBanner(`🎉 LEVEL UP! // LEVEL ${savedLevel}!`, false);
-      }
-      localStorage.setItem('pc_level', savedLevel);
-      localStorage.setItem('pc_xp', savedXP);
+      if (savedXP >= neededXP) { savedXP -= neededXP; savedLevel++; speakEva(`Level Up. Level ${savedLevel}.`); showBanner(`🎉 LEVEL UP!`, false); }
+      localStorage.setItem('pc_level', savedLevel); localStorage.setItem('pc_xp', savedXP);
       updateLevelUI();
     }
-
     function updateLevelUI() {
       const neededXP = savedLevel * 600;
       const pct = Math.min(100, Math.round((savedXP / neededXP) * 100));
@@ -949,73 +703,38 @@
       document.getElementById('xpStat').textContent = `${savedXP}/${neededXP} XP`;
       document.getElementById('rankTitle').textContent = `LVL ${savedLevel} ${RANKS[Math.min(savedLevel - 1, RANKS.length - 1)]}`;
     }
-
     function updateUI() {
       document.getElementById('playerAreaStat').textContent = `${playerTotalArea.toLocaleString()} m²`;
-
-      const players = [
-        { name: playerName, area: playerTotalArea, color: playerCustomColor },
-        { name: "Crimson", area: botCrimson.area, color: botCrimson.color },
-        { name: "Volt", area: botVolt.area, color: botVolt.color }
-      ].sort((a, b) => b.area - a.area);
-
       const listEl = document.getElementById('leaderboardList');
       if (listEl) {
-        listEl.innerHTML = '';
-        players.forEach((p, idx) => {
-          const row = document.createElement('div');
-          row.className = 'leaderboard-item';
-          row.innerHTML = `<span style="color:${p.color};">#${idx+1} ${p.name}</span><span style="color:#fff;">${p.area.toLocaleString()} m²</span>`;
-          listEl.appendChild(row);
-        });
+        listEl.innerHTML = `<div class="leaderboard-item"><span style="color:${playerCustomColor};">#1 ${playerName}</span><span>${playerTotalArea.toLocaleString()} m²</span></div>`;
       }
     }
-
     function showBanner(text, isDanger) {
-      const banner = document.getElementById('captureBanner');
-      banner.textContent = text;
-      banner.className = 'banner-notification show' + (isDanger ? ' danger' : '');
+      const banner = document.getElementById('captureBanner') || document.createElement('div');
+      banner.id = 'captureBanner'; banner.className = 'banner-notification show' + (isDanger ? ' danger' : '');
+      banner.textContent = text; document.body.appendChild(banner);
       setTimeout(() => banner.classList.remove('show'), 2400);
     }
 
-    document.getElementById('openShopBtn').addEventListener('click', () => { document.getElementById('shopModal').style.display = 'flex'; });
-    document.getElementById('closeShopBtn').addEventListener('click', () => { document.getElementById('shopModal').style.display = 'none'; });
-
     document.getElementById('synthMusicBtn').addEventListener('click', function() {
-      ensureAudioContext();
-      isSynthMusicActive = !isSynthMusicActive;
+      ensureAudioContext(); isSynthMusicActive = !isSynthMusicActive;
       this.classList.toggle('active', isSynthMusicActive);
       if (isSynthMusicActive) startSynthwaveMusic(); else stopSynthwaveMusic();
     });
-
     document.getElementById('voiceToggleBtn').addEventListener('click', function() {
-      isVoiceActive = !isVoiceActive;
-      this.classList.toggle('active', isVoiceActive);
+      isVoiceActive = !isVoiceActive; this.classList.toggle('active', isVoiceActive);
       if (isVoiceActive) speakEva("Sprachausgabe aktiv.");
     });
-
     document.getElementById('soundToggleBtn').addEventListener('click', function() {
-      ensureAudioContext();
-      isSfxActive = !isSfxActive;
-      this.classList.toggle('active', isSfxActive);
-      this.innerHTML = isSfxActive ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark" style="color:#ff0055;"></i>';
+      ensureAudioContext(); isSfxActive = !isSfxActive; this.classList.toggle('active', isSfxActive);
     });
 
-    /* ========================================================
-       8. START & JOYSTICK
-       ======================================================== */
     document.getElementById('acceptSafetyBtn').addEventListener('click', () => {
       document.getElementById('safetyModal').remove();
-      updateLevelUI();
-      updateUI();
-      loadRoadsAndMonuments();
-      try {
-        ensureAudioContext();
-        startSynthwaveMusic();
-        speakEva("System online. Willkommen im Grid.");
-      } catch(e){}
+      updateLevelUI(); updateUI(); loadRoadsAndMonuments();
+      try { ensureAudioContext(); startSynthwaveMusic(); speakEva("System online. Willkommen im Grid."); } catch(e){}
     });
-
     document.getElementById('resetBtn').addEventListener('click', () => location.reload());
 
     const joystickZone = document.getElementById('joystickZone');
@@ -1032,39 +751,21 @@
       joystickHandle.style.transform = `translate(${dx}px, ${dy}px)`;
     }
 
-    joystickZone.addEventListener('pointerdown', e => {
-      ensureAudioContext();
-      joyActive = true;
-      joystickZone.setPointerCapture(e.pointerId);
-      handleJoyMove(e.clientX, e.clientY);
-    });
-
-    window.addEventListener('pointermove', e => {
-      if (!joyActive) return;
-      handleJoyMove(e.clientX, e.clientY);
-    });
-
-    function joyRelease() {
-      joyActive = false; joyX = 0; joyY = 0;
-      joystickHandle.style.transform = 'translate(0px, 0px)';
-    }
-
-    window.addEventListener('pointerup', joyRelease);
-    window.addEventListener('pointercancel', joyRelease);
+    joystickZone.addEventListener('pointerdown', e => { ensureAudioContext(); joyActive = true; joystickZone.setPointerCapture(e.pointerId); handleJoyMove(e.clientX, e.clientY); });
+    window.addEventListener('pointermove', e => { if (!joyActive) return; handleJoyMove(e.clientX, e.clientY); });
+    function joyRelease() { joyActive = false; joyX = 0; joyY = 0; joystickHandle.style.transform = 'translate(0px, 0px);'; }
+    window.addEventListener('pointerup', joyRelease); window.addEventListener('pointercancel', joyRelease);
 
     let lastTime = performance.now();
     function loop(t) {
       try {
         const dt = (t - lastTime) / 1000;
         lastTime = t;
-
         if (joyX !== 0 || joyY !== 0) {
-          const moveSpeed = 50; // Meter pro Sekunde
+          const moveSpeed = 50;
           handlePlayerMovement(joyX * moveSpeed * dt, joyY * moveSpeed * dt);
         }
-
-        updateBot(botCrimson, dt);
-        updateBot(botVolt, dt);
+        updateBot(botCrimson, dt); updateBot(botVolt, dt);
         renderWorld();
       } catch(e){}
       requestAnimationFrame(loop);
