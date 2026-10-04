@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // NEON GRID - HIGH-SPEED TEST PHASE</title>
+  <title>PaperCity // NEON GRID - EXPEDITION SYSTEM</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#00f3ff" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
@@ -821,12 +821,12 @@
         <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Test-Phase (50 m/s & Cloud-Ready)</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Test-Phase (50 m/s & Loop-Fixed)</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem;">
         <li><i class="fa-solid fa-person-walking" style="color:var(--cyber-volt);"></i> Nutze nur öffentliche Straßen, Gehwege & Parks.</li>
         <li><i class="fa-solid fa-ban" style="color:var(--cyber-crimson);"></i> <b>Privatgelände, Firmengelände & Bahngleise sind TABUZONEN!</b></li>
-        <li><i class="fa-solid fa-cloud" style="color:var(--cyber-cyan);"></i> <b>LAZY-AUTH AKTIV:</b> Du spielst sofort als Gast. Cloud-Sync ist jederzeit im Profil möglich.</li>
+        <li><i class="fa-solid fa-draw-polygon" style="color:var(--cyber-cyan);"></i> <b>EXPEDITIONS-SYSTEM:</b> Dein ganzes Land ist sicher! Schleifen schließen am Rand deines Territoriums ab.</li>
         <li><i class="fa-solid fa-compass" style="color:var(--cyber-cyan);"></i> <b>Gyro-Sensoren:</b> Drehe dein Gerät für 360°-Targeting.</li>
         <li><i class="fa-solid fa-lock" style="color:var(--cyber-cyan);"></i> <b>Anti-Cheat:</b> Fake-GPS führt im Echtbetrieb zum Lock.</li>
         <li><i class="fa-solid fa-user-shield" style="color:var(--cyber-green);"></i> <b>DSGVO-Shield:</b> Deine exakte Privatadresse bleibt verschleiert.</li>
@@ -861,7 +861,6 @@
     </div>
   </div>
 
-  <!-- Profil & Cloud-Sync Terminal Modal -->
   <div class="modal-overlay" id="profileModal">
     <div class="cyber-modal-card">
       <div class="modal-header">
@@ -888,14 +887,13 @@
         <input type="text" id="agentTagInput" class="cyber-input" maxlength="20" placeholder="Cyber-Runner" />
       </div>
 
-      <!-- Cloud-Sync / Account Verknüpfung -->
       <div class="account-sync-card">
         <div style="font-family:var(--font-tech); font-size:0.75rem; color:var(--cyber-gold); display:flex; justify-content:space-between; align-items:center;">
           <span><i class="fa-solid fa-cloud-arrow-up"></i> CLOUD-SYNC (SUPABASE)</span>
           <span id="accountSyncStatus" class="cloud-status-badge">GAST</span>
         </div>
         <p style="font-size:0.72rem; color:#aaa;" id="syncDescText">
-          Verknüpfe dein Gast-Profil mit einer E-Mail-Adresse, um Fortschritte und Territorien dauerhaft in der Cloud zu sichern (+1.000 $CYB Bonus).
+          Verknüpfe dein Gast-Profil mit einer E-Mail-Adresse, um Fortschritte dauerhaft zu sichern (+1.000 $CYB Bonus).
         </p>
 
         <div id="authFieldsContainer" style="display:flex; flex-direction:column; gap:6px;">
@@ -937,7 +935,7 @@
       <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
         <div>
           <div style="font-family:var(--font-tech); font-weight:700;">BASIS-EXPANSION I</div>
-          <div style="font-size:0.75rem; color:#888;">Erhöht sicheren Basiskreis auf 35m</div>
+          <div style="font-size:0.75rem; color:#888;">Erhöht sicheren Basiskreis auf 45m</div>
         </div>
         <button class="tool-btn" id="buyBaseUpgradeBtn" style="color:var(--cyber-gold); border-color:var(--cyber-gold);">500 $CYB</button>
       </div>
@@ -969,7 +967,6 @@
     <span id="bannerText">SEKTOR GESICHERT!</span>
   </div>
 
-  <!-- Top HUD -->
   <div class="hud-top">
     <div class="cyber-panel">
       <div class="hud-profile-row" id="hudProfileTrigger" title="Agenten-Akte öffnen">
@@ -1179,6 +1176,12 @@
 
     let playerTotalArea = parseInt(localStorage.getItem('pc_total_area') || '1960');
     let baseCircleLayer = null;
+    let playerTerritoryPolygons = []; // Speichert alle geschlossenen Territorien als Koordinaten-Arrays
+
+    const savedPolygonsRaw = localStorage.getItem('pc_saved_polygons');
+    if (savedPolygonsRaw) {
+      try { playerTerritoryPolygons = JSON.parse(savedPolygonsRaw); } catch(e){}
+    }
 
     let botCrimson = {
       name: "Crimson", color: CRIMSON_COLOR, spawn: [playerSpawn[0] + 0.0018, playerSpawn[1] + 0.0022], pos: [playerSpawn[0] + 0.0018, playerSpawn[1] + 0.0022],
@@ -1197,7 +1200,38 @@
     let cachedRoadSegments = [];
 
     /* ========================================================
-       3. Cloud-Sync (Lazy Authentication Pipeline)
+       3. Geometrie-Helfer: Punkt-in-Polygon (Ray-Casting)
+       ======================================================== */
+    function isPointInPolygon(point, polygon) {
+      const lat = point[0], lng = point[1];
+      let inside = false;
+      for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const xi = polygon[i][0], yi = polygon[i][1];
+        const xj = polygon[j][0], yj = polygon[j][1];
+        const intersect = ((yi > lng) !== (yj > lng)) &&
+          (lat < (xj - xi) * (lng - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+      }
+      return inside;
+    }
+
+    // Prüft, ob ein Punkt in der unantastbaren Basis oder in einem eroberten Territorium liegt
+    function isPointInPlayerTerritory(point) {
+      // 1. Unantastbare Basis prüfen
+      if (getDistanceMeters(point, playerSpawn) <= (baseRadius + 4)) {
+        return true;
+      }
+      // 2. Alle eroberten Polygone prüfen
+      for (let i = 0; i < playerTerritoryPolygons.length; i++) {
+        if (isPointInPolygon(point, playerTerritoryPolygons[i])) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    /* ========================================================
+       4. Cloud-Sync
        ======================================================== */
     async function syncProfileToCloud() {
       if (!isSupabaseConfigured || !cloudUser) return;
@@ -1276,7 +1310,7 @@
     }
 
     /* ========================================================
-       4. Road Snapping Engine
+       5. Road Snapping Engine
        ======================================================== */
     async function fetchRoadNetwork(center) {
       cachedRoadSegments = [];
@@ -1352,7 +1386,7 @@
     }
 
     /* ========================================================
-       5. Audio, FX & Story-Share
+       6. Audio, FX & Story-Share
        ======================================================== */
     let audioCtx = null;
     function ensureAudioContext() {
@@ -1488,7 +1522,7 @@
 
       sCtx.fillStyle = '#799bbb';
       sCtx.font = '700 26px Orbitron';
-      sCtx.fillText('HIGH-SPEED TEST REPORT', 540, 200);
+      sCtx.fillText('HIGH-SPEED CLOUD REPORT', 540, 200);
 
       const avImg = new Image();
       avImg.onload = function() {
@@ -1593,7 +1627,7 @@
     });
 
     /* ========================================================
-       6. Profil UI & Synchronisation
+       7. Profil UI & Synchronisation
        ======================================================== */
     function syncProfileUI() {
       const hudAv = document.getElementById('hudAvatarImg');
@@ -1647,7 +1681,7 @@
           if (w > h) {
             if (w > maxDim) { h = Math.round(h * maxDim / w); w = maxDim; }
           } else {
-            if (h > maxDim) { w = Math.round(w * maxDim / h); h = maxDim; }
+            if (h > maxDim) { w = Math.round(h * maxDim / h); h = maxDim; }
           }
           canvas.width = w; canvas.height = h;
           const ctx = canvas.getContext('2d');
@@ -1690,7 +1724,7 @@
     document.getElementById('confirmLegalBtn').addEventListener('click', () => legalModal.style.display = 'none');
 
     /* ========================================================
-       7. Währung, Bounties & Snap Toggle
+       8. Währung, Bounties & Snap Toggle
        ======================================================== */
     function addCredits(amount) {
       savedCredits += amount;
@@ -1734,12 +1768,16 @@
       else { landEl.textContent = `${sessionLand.toLocaleString()}/2.000 m²`; }
 
       const botEl = document.getElementById('bountyBotTxt');
-      if (bBotClaimed) { botEl.textContent = "ABGESCHLOSSEN"; botEl.className = "bounty-done"; }
-      else { botEl.textContent = `${sessionBotKills}/1 Kill`; }
+      if (botEl) {
+        if (bBotClaimed) { botEl.textContent = "ABGESCHLOSSEN"; botEl.className = "bounty-done"; }
+        else { botEl.textContent = `${sessionBotKills}/1 Kill`; }
+      }
 
       const coreEl = document.getElementById('bountyCoreTxt');
-      if (bCoreClaimed) { coreEl.textContent = "ABGESCHLOSSEN"; coreEl.className = "bounty-done"; }
-      else { coreEl.textContent = `${sessionCores}/1 Core`; }
+      if (coreEl) {
+        if (bCoreClaimed) { coreEl.textContent = "ABGESCHLOSSEN"; coreEl.className = "bounty-done"; }
+        else { coreEl.textContent = `${sessionCores}/1 Core`; }
+      }
     }
 
     const snapBtn = document.getElementById('toggleSnapBtn');
@@ -1812,7 +1850,7 @@
     });
 
     /* ========================================================
-       8. Sensor & Anti-Cheat
+       9. Sensor & Anti-Cheat
        ======================================================== */
     function initDeviceCompass() {
       if (window.DeviceOrientationEvent) {
@@ -1942,7 +1980,7 @@
     }
 
     /* ========================================================
-       9. Map, Layers & Setup
+       10. Map, Layers & Setup
        ======================================================== */
     const map = L.map('map', { zoomControl: false, attributionControl: false }).setView(playerPos, 17);
     const darkTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, subdomains: 'abcd' });
@@ -2145,7 +2183,7 @@
     }, 5000);
 
     /* ========================================================
-       10. Radar Mini-Map
+       11. Radar Mini-Map
        ======================================================== */
     const radarCanvas = document.getElementById('radarCanvas');
     const rCtx = radarCanvas.getContext('2d');
@@ -2258,6 +2296,11 @@
 
       baseCircleLayer = L.circle(playerSpawn, { radius: baseRadius, color: playerCustomColor, fillColor: playerCustomColor, fillOpacity: 0.4, weight: 2 }).addTo(territoryGroup);
 
+      // Wiederherstellen bereits eroberter Territorien auf der Karte
+      playerTerritoryPolygons.forEach(polyCoords => {
+        L.polygon(polyCoords, { color: playerCustomColor, fillColor: playerCustomColor, fillOpacity: 0.4, weight: 2 }).addTo(territoryGroup);
+      });
+
       if (playerTrail.length > 0) {
         playerTrailLayer.setLatLngs(playerTrail);
         playerPos = [...playerTrail[playerTrail.length - 1]];
@@ -2334,7 +2377,7 @@
     });
 
     /* ========================================================
-       11. Spiellogik & Snapped-Movement
+       12. Spiellogik, Expeditionen & Schleifen-Abschluss
        ======================================================== */
     function checkCut(runnerPos, trail) {
       if (trail.length < 3) return false;
@@ -2342,6 +2385,58 @@
         if (getDistanceMeters(runnerPos, trail[i]) < 12) return true;
       }
       return false;
+    }
+
+    // Prüft, ob der Spieler in seine laufende Spur zurückgeschnitten hat
+    function checkSelfIntersectionIndex(pos, trail) {
+      if (trail.length < 5) return -1;
+      for (let i = 0; i < trail.length - 4; i++) {
+        if (getDistanceMeters(pos, trail[i]) < 14) {
+          return i;
+        }
+      }
+      return -1;
+    }
+
+    function completePlayerTerritory(coords) {
+      const addedArea = Math.round(coords.length * 60);
+      playerTotalArea += addedArea;
+      localStorage.setItem('pc_total_area', playerTotalArea);
+      sessionLand += addedArea;
+      checkBounties();
+
+      triggerShockwave(playerPos, playerCustomColor);
+      if (navigator.vibrate) navigator.vibrate([60, 40, 120]);
+
+      const gainedXP = Math.round(addedArea * 0.8);
+      const gainedCredits = Math.max(10, Math.round(addedArea * 0.04));
+      addXP(gainedXP);
+      addCredits(gainedCredits);
+
+      L.polygon(coords, { color: playerCustomColor, fillColor: playerCustomColor, fillOpacity: 0.4, weight: 2 }).addTo(territoryGroup);
+
+      // Neues Polygon in den lokalen Speicher legen
+      playerTerritoryPolygons.push(coords);
+      localStorage.setItem('pc_saved_polygons', JSON.stringify(playerTerritoryPolygons));
+
+      if (isSupabaseConfigured && cloudUser) {
+        supabaseClient.from('territories').insert({
+          owner_id: cloudUser.id,
+          color: playerCustomColor,
+          polygon_points: coords,
+          area_m2: addedArea
+        }).then(() => {});
+      }
+
+      spawnFloatingText(`+${addedArea.toLocaleString()} m²`, playerCustomColor);
+      showBanner(`+${addedArea.toLocaleString()} m² SEKTOR EROBERT! 🏆`, false);
+      playTone(440, 880, 'triangle', 0.3);
+
+      playerTrail = [];
+      syncTrailStorage();
+      playerTrailLayer.setLatLngs([]);
+      updateUI();
+      syncProfileToCloud();
     }
 
     function checkMonumentCapture(runnerPos, ownerName, ownerColor) {
@@ -2397,70 +2492,48 @@
 
       checkMonumentCapture(playerPos, 'PLAYER', playerCustomColor);
 
-      const inBase = getDistanceMeters(playerPos, playerSpawn) <= (baseRadius + 5);
+      // DYNAMISCH: Befindet sich der Spieler innerhalb seines eroberten Landes oder der Basis?
+      const inSafeZone = isPointInPlayerTerritory(playerPos);
       const badge = document.getElementById('playerStatusBadge');
 
-      if (inBase) {
-        badge.textContent = 'IN BASIS (GESICHERT)';
+      if (inSafeZone) {
+        badge.textContent = 'IN SEKTOR (GESICHERT)';
         badge.classList.remove('danger');
 
+        // Kommt der Spieler aus einer Expedition zurück ins eigene Land? -> SCHLEIFE VOLLENDEN
         if (playerTrail.length >= 4) {
-          const addedArea = Math.round(playerTrail.length * 60);
-          playerTotalArea += addedArea;
-          localStorage.setItem('pc_total_area', playerTotalArea);
-          sessionLand += addedArea;
-          checkBounties();
-
-          triggerShockwave(playerPos, playerCustomColor);
-          if (navigator.vibrate) navigator.vibrate([60, 40, 120]);
-
-          const gainedXP = Math.round(addedArea * 0.8);
-          const gainedCredits = Math.max(10, Math.round(addedArea * 0.04));
-          addXP(gainedXP);
-          addCredits(gainedCredits);
-
-          const polyCoords = [...playerTrail, playerSpawn];
-          L.polygon(polyCoords, { color: playerCustomColor, fillColor: playerCustomColor, fillOpacity: 0.4, weight: 2 }).addTo(territoryGroup);
-
-          if (isSupabaseConfigured && cloudUser) {
-            supabaseClient.from('territories').insert({
-              owner_id: cloudUser.id,
-              color: playerCustomColor,
-              polygon_points: polyCoords,
-              area_m2: addedArea
-            }).then(() => {});
-          }
-
-          spawnFloatingText(`+${addedArea.toLocaleString()} m²`, playerCustomColor);
-          showBanner(`+${addedArea.toLocaleString()} m² SEKTOR EROBERT! 🏆`, false);
-          playTone(440, 880, 'triangle', 0.3);
-
-          playerTrail = [];
-          syncTrailStorage();
-          playerTrailLayer.setLatLngs([]);
-          updateUI();
-          syncProfileToCloud();
+          // Schließe das Polygon mit der aktuellen Grenzberührung ab
+          const polygonToClose = [...playerTrail, playerPos];
+          completePlayerTerritory(polygonToClose);
         } else {
+          // Im eigenen Land werden keine Spuren gezogen
           playerTrail = [];
           syncTrailStorage();
           playerTrailLayer.setLatLngs([]);
         }
       } else {
+        // Spieler befindet sich im Feindesland / neutralen Raum -> EXPEDITION
         badge.textContent = 'EXPEDITION (GEFAHR)';
         badge.classList.add('danger');
 
+        // Kreis in eigener Spur geschlossen (Loop im Freien)
+        const hitIdx = checkSelfIntersectionIndex(playerPos, playerTrail);
+        if (hitIdx !== -1) {
+          const loopPolygon = playerTrail.slice(hitIdx);
+          loopPolygon.push(playerPos);
+          completePlayerTerritory(loopPolygon);
+          return;
+        }
+
         const last = playerTrail[playerTrail.length - 1];
         if (!last || getDistanceMeters(playerPos, last) >= 6.0) {
-          if (checkCut(playerPos, playerTrail)) {
-            triggerPlayerDeath("Eigene Spur geschnitten!");
-            return;
-          }
           playerTrail.push(playerPos);
           syncTrailStorage();
           playerTrailLayer.setLatLngs(playerTrail);
         }
       }
 
+      // Prüfen, ob der Spieler die Spur eines Bots zerschneidet
       [botCrimson, botVolt].forEach(b => {
         if (b.trail.length > 2 && checkCut(playerPos, b.trail)) {
           triggerShockwave(b.pos, b.color);
@@ -2529,6 +2602,7 @@
           bot.trailLayer.setLatLngs(bot.trail);
         }
 
+        // Bots töten den Spieler, wenn dieser sich auf Expedition befindet und seine Spur geschnitten wird
         if (playerTrail.length > 2 && checkCut(bot.pos, playerTrail)) {
           triggerPlayerDeath(`${bot.name} hat deine Spur geschnitten!`);
         }
@@ -2594,7 +2668,7 @@
     });
 
     /* ========================================================
-       12. Joystick & Gameloop
+       13. Joystick & Gameloop
        ======================================================== */
     const joystickZone = document.getElementById('joystickZone');
     const joystickHandle = document.getElementById('joystickHandle');
@@ -2660,7 +2734,7 @@
     requestAnimationFrame(gameLoop);
 
     /* ========================================================
-       13. GPS Pipeline
+       14. GPS Pipeline
        ======================================================== */
     const toggleGpsBtn = document.getElementById('toggleGpsBtn');
     const gpsBtnLabel = document.getElementById('gpsBtnLabel');
@@ -2722,12 +2796,14 @@
     document.getElementById('resetBtn').addEventListener('click', () => {
       ensureAudioContext();
       playerTrail = [];
+      playerTerritoryPolygons = [];
+      localStorage.removeItem('pc_saved_polygons');
       syncTrailStorage();
       initGame(playerSpawn);
     });
 
     /* ========================================================
-       14. PWA Service Worker & Install-Prompt Pipeline
+       15. PWA Service Worker & Install-Prompt
        ======================================================== */
     let deferredInstallPrompt = null;
 
