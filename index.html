@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // NEON GRID - FAST START</title>
+  <title>PaperCity // NEON GRID - CHROME FIX</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#00f3ff" />
@@ -207,7 +207,7 @@
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem;">
         <li><i class="fa-solid fa-person-walking" style="color:var(--cyber-volt);"></i> Nutze nur öffentliche Straßen, Gehwege & Parks.</li>
-        <li><i class="fa-solid fa-headphones" style="color:var(--cyber-cyan);"></i> Synthwave-Sound & EVA-Sprachausgabe aktiv.</li>
+        <li><i class="fa-solid fa-headphones" style="color:var(--cyber-cyan);"></i> Kopfhörer empfohlen für Synthwave & Sound.</li>
         <li><i class="fa-solid fa-traffic-light" style="color:var(--cyber-gold);"></i> Ampel-Puffer schützt deine Spur vor GPS-Jitter.</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
@@ -327,7 +327,7 @@
 
   <script>
     /* ========================================================
-       1. AUDIO- & EVA-SYSTEM
+       1. ROBUSTE AUDIO- & EVA-SYNTHESE (KEIN CHROME-CRASH)
        ======================================================== */
     let audioCtx = null;
     let isSynthMusicActive = true;
@@ -337,21 +337,25 @@
     function ensureAudioContext() {
       try {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
         return audioCtx;
       } catch(e) { return null; }
     }
 
     function speakEva(text) {
-      if (!isVoiceActive || !('speechSynthesis' in window)) return;
+      if (!isVoiceActive) return;
       try {
-        window.speechSynthesis.cancel();
-        const utt = new SpeechSynthesisUtterance(text);
-        utt.lang = 'de-DE';
-        utt.pitch = 0.85;
-        utt.rate = 1.05;
-        window.speechSynthesis.speak(utt);
-      } catch(e){}
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utt = new SpeechSynthesisUtterance(text);
+          utt.lang = 'de-DE';
+          utt.pitch = 0.85;
+          utt.rate = 1.05;
+          window.speechSynthesis.speak(utt);
+        }
+      } catch(e) {
+        // Schützt Chrome zuverlässig vor Abstürzen
+      }
     }
 
     let synthTimer = null;
@@ -377,7 +381,7 @@
           filter.frequency.setValueAtTime(650, ctx.currentTime);
           filter.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.22);
 
-          gain.gain.setValueAtTime(0.06, ctx.currentTime);
+          gain.gain.setValueAtTime(0.05, ctx.currentTime);
           gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
 
           osc.connect(filter);
@@ -436,7 +440,6 @@
     let playerTotalArea = parseInt(localStorage.getItem('pc_total_area') || '1960');
 
     let playerPos = [...playerSpawn];
-    let playerHeadingDeg = 0;
     let isRealGpsActive = false;
     let gpsWatchId = null;
     let playerTrail = [];
@@ -508,7 +511,7 @@
     }
 
     /* ========================================================
-       3. MONUMENTE
+       3. MONUMENTE (LADEN)
        ======================================================== */
     async function fetchRealMonuments(center) {
       monumentGroup.clearLayers();
@@ -752,7 +755,7 @@
     }
 
     /* ========================================================
-       6. SHOP & EVENTS
+       6. SHOP & UPGRADES
        ======================================================== */
     document.getElementById('openShopBtn').addEventListener('click', () => {
       document.getElementById('shopModal').style.display = 'flex';
@@ -797,6 +800,7 @@
       }
     }
 
+    // Audio-Controls
     document.getElementById('synthMusicBtn').addEventListener('click', function() {
       ensureAudioContext();
       isSynthMusicActive = !isSynthMusicActive;
@@ -818,7 +822,7 @@
     });
 
     /* ========================================================
-       7. INITIALISIERUNG & START (SOFORTIGES SCHLIESSEN)
+       7. INITIALISIERUNG & INSTANT-START (CHROME-PROOF)
        ======================================================== */
     function initializeBaseAndMonuments(coords) {
       playerSpawn = [...coords];
@@ -830,30 +834,34 @@
       fetchRealMonuments(playerSpawn);
     }
 
+    // Beim Klick auf den Start-Button
     document.getElementById('acceptSafetyBtn').addEventListener('click', () => {
-      // 1. Fenster SOFORT und ohne jede Bedingung ausblenden
-      document.getElementById('safetyModal').style.display = 'none';
+      // 1. Modal SOFORT aus dem DOM löschen (hängt niemals mehr!)
+      const modal = document.getElementById('safetyModal');
+      if (modal) modal.remove();
 
-      // 2. Audio-Kontext und Musik starten
-      ensureAudioContext();
-      startSynthwaveMusic();
-      speakEva("System online.");
-
-      // 3. Erstes Rendern mit Default-Koordinaten
+      // 2. Basis & Map direkt rendern
       initializeBaseAndMonuments(playerSpawn);
       updateLevelUI();
       updateUI();
 
-      // 4. GPS im Hintergrund abfragen, ohne das Interface zu blockieren
+      // 3. Audio & Voice in try/catch (stürzt niemals ab, falls Chrome zickt)
+      try {
+        ensureAudioContext();
+        startSynthwaveMusic();
+        speakEva("System online. Willkommen im Grid.");
+      } catch(e){}
+
+      // 4. GPS unaufdringlich im Hintergrund abfragen
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
           pos => {
             initializeBaseAndMonuments([pos.coords.latitude, pos.coords.longitude]);
           },
           err => {
-            console.log("GPS-Hinweis: Nutze Standardkoordinaten", err);
+            console.log("GPS-Hinweis: Nutze Standardort", err);
           },
-          { enableHighAccuracy: true, timeout: 6000 }
+          { enableHighAccuracy: true, timeout: 5000 }
         );
       }
     });
