@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // NEON GRID - FREE HACK & MOVEMENT FIX</title>
+  <title>PaperCity // NEON GRID - FULL MASTER STABLE</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#00f3ff" />
@@ -23,6 +23,7 @@
       --cyber-gold: #ffaa00;
       --cyber-green: #00ff66;
       --cyber-purple: #bd00ff;
+      --cyber-orange: #ff6600;
       --cyber-dark: rgba(6, 10, 18, 0.88);
       --cyber-border: rgba(0, 243, 255, 0.45);
       --cyber-glow: 0 0 15px rgba(0, 243, 255, 0.55);
@@ -94,10 +95,22 @@
       letter-spacing: 1px; cursor: pointer; margin-top: 10px; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
     }
 
-    /* Freier Hack Trigger Button im HUD */
-    .hack-hud-trigger {
-      position: absolute; top: 110px; left: 50%; transform: translateX(-50%); z-index: 1500; display: none; pointer-events: auto;
+    .shop-section-title {
+      font-family: var(--font-tech); font-size: 0.75rem; color: var(--cyber-gold); letter-spacing: 1.5px; margin: 16px 0 8px 0; border-bottom: 1px solid rgba(255, 170, 0, 0.3); padding-bottom: 4px; display: flex; justify-content: space-between;
     }
+    .shop-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.07); }
+    .shop-row:last-child { border-bottom: none; }
+    .shop-item-desc { font-size: 0.72rem; color: #8fa5ba; }
+    .shop-action-box { display: flex; gap: 6px; }
+
+    .buy-btn-cyb {
+      background: rgba(255, 170, 0, 0.15); border: 1px solid var(--cyber-gold); color: var(--cyber-gold); padding: 5px 9px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 800; cursor: pointer; border-radius: 4px;
+    }
+    .buy-btn-eur {
+      background: rgba(0, 255, 102, 0.15); border: 1px solid var(--cyber-green); color: var(--cyber-green); padding: 5px 9px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 800; cursor: pointer; border-radius: 4px;
+    }
+
+    .hack-hud-trigger { position: absolute; top: 110px; left: 50%; transform: translateX(-50%); z-index: 1500; display: none; pointer-events: auto; }
     .hack-action-btn {
       background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-green)); color: #03060a; border: 2px solid #fff; font-family: var(--font-tech);
       font-weight: 900; font-size: 0.85rem; padding: 10px 22px; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
@@ -117,6 +130,9 @@
     }
     .tool-btn.active { border-color: var(--cyber-cyan); color: var(--cyber-cyan); box-shadow: 0 0 14px var(--cyber-cyan); }
 
+    .leaderboard-list { display: flex; flex-direction: column; gap: 4px; margin-top: 5px; font-size: 0.8rem; font-weight: 700; }
+    .leaderboard-item { display: flex; justify-content: space-between; gap: 12px; font-family: var(--font-tech); font-size: 0.68rem; }
+
     .player-avatar-container { position: relative; width: 58px; height: 58px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
     .player-rotator { position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition: transform 0.12s ease-out; pointer-events: none; }
     .player-cone {
@@ -124,6 +140,10 @@
       border-top: 42px solid rgba(0, 243, 255, 0.35); filter: drop-shadow(0 0 10px var(--cyber-cyan)); pointer-events: none;
     }
     .player-custom-pin { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--cyber-cyan); box-shadow: 0 0 15px var(--cyber-cyan); object-fit: cover; position: relative; z-index: 2; background: #000; }
+
+    .crimson-dot, .volt-dot { width: 18px; height: 18px; border-radius: 50%; background: #ffffff; border: 3px solid; }
+    .crimson-dot { border-color: var(--cyber-crimson); box-shadow: 0 0 16px var(--cyber-crimson); }
+    .volt-dot { border-color: var(--cyber-volt); box-shadow: 0 0 16px var(--cyber-volt); }
 
     .monument-pin-container { display: flex; flex-direction: column; align-items: center; transform: translateY(-50%); }
     .monument-icon-badge {
@@ -164,14 +184,12 @@
   <div class="cyber-overlay"></div>
   <canvas id="fxCanvas"></canvas>
 
-  <!-- Freiwilliger Hack-Button im HUD: Nur sichtbar, wenn in Reichweite -->
   <div class="hack-hud-trigger" id="hackHudTrigger">
     <button class="hack-action-btn" id="startHackBtn">
       <i class="fa-solid fa-terminal"></i> ⚡ CORE HACKEN
     </button>
   </div>
 
-  <!-- Hack Modal mit Abbrechen / Schließen-Button -->
   <div class="modal-overlay" id="hackModal">
     <div class="cyber-modal-card" style="text-align:center;">
       <div class="modal-header" style="color:var(--cyber-green);">
@@ -187,21 +205,81 @@
     </div>
   </div>
 
-  <!-- START MODAL -->
+  <div class="modal-overlay" id="outpostModal">
+    <div class="cyber-modal-card">
+      <div class="modal-header">
+        <span><i class="fa-solid fa-map-location-dot"></i> NEUER DISTRIKT ENTDECKT!</span>
+      </div>
+      <div style="font-size: 0.9rem; line-height: 1.5; color: #bad3eb; margin-bottom: 14px;">
+        Du betrittst <b id="detectedDistrictName" style="color:var(--cyber-cyan);">Unbekannter Distrikt</b>! Du besitzt hier noch keinen Außenposten.
+      </div>
+      <p style="font-size: 0.78rem; color: #aaa; margin-bottom: 20px;">
+        ✓ Errichte den offiziellen Stützpunkt für dieses Viertel.<br>
+        ✓ Deine Basen und Gebiete in anderen Stadtteilen bleiben vollständig erhalten.
+      </p>
+      <div style="display:flex; gap:10px;">
+        <button class="save-profile-btn" id="confirmNewOutpostBtn">BASIS ERRICHTEN</button>
+        <button class="save-profile-btn" id="cancelNewOutpostBtn" style="background:#222; color:#fff; border:1px solid #555;">SPÄTER</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="safetyModal" style="display:flex;">
     <div class="cyber-modal-card">
       <div class="modal-header">
         <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Neon Grid</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Master Stable</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem;">
         <li><i class="fa-solid fa-person-walking" style="color:var(--cyber-volt);"></i> Nutze nur öffentliche Straßen, Gehwege & Parks.</li>
-        <li><i class="fa-solid fa-hand" style="color:var(--cyber-green);"></i> <b>Freies Hacken:</b> Du entscheidest selbst, ob du Monumente einnimmst oder einfach weiterläufst.</li>
+        <li><i class="fa-solid fa-map-location-dot" style="color:var(--cyber-cyan);"></i> <b>Distrikt-Netzwerk:</b> Erobere Stadtteile Viertel für Viertel!</li>
         <li><i class="fa-solid fa-traffic-light" style="color:var(--cyber-gold);"></i> Ampel-Puffer schützt deine Spur vor GPS-Jitter.</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
+    </div>
+  </div>
+
+  <!-- SHOP MODAL -->
+  <div class="modal-overlay" id="shopModal">
+    <div class="cyber-modal-card">
+      <div class="modal-header" style="color:var(--cyber-gold);">
+        <span><i class="fa-solid fa-cart-shopping"></i> CYBER-STORE</span>
+        <button class="close-modal-btn" id="closeShopBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="shop-section-title"><span>HACK-TOOL UPGRADES</span><span>CORE OVERRIDE</span></div>
+      <div class="shop-row">
+        <div>
+          <div style="font-family:var(--font-tech); font-weight:700;">CYBERDECK MK.II (6s HACK)</div>
+          <div class="shop-item-desc">Reduziert Hack-Zeit auf 6 Sekunden</div>
+        </div>
+        <div class="shop-action-box">
+          <button class="buy-btn-cyb" onclick="upgradeHackTool(2, 1800, 0)">1.800 $CYB</button>
+          <button class="buy-btn-eur" onclick="upgradeHackTool(2, 0, 1.49)">1,49 €</button>
+        </div>
+      </div>
+      <div class="shop-row">
+        <div>
+          <div style="font-family:var(--font-tech); font-weight:700;">QUANTUM RIG MK.III (3s HACK)</div>
+          <div class="shop-item-desc">High-End Rig: Hackt in 3 Sekunden</div>
+        </div>
+        <div class="shop-action-box">
+          <button class="buy-btn-cyb" onclick="upgradeHackTool(3, 4000, 0)">4.000 $CYB</button>
+          <button class="buy-btn-eur" onclick="upgradeHackTool(3, 0, 2.99)">2,99 €</button>
+        </div>
+      </div>
+      <div class="shop-section-title"><span>DISTRIKT-EXPANSION</span><span>BASIS-SLOTS</span></div>
+      <div class="shop-row">
+        <div>
+          <div style="font-family:var(--font-tech); font-weight:700;">BASIS-EXPANSION (45m)</div>
+          <div class="shop-item-desc">Erweitert Basiskreis auf 45 Meter</div>
+        </div>
+        <div class="shop-action-box">
+          <button class="buy-btn-cyb" onclick="buyBaseExpansion(500, 0)">500 $CYB</button>
+          <button class="buy-btn-eur" onclick="buyBaseExpansion(0, 0.99)">0,99 €</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -214,10 +292,10 @@
   <div class="hud-top">
     <div class="cyber-panel">
       <div class="hud-profile-row">
-        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
+        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" id="hudAvatarImg" class="hud-avatar" alt="Avatar" />
         <div>
           <div class="agent-name-label" id="hudAgentName">AGENT V</div>
-          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">LIVE // 50 m/s</div>
+          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">HACK-RIG MK.1 // 50 m/s</div>
         </div>
       </div>
 
@@ -240,6 +318,8 @@
 
     <div class="top-right-col">
       <div class="quick-toolbar">
+        <button class="tool-btn" id="cycleOutpostBtn" style="color:var(--cyber-volt); border-color:var(--cyber-volt);">🏢 DISTRIKT</button>
+        <button class="tool-btn" id="openShopBtn" style="color:var(--cyber-gold); border-color:var(--cyber-gold);"><i class="fa-solid fa-cart-shopping"></i> SHOP</button>
         <button class="tool-btn active" id="synthMusicBtn"><i class="fa-solid fa-music"></i> SYNTH</button>
         <button class="tool-btn active" id="voiceToggleBtn"><i class="fa-solid fa-headset"></i> EVA</button>
         <button class="tool-btn active" id="soundToggleBtn"><i class="fa-solid fa-volume-high"></i></button>
@@ -274,7 +354,7 @@
 
   <script>
     /* ========================================================
-       1. AUDIO & SOUND ENGINE
+       1. AUDIO- & EVA-SYSTEM
        ======================================================== */
     let audioCtx = null;
     let isSynthMusicActive = true;
@@ -371,13 +451,28 @@
     }
 
     /* ========================================================
-       2. DATEN & SETUP
+       2. OUTPOST-LISTE, BOTS & GLOBALE DATEN
        ======================================================== */
     let playerCustomColor = localStorage.getItem('pc_skin_color') || '#00f3ff';
     let hackToolLevel = parseInt(localStorage.getItem('pc_hack_tool_lvl') || '1');
     let playerName = localStorage.getItem('pc_agent_name') || 'AGENT V';
-    let playerSpawn = [52.1738, 7.5312];
-    let baseRadius = 35;
+    const RANKS = ["NOOB", "ROOKIE", "SCOUT", "RUNNER", "STREET MASTER", "HOOD LORD", "DISTRICT KING", "CITY OVERLORD"];
+
+    let outpostList = [];
+    const savedOutposts = localStorage.getItem('pc_outposts');
+    if (savedOutposts) {
+      try { outpostList = JSON.parse(savedOutposts); } catch(e){}
+    }
+    if (outpostList.length === 0) {
+      outpostList = [
+        { id: 1, districtName: "Zentrum", coords: [52.1738, 7.5312], radius: 35 }
+      ];
+      localStorage.setItem('pc_outposts', JSON.stringify(outpostList));
+    }
+
+    let currentOutpostIdx = 0;
+    let playerSpawn = [...outpostList[0].coords];
+    let baseRadius = outpostList[0].radius;
 
     let savedLevel = parseInt(localStorage.getItem('pc_level') || '1');
     let savedXP = parseInt(localStorage.getItem('pc_xp') || '0');
@@ -389,6 +484,17 @@
     let gpsWatchId = null;
     let playerTrail = [];
     let cityMonuments = [];
+    let justCapturedCooldown = false;
+
+    // Die Rivalen-Bots
+    let botCrimson = {
+      name: "Crimson", color: '#ff0055', spawn: [playerSpawn[0] + 0.0018, playerSpawn[1] + 0.0022], pos: [playerSpawn[0] + 0.0018, playerSpawn[1] + 0.0022],
+      trail: [], area: 1960, heading: 45, timeSinceTurn: 0, marker: null, trailLayer: null
+    };
+    let botVolt = {
+      name: "Volt", color: '#ffee00', spawn: [playerSpawn[0] + 0.0016, playerSpawn[1] - 0.0024], pos: [playerSpawn[0] + 0.0016, playerSpawn[1] - 0.0024],
+      trail: [], area: 1960, heading: 220, timeSinceTurn: 0, marker: null, trailLayer: null
+    };
 
     const map = L.map('map', { zoomControl: false, attributionControl: false }).setView(playerPos, 17);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, subdomains: 'abcd' }).addTo(map);
@@ -396,6 +502,9 @@
     const territoryGroup = L.featureGroup().addTo(map);
     const monumentGroup = L.featureGroup().addTo(map);
     const playerTrailLayer = L.polyline([], { color: playerCustomColor, weight: 6, opacity: 0.95 }).addTo(map);
+
+    botCrimson.trailLayer = L.polyline([], { color: botCrimson.color, weight: 6, opacity: 0.95 }).addTo(map);
+    botVolt.trailLayer = L.polyline([], { color: botVolt.color, weight: 6, opacity: 0.95 }).addTo(map);
 
     const playerMarker = L.marker(playerPos, {
       icon: L.divIcon({
@@ -414,7 +523,18 @@
       zIndexOffset: 1000
     }).addTo(map);
 
+    botCrimson.marker = L.marker(botCrimson.pos, {
+      icon: L.divIcon({ className: 'b-pin', html: '<div class="crimson-dot"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }),
+      zIndexOffset: 950
+    }).addTo(map);
+
+    botVolt.marker = L.marker(botVolt.pos, {
+      icon: L.divIcon({ className: 'v-pin', html: '<div class="volt-dot"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }),
+      zIndexOffset: 940
+    }).addTo(map);
+
     function getDistanceMeters(c1, c2) {
+      if (!c1 || !c2) return 9999;
       const R = 6371e3;
       const dLat = (c2[0] - c1[0]) * Math.PI / 180;
       const dLon = (c2[1] - c1[1]) * Math.PI / 180;
@@ -439,12 +559,8 @@
       return Math.round(Math.abs(total) / 2);
     }
 
-    function ccw(A, B, C) {
-      return (C[0] - A[0]) * (B[1] - A[1]) > (B[0] - A[0]) * (C[1] - A[1]);
-    }
-    function lineIntersects(A, B, C, D) {
-      return (ccw(A, C, D) !== ccw(B, C, D)) && (ccw(A, B, C) !== ccw(A, B, D));
-    }
+    function ccw(A, B, C) { return (C[0] - A[0]) * (B[1] - A[1]) > (B[0] - A[0]) * (C[1] - A[1]); }
+    function lineIntersects(A, B, C, D) { return (ccw(A, C, D) !== ccw(B, C, D)) && (ccw(A, B, C) !== ccw(A, B, D)); }
     function checkSelfIntersectionIndex(pos, trail) {
       if (trail.length < 5) return -1;
       const p1 = trail[trail.length - 1];
@@ -455,8 +571,108 @@
       return -1;
     }
 
+    // Prüft, ob ein Punkt in IRGENDEINEM eigenen Außenposten liegt
+    function isPointInPlayerBases(point) {
+      for (let o of outpostList) {
+        if (getDistanceMeters(point, o.coords) <= (o.radius + 5)) return true;
+      }
+      return false;
+    }
+
     /* ========================================================
-       3. MONUMENTE (LADEN)
+       3. DISTRIKT-ERKENNUNG & UMSCHALT-LOGIK
+       ======================================================== */
+    let lastDistrictCheckTime = 0;
+    let isCheckingDistrict = false;
+    let pendingOutpostData = null;
+
+    async function fetchDistrictName(lat, lng) {
+      try {
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`;
+        const resp = await fetch(url, { headers: { 'Accept-Language': 'de' } });
+        const data = await resp.json();
+        if (data && data.address) {
+          return data.address.suburb || data.address.neighbourhood || data.address.quarter || data.address.city_district || data.address.village || data.address.town || "Neuer Distrikt";
+        }
+      } catch(e){}
+      return "Neuer Distrikt";
+    }
+
+    async function checkDistrictBoundary(lat, lng) {
+      const now = Date.now();
+      if (now - lastDistrictCheckTime < 10000 || isCheckingDistrict) return;
+      lastDistrictCheckTime = now;
+      isCheckingDistrict = true;
+
+      const detected = await fetchDistrictName(lat, lng);
+      isCheckingDistrict = false;
+
+      const alreadyHas = outpostList.some(o => o.districtName.toLowerCase() === detected.toLowerCase());
+      const outpostModal = document.getElementById('outpostModal');
+
+      if (!alreadyHas && outpostModal && outpostModal.style.display !== 'flex') {
+        pendingOutpostData = { districtName: detected, coords: [lat, lng] };
+        document.getElementById('detectedDistrictName').textContent = detected;
+        outpostModal.style.display = 'flex';
+      }
+    }
+
+    document.getElementById('confirmNewOutpostBtn').addEventListener('click', () => {
+      ensureAudioContext();
+      if (pendingOutpostData) {
+        const newOp = {
+          id: outpostList.length + 1,
+          districtName: pendingOutpostData.districtName,
+          coords: [...pendingOutpostData.coords],
+          radius: 35
+        };
+        outpostList.push(newOp);
+        localStorage.setItem('pc_outposts', JSON.stringify(outpostList));
+        currentOutpostIdx = outpostList.length - 1;
+        playerSpawn = [...newOp.coords];
+        baseRadius = newOp.radius;
+
+        renderAllTerritories();
+        updateOutpostBtnUI();
+        showBanner(`OUTPOST // ${newOp.districtName.toUpperCase()} GEGRÜNDET!`, false);
+        speakEva(`Neuer Außenposten gegründet: ${newOp.districtName}`);
+      }
+      document.getElementById('outpostModal').style.display = 'none';
+      pendingOutpostData = null;
+    });
+
+    document.getElementById('cancelNewOutpostBtn').addEventListener('click', () => {
+      document.getElementById('outpostModal').style.display = 'none';
+      pendingOutpostData = null;
+    });
+
+    document.getElementById('cycleOutpostBtn').addEventListener('click', () => {
+      ensureAudioContext();
+      if (outpostList.length > 1) {
+        currentOutpostIdx = (currentOutpostIdx + 1) % outpostList.length;
+        const target = outpostList[currentOutpostIdx];
+        playerSpawn = [...target.coords];
+        baseRadius = target.radius;
+        playerPos = [...playerSpawn];
+        playerMarker.setLatLng(playerPos);
+        map.setView(playerPos, 17);
+        updateOutpostBtnUI();
+        showBanner(`ZU ${target.districtName.toUpperCase()} GEWECHSELT!`, false);
+        speakEva(`Sektor gewechselt: ${target.districtName}`);
+      } else {
+        showBanner(`1 BASIS AKTIV // GEHE IN ANDERE VIERTEL!`, false);
+      }
+    });
+
+    function updateOutpostBtnUI() {
+      const btn = document.getElementById('cycleOutpostBtn');
+      if (btn && outpostList[currentOutpostIdx]) {
+        btn.textContent = `🏢 ${outpostList[currentOutpostIdx].districtName.toUpperCase()}`;
+      }
+    }
+
+    /* ========================================================
+       4. MONUMENTE (LADEN)
        ======================================================== */
     async function fetchRealMonuments(center) {
       monumentGroup.clearLayers();
@@ -483,7 +699,6 @@
         }
       } catch(e){}
 
-      // Fallback
       [
         { id: "local_1", name: "Alte Stadtkirche", pos: [center[0] + 0.0014, center[1] + 0.0012] },
         { id: "local_2", name: "Marktbrunnen", pos: [center[0] - 0.0012, center[1] + 0.0015] },
@@ -510,7 +725,7 @@
     }
 
     /* ========================================================
-       4. FREIWILLIGES HACKEN (OHNE BLOCKIEREN)
+       5. FREIWILLIGES HACKEN (UNBLOCKIERT)
        ======================================================== */
     let activeHackTarget = null;
     let hackInterval = null;
@@ -518,11 +733,8 @@
     let isHackModalOpen = false;
 
     function checkNearbyMonumentForHack() {
-      // Wenn das Hack-Modal offen ist, prüfen ob Spieler noch in Reichweite ist
       if (isHackModalOpen && activeHackTarget) {
-        if (getDistanceMeters(playerPos, activeHackTarget.pos) > 32) {
-          cancelHack("Hack abgebrochen: Außer Reichweite!");
-        }
+        if (getDistanceMeters(playerPos, activeHackTarget.pos) > 32) cancelHack("Hack abgebrochen: Außer Reichweite!");
         return;
       }
 
@@ -534,14 +746,13 @@
       const trigger = document.getElementById('hackHudTrigger');
       if (found && found.owner !== 'PLAYER') {
         activeHackTarget = found;
-        trigger.style.display = 'block'; // Nur Button anzeigen, Spieler läuft normal weiter
+        trigger.style.display = 'block';
       } else {
         trigger.style.display = 'none';
         if (!isHackModalOpen) activeHackTarget = null;
       }
     }
 
-    // Spieler klickt freiwillig auf "Core Hacken"
     document.getElementById('startHackBtn').addEventListener('click', (e) => {
       e.stopPropagation();
       ensureAudioContext();
@@ -563,10 +774,7 @@
         document.getElementById('hackTimerTxt').textContent = `${Math.round(hackProgress)}%`;
 
         if (Math.random() > 0.6) playTone(300 + Math.random() * 400, 800, 'sawtooth', 0.05);
-
-        if (hackProgress >= 100) {
-          finishHackSuccess();
-        }
+        if (hackProgress >= 100) finishHackSuccess();
       }, 100);
     });
 
@@ -590,9 +798,7 @@
         addCredits(75);
         addXP(450);
       }
-
       document.getElementById('hackHudTrigger').style.display = 'none';
-      resetJoystickState();
     }
 
     function cancelHack(reasonMsg) {
@@ -600,84 +806,124 @@
       isHackModalOpen = false;
       document.getElementById('hackModal').style.display = 'none';
       if (reasonMsg) showBanner(reasonMsg, true);
-      resetJoystickState();
     }
 
     document.getElementById('closeHackBtn').addEventListener('click', () => cancelHack());
     document.getElementById('cancelHackBtn').addEventListener('click', () => cancelHack());
 
-    function resetJoystickState() {
-      joyX = 0; joyY = 0; joyActive = false;
-      joystickHandle.style.transform = 'translate(0px, 0px)';
-    }
-
     /* ========================================================
-       5. BEWEGUNG & FLÜSSIGE SCHLEIFEN
+       6. BEWEGUNG, SCHLEIFENSCHLUSS & BOTS
        ======================================================== */
     const STILLSTAND_SPEED_THRESHOLD_KMH = 2.2;
     const MIN_TRAIL_STEP_METERS = 8.0;
 
     function handlePlayerMovement(rawLat, rawLng, speedKmh = 0) {
-      playerPos = [rawLat, rawLng];
-      playerMarker.setLatLng(playerPos);
+      try {
+        playerPos = [rawLat, rawLng];
+        playerMarker.setLatLng(playerPos);
 
-      checkNearbyMonumentForHack();
+        checkDistrictBoundary(rawLat, rawLng);
+        checkNearbyMonumentForHack();
 
-      const inSafeZone = getDistanceMeters(playerPos, playerSpawn) <= baseRadius;
-      const badge = document.getElementById('playerStatusBadge');
+        const inSafeZone = isPointInPlayerBases(playerPos);
+        const badge = document.getElementById('playerStatusBadge');
 
-      if (inSafeZone) {
-        badge.textContent = 'IN BASIS (GESICHERT)';
-        badge.className = 'status-badge';
+        if (inSafeZone) {
+          badge.textContent = 'IN BASIS (GESICHERT)';
+          badge.className = 'status-badge';
 
-        if (playerTrail.length >= 3) {
-          completeTerritory([...playerTrail, playerPos]);
+          if (playerTrail.length >= 3 && !justCapturedCooldown) {
+            completeTerritory([...playerTrail, playerPos]);
+          } else if (playerTrail.length < 3) {
+            playerTrail = [];
+            playerTrailLayer.setLatLngs([]);
+          }
         } else {
-          playerTrail = [];
-          playerTrailLayer.setLatLngs([]);
-        }
-      } else {
-        const last = playerTrail[playerTrail.length - 1];
-        const distToLast = last ? getDistanceMeters(playerPos, last) : 999;
+          const last = playerTrail[playerTrail.length - 1];
+          const distToLast = last ? getDistanceMeters(playerPos, last) : 999;
 
-        if (speedKmh < STILLSTAND_SPEED_THRESHOLD_KMH && distToLast < MIN_TRAIL_STEP_METERS) {
-          badge.textContent = 'SIGNAL GEHALTEN // AMPEL-HALT';
-          badge.className = 'status-badge waiting';
-          return;
-        }
+          if (speedKmh < STILLSTAND_SPEED_THRESHOLD_KMH && distToLast < MIN_TRAIL_STEP_METERS && playerTrail.length > 0) {
+            badge.textContent = 'SIGNAL GEHALTEN // AMPEL-HALT';
+            badge.className = 'status-badge waiting';
+            return;
+          }
 
-        badge.textContent = 'EXPEDITION (GEFAHR)';
-        badge.className = 'status-badge danger';
+          badge.textContent = 'EXPEDITION (GEFAHR)';
+          badge.className = 'status-badge danger';
 
-        const hitIdx = checkSelfIntersectionIndex(playerPos, playerTrail);
-        if (hitIdx !== -1) {
-          const loopPolygon = playerTrail.slice(hitIdx);
-          loopPolygon.push(playerPos);
-          completeTerritory(loopPolygon);
-          return;
-        }
+          if (!justCapturedCooldown) {
+            const hitIdx = checkSelfIntersectionIndex(playerPos, playerTrail);
+            if (hitIdx !== -1) {
+              const loopPolygon = playerTrail.slice(hitIdx);
+              loopPolygon.push(playerPos);
+              completeTerritory(loopPolygon);
+              return;
+            }
+          }
 
-        if (!last || distToLast >= MIN_TRAIL_STEP_METERS) {
-          playerTrail.push(playerPos);
-          playerTrailLayer.setLatLngs(playerTrail);
+          if (!last || distToLast >= MIN_TRAIL_STEP_METERS) {
+            playerTrail.push(playerPos);
+            playerTrailLayer.setLatLngs(playerTrail);
+          }
         }
-      }
+      } catch(err){}
     }
 
     function completeTerritory(coords) {
-      const area = calculatePolygonAreaM2(coords);
-      playerTotalArea += area;
-      L.polygon(coords, { color: playerCustomColor, fillColor: playerCustomColor, fillOpacity: 0.45, weight: 2 }).addTo(territoryGroup);
+      try {
+        const area = calculatePolygonAreaM2(coords);
+        playerTotalArea += area;
 
-      playerTrail = [];
-      playerTrailLayer.setLatLngs([]);
-      showBanner(`+${area.toLocaleString()} m² SEKTOR GESICHERT!`, false);
-      speakEva(`Sektor gesichert. Plus ${area} Quadratmeter.`);
-      playFanfare();
+        L.polygon(coords, {
+          color: playerCustomColor,
+          fillColor: playerCustomColor,
+          fillOpacity: 0.45,
+          weight: 2
+        }).addTo(territoryGroup);
 
-      addCredits(Math.max(10, Math.round(area * 0.03)));
-      addXP(Math.round(area * 0.5));
-      updateUI();
+        playerTrail = [playerPos];
+        playerTrailLayer.setLatLngs(playerTrail);
+
+        justCapturedCooldown = true;
+        setTimeout(() => { justCapturedCooldown = false; }, 1500);
+
+        showBanner(`+${area.toLocaleString()} m² SEKTOR GESICHERT!`, false);
+        speakEva(`Sektor gesichert. Plus ${area} Quadratmeter.`);
+        playFanfare();
+
+        addCredits(Math.max(10, Math.round(area * 0.03)));
+        addXP(Math.round(area * 0.5));
+        updateUI();
+      } catch(err){}
+    }
+
+    function updateRealisticBot(bot, deltaSec, turnIntervalSec, turnAngle) {
+      bot.timeSinceTurn += deltaSec;
+      if (bot.timeSinceTurn >= turnIntervalSec) {
+        bot.timeSinceTurn = 0;
+        bot.heading += (Math.random() > 0.5 ? turnAngle : -turnAngle);
+      }
+      const moveDistanceMeters = 20.0 * deltaSec;
+      const rad = bot.heading * (Math.PI / 180);
+      bot.pos = moveCoordsByMeters(bot.pos[0], bot.pos[1], Math.sin(rad) * moveDistanceMeters, Math.cos(rad) * moveDistanceMeters);
+      bot.marker.setLatLng(bot.pos);
+
+      const inBase = getDistanceMeters(bot.pos, bot.spawn) <= 35;
+      if (!inBase) {
+        const last = bot.trail[bot.trail.length - 1];
+        if (!last || getDistanceMeters(bot.pos, last) >= 8) {
+          bot.trail.push(bot.pos);
+          bot.trailLayer.setLatLngs(bot.trail);
+        }
+      } else {
+        if (bot.trail.length >= 4) {
+          bot.area += Math.round(bot.trail.length * 40);
+          L.polygon([...bot.trail, bot.spawn], { color: bot.color, fillColor: bot.color, fillOpacity: 0.35, weight: 2 }).addTo(territoryGroup);
+          updateUI();
+        }
+        bot.trail = [];
+        bot.trailLayer.setLatLngs([]);
+      }
     }
 
     function addCredits(amount) {
@@ -710,6 +956,24 @@
 
     function updateUI() {
       document.getElementById('playerAreaStat').textContent = `${playerTotalArea.toLocaleString()} m²`;
+
+      // Live Leaderboard mit Bots
+      const players = [
+        { name: playerName, area: playerTotalArea, color: playerCustomColor },
+        { name: "Crimson", area: botCrimson.area, color: botCrimson.color },
+        { name: "Volt", area: botVolt.area, color: botVolt.color }
+      ].sort((a, b) => b.area - a.area);
+
+      const listEl = document.getElementById('leaderboardList');
+      if (listEl) {
+        listEl.innerHTML = '';
+        players.forEach((p, idx) => {
+          const row = document.createElement('div');
+          row.className = 'leaderboard-item';
+          row.innerHTML = `<span style="color:${p.color};">#${idx+1} ${p.name}</span><span style="color:#fff;">${p.area.toLocaleString()} m²</span>`;
+          listEl.appendChild(row);
+        });
+      }
     }
 
     function showBanner(text, isDanger) {
@@ -720,8 +984,53 @@
     }
 
     /* ========================================================
-       6. AUDIO CONTROLS
+       7. SHOP & TOOL UPGRADES
        ======================================================== */
+    const openShopBtn = document.getElementById('openShopBtn');
+    if (openShopBtn) openShopBtn.addEventListener('click', () => { document.getElementById('shopModal').style.display = 'flex'; });
+    const closeShopBtn = document.getElementById('closeShopBtn');
+    if (closeShopBtn) closeShopBtn.addEventListener('click', () => { document.getElementById('shopModal').style.display = 'none'; });
+
+    function upgradeHackTool(level, cybCost, eurCost) {
+      ensureAudioContext();
+      if (hackToolLevel >= level) { showBanner("TOOL BEREITS INSTALLIERT!", false); return; }
+      if (eurCost > 0) {
+        if (confirm(`Für ${eurCost.toFixed(2)} € kaufen?`)) applyHackUpgrade(level);
+      } else if (savedCredits >= cybCost) {
+        savedCredits -= cybCost;
+        addCredits(0);
+        applyHackUpgrade(level);
+      } else {
+        showBanner("NICHT GENUG $CYB CREDITS!", true);
+      }
+    }
+
+    function applyHackUpgrade(level) {
+      hackToolLevel = level;
+      localStorage.setItem('pc_hack_tool_lvl', hackToolLevel);
+      document.getElementById('hudAgentTag').textContent = `HACK-RIG MK.${hackToolLevel} // 50 m/s`;
+      playFanfare();
+      showBanner(`HACK-RIG MK.${level} INSTALLIERT!`, false);
+      speakEva(`Rig Mark ${level} aktiv.`);
+    }
+
+    function buyBaseExpansion(cybCost, eurCost) {
+      ensureAudioContext();
+      if (baseRadius >= 45) { showBanner("BASIS BEREITS MAXIMAL AUSGEBAUT!", false); return; }
+      if (eurCost > 0 || savedCredits >= cybCost) {
+        if (cybCost > 0) { savedCredits -= cybCost; addCredits(0); }
+        baseRadius = 45;
+        outpostList[currentOutpostIdx].radius = baseRadius;
+        localStorage.setItem('pc_outposts', JSON.stringify(outpostList));
+        renderAllTerritories();
+        playFanfare();
+        showBanner("BASIS-KREIS AUF 45 METER ERWEITERT!", false);
+      } else {
+        showBanner("NICHT GENUG $CYB CREDITS!", true);
+      }
+    }
+
+    // Audio-Controls
     document.getElementById('synthMusicBtn').addEventListener('click', function() {
       ensureAudioContext();
       isSynthMusicActive = !isSynthMusicActive;
@@ -743,16 +1052,31 @@
     });
 
     /* ========================================================
-       7. START & BEWEGUNGS-INITIALISIERUNG
+       8. INITIALISIERUNG & INSTANT-START
        ======================================================== */
+    function renderAllTerritories() {
+      territoryGroup.clearLayers();
+      outpostList.forEach(op => {
+        L.circle(op.coords, {
+          radius: op.radius,
+          color: playerCustomColor,
+          fillColor: playerCustomColor,
+          fillOpacity: 0.55,
+          weight: 3
+        }).bindTooltip(`<b>${op.districtName.toUpperCase()}</b>`, { permanent: true, direction: 'center', className: 'monument-label' }).addTo(territoryGroup);
+      });
+    }
+
     function initializeBaseAndMonuments(coords) {
       playerSpawn = [...coords];
+      outpostList[currentOutpostIdx].coords = [...playerSpawn];
+      localStorage.setItem('pc_outposts', JSON.stringify(outpostList));
       playerPos = [...playerSpawn];
       playerMarker.setLatLng(playerPos);
       map.setView(playerPos, 17);
-      territoryGroup.clearLayers();
-      L.circle(playerSpawn, { radius: baseRadius, color: playerCustomColor, fillColor: playerCustomColor, fillOpacity: 0.55, weight: 3 }).addTo(territoryGroup);
+      renderAllTerritories();
       fetchRealMonuments(playerSpawn);
+      updateOutpostBtnUI();
     }
 
     document.getElementById('acceptSafetyBtn').addEventListener('click', () => {
@@ -780,7 +1104,6 @@
       }
     });
 
-    // GPS & Relocate
     const toggleGpsBtn = document.getElementById('toggleGpsBtn');
     toggleGpsBtn.addEventListener('click', () => {
       ensureAudioContext();
@@ -817,7 +1140,7 @@
     document.getElementById('resetBtn').addEventListener('click', () => location.reload());
 
     /* ========================================================
-       8. JOYSTICK (100% UNBLOCKIERT)
+       9. JOYSTICK & GAMELOOP
        ======================================================== */
     const joystickZone = document.getElementById('joystickZone');
     const joystickHandle = document.getElementById('joystickHandle');
@@ -855,16 +1178,21 @@
 
     let lastTime = performance.now();
     function loop(t) {
-      const dt = (t - lastTime) / 1000;
-      lastTime = t;
+      try {
+        const dt = (t - lastTime) / 1000;
+        lastTime = t;
 
-      if (!isRealGpsActive && (joyX !== 0 || joyY !== 0)) {
-        const move = 50.0 * dt;
-        const newPos = moveCoordsByMeters(playerPos[0], playerPos[1], joyX * move, -joyY * move);
-        handlePlayerMovement(newPos[0], newPos[1], 15);
-        map.panTo(playerPos, { animate: false });
-      }
+        if (!isRealGpsActive && (joyX !== 0 || joyY !== 0)) {
+          const move = 50.0 * dt;
+          const newPos = moveCoordsByMeters(playerPos[0], playerPos[1], joyX * move, -joyY * move);
+          handlePlayerMovement(newPos[0], newPos[1], 15);
+          map.panTo(playerPos, { animate: false });
+        }
 
+        // Bots bewegen
+        updateRealisticBot(botCrimson, dt, 3.2, 85);
+        updateRealisticBot(botVolt, dt, 2.6, 110);
+      } catch(e){}
       requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);
