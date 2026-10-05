@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // AAA SMARTWATCH & GPS MASTER</title>
+  <title>PaperCity // HEARTBEAT DYNAMIC CANVAS</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#020408" />
@@ -157,7 +157,7 @@
     </button>
   </div>
 
-  <!-- BIO-RESONANCE LINK MODAL (SMARTWATCH & CAMERA) -->
+  <!-- BIO-RESONANCE LINK MODAL -->
   <div class="modal-overlay" id="bioModal">
     <div class="cyber-modal-card">
       <div class="modal-header" style="color:var(--cyber-purple);">
@@ -165,9 +165,9 @@
         <button class="close-modal-btn" id="closeBioModal"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <p style="font-size: 0.85rem; color: #bad3eb; margin-bottom: 16px;">
-        Verbinde deine Smartwatch via Bluetooth oder nutze den Kamera-Scan, um deinen Puls zu synchronisieren.
+        Verbinde deine Smartwatch via Bluetooth für den Live-Herzfrequenz-Hintergrund und automatisches Overclocking.
       </p>
-      <div id="bioStatusTxt" style="font-family:var(--font-tech); font-size:1.05rem; color:var(--cyber-cyan); margin: 15px 0;">BEREIT ZUR SYNCHRONISATION...</div>
+      <div id="bioStatusTxt" style="font-family:var(--font-tech); font-size:1.05rem; color:var(--cyber-cyan); margin: 15px 0;">PULS: WARTING AUF SIGNAL...</div>
       <div style="display:flex; flex-direction:column; gap:10px;">
         <button class="save-profile-btn" id="connectSmartwatchBtn" style="background:var(--cyber-cyan); color:#020408; box-shadow:0 0 20px var(--cyber-cyan);">⌚ SMARTWATCH KOPPELN (BLUETOOTH)</button>
         <button class="save-profile-btn" id="startBioScanBtn" style="background:var(--cyber-purple); box-shadow:0 0 20px var(--cyber-purple);">📸 KAMERA-PULS-SCAN</button>
@@ -181,11 +181,11 @@
         <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Smartwatch & GPS Master</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Heartbeat Dynamic Canvas</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem; text-align:left;">
-        <li><i class="fa-solid fa-clock" style="color:var(--cyber-purple);"></i> <b>Smartwatch Link:</b> Bluetooth-Herzfrequenzmessung direkt vom Handgelenk.</li>
-        <li><i class="fa-solid fa-location-crosshairs" style="color:var(--cyber-cyan);"></i> <b>Echt-GPS Modus:</b> Erfasse reale Laufwege draußen.</li>
+        <li><i class="fa-solid fa-heart-pulse" style="color:var(--cyber-crimson);"></i> <b>Heartbeat Canvas:</b> Der Hintergrund pulsiert im echten Takt deines Herzschlags!</li>
+        <li><i class="fa-solid fa-location-crosshairs" style="color:var(--cyber-cyan);"></i> <b>Echt-GPS & Joystick:</b> Volle Bewegungsfreiheit.</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
     </div>
@@ -197,7 +197,7 @@
         <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
         <div>
           <div class="agent-name-label" id="hudAgentName">AGENT V</div>
-          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">SMARTWATCH LINK // 50 m/s</div>
+          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">HEARTBEAT LINK // 50 m/s</div>
         </div>
       </div>
 
@@ -263,6 +263,8 @@
     let isSfxActive = true;
     let cachedGermanVoice = null;
     let isOverclockActive = false;
+    let currentHeartRate = 72; // Standard Ruheherzfrequenz
+    let heartBeatPulse = 0;
 
     function ensureAudioContext() {
       try {
@@ -364,7 +366,7 @@
     }
 
     /* ========================================================
-       2. SMARTWATCH BLUETOOTH & CANVAS ENGINE
+       2. HEARTBEAT DYNAMIC CANVAS ENGINE
        ======================================================== */
     const canvas = document.getElementById('worldCanvas');
     const ctx = canvas.getContext('2d');
@@ -396,7 +398,6 @@
     let justCapturedCooldown = false;
     let particles = [];
 
-    // GPS & Smartwatch Variablen
     let isRealGpsActive = false;
     let gpsWatchId = null;
     let gpsOriginLat = null;
@@ -495,17 +496,16 @@
     }
 
     /* ========================================================
-       3. SMARTWATCH BLUETOOTH & CAMERA BIO-SCAN
+       3. SMARTWATCH BLUETOOTH & PULS-INTEGRATION
        ======================================================== */
     const bioModal = document.getElementById('bioModal');
     document.getElementById('bioScanTriggerBtn').addEventListener('click', () => {
       ensureAudioContext();
       bioModal.style.display = 'flex';
-      document.getElementById('bioStatusTxt').textContent = "WÄHLE SYNCHRONISATIONS-METHODE...";
+      document.getElementById('bioStatusTxt').textContent = "PULS: WARTING AUF SIGNAL...";
     });
     document.getElementById('closeBioModal').addEventListener('click', () => { bioModal.style.display = 'none'; });
 
-    // Smartwatch Bluetooth Kopplung (Standard Heart Rate Profile 0x180D)
     document.getElementById('connectSmartwatchBtn').addEventListener('click', async () => {
       const statusTxt = document.getElementById('bioStatusTxt');
       try {
@@ -525,22 +525,21 @@
         await characteristic.startNotifications();
         characteristic.addEventListener('characteristicvaluechanged', (event) => {
           const value = event.target.value;
-          const hr = value.getUint8(1); // Herzfrequenz BPM
-          statusTxt.textContent = `PULS ERKANNT: ${hr} BPM`;
-          if (hr > 105) { // Ab 105 BPM schaltet das Overclock ein
+          currentHeartRate = value.getUint8(1); // Live BPM von der Uhr
+          statusTxt.textContent = `PULS SYNC: ${currentHeartRate} BPM`;
+          if (currentHeartRate > 105 && !isOverclockActive) {
             activateOverclock();
           }
         });
         statusTxt.textContent = "SMARTWATCH GEKOPPELT!";
         speakEva("Smartwatch erfolgreich synchronisiert.");
       } catch (err) {
-        statusTxt.textContent = "KOPPLUNG ABGEBROCHEN ODER FEHLGESCHLAGEN.";
+        statusTxt.textContent = "KOPPLUNG ABGEBROCHEN.";
       }
     });
 
-    // Kamera-Scan Fallback
     document.getElementById('startBioScanBtn').addEventListener('click', () => {
-      document.getElementById('bioStatusTxt').textContent = "SYNCHRONISIERE BIOMETRIE...";
+      document.getElementById('bioStatusTxt').textContent = "SYNCHRONISIERE PULS...";
       speakEva("Analysiere biometrische Resonanz.");
 
       navigator.mediaDevices?.getUserMedia({ video: { facingMode: "environment" } }).then(stream => {
@@ -550,10 +549,11 @@
         }
         setTimeout(() => {
           stream.getTracks().forEach(t => t.stop());
+          currentHeartRate = 115; // Simulierter erhöhter Puls
           activateOverclock();
         }, 3500);
       }).catch(() => {
-        setTimeout(() => { activateOverclock(); }, 3000);
+        setTimeout(() => { currentHeartRate = 115; activateOverclock(); }, 3000);
       });
     });
 
@@ -563,19 +563,19 @@
       const badge = document.getElementById('playerStatusBadge');
       badge.textContent = '⚡ OVERCLOCK AKTIV (2X)';
       badge.className = 'status-badge overclock';
-      showBanner("⚡ BIO-RESONANCE OVERCLOCK AKTIV!", false);
-      speakEva("Biometrische Resonanz erfolgreich. Overclock aktiviert.");
+      showBanner("⚡ PULS-OVERCLOCK AKTIV!", false);
+      speakEva("Herzfrequenz-Schwellenwert erreicht. Overclock aktiviert.");
       playFanfare();
 
       setTimeout(() => {
         isOverclockActive = false;
+        currentHeartRate = 72;
         badge.textContent = 'IN BASIS (GESICHERT)';
         badge.className = 'status-badge';
         showBanner("Overclock beendet.", true);
       }, 30000);
     }
 
-    // ECHT-GPS Integration
     const toggleGpsBtn = document.getElementById('toggleGpsBtn');
     toggleGpsBtn.addEventListener('click', () => {
       ensureAudioContext();
@@ -644,7 +644,7 @@
     }
 
     /* ========================================================
-       5. GAME LOOP & AAA RENDER ENGINE
+       5. GAME LOOP & HEARTBEAT BACKGROUND RENDER
        ======================================================== */
     function handlePlayerMovement(dx, dy) {
       try {
@@ -707,7 +707,7 @@
       bot.y -= Math.cos(rad) * bot.speed * dt;
     }
 
-    function renderWorld() {
+    function renderWorld(timestamp) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
@@ -715,11 +715,20 @@
       cameraX += (worldX - cameraX) * 0.12;
       cameraY += (worldY - cameraY) * 0.12;
 
+      // Herzschlag-Puls-Berechnung für den Hintergrund
+      // Frequenz basiert auf echten BPM (Schläge pro Sekunde = BPM / 60)
+      const bps = currentHeartRate / 60;
+      heartBeatPulse = Math.sin(timestamp * 0.001 * bps * Math.PI * 2) * 0.5 + 0.5; // Wert zwischen 0 und 1 im Takt
+
       ctx.save();
       ctx.translate(centerX - cameraX, centerY - cameraY);
 
-      ctx.strokeStyle = 'rgba(0, 243, 255, 0.03)';
-      ctx.lineWidth = 1;
+      // 1. Herzschlag-Pulsiendes Hintergrund-Grid
+      const gridBaseAlpha = 0.02;
+      const gridPulseAlpha = gridBaseAlpha + (heartBeatPulse * 0.04);
+      ctx.strokeStyle = isOverclockActive ? `rgba(189, 0, 255, ${gridPulseAlpha * 1.8})` : `rgba(0, 243, 255, ${gridPulseAlpha})`;
+      ctx.lineWidth = 1 + (heartBeatPulse * 0.8);
+      
       const gridStep = 100;
       let startX = Math.floor((cameraX - centerX) / gridStep) * gridStep;
       let startY = Math.floor((cameraY - centerY) / gridStep) * gridStep;
@@ -730,6 +739,7 @@
         ctx.beginPath(); ctx.moveTo(cameraX - centerX - 200, y); ctx.lineTo(cameraX + centerX + canvas.width, y); ctx.stroke();
       }
 
+      // 2. Volumetrische Gebäude
       backgroundBuildings.forEach(b => {
         ctx.fillStyle = 'rgba(5, 12, 24, 0.85)';
         ctx.fillRect(b.x, b.y, b.w, b.h);
@@ -738,6 +748,7 @@
         ctx.strokeRect(b.x, b.y, b.w, b.h);
       });
 
+      // 3. Organische Straßen
       roadSegments.forEach(r => {
         ctx.strokeStyle = 'rgba(0, 243, 255, 0.06)';
         ctx.lineWidth = 22; ctx.lineCap = 'round';
@@ -748,17 +759,20 @@
         ctx.beginPath(); ctx.moveTo(r.x1, r.y1); ctx.lineTo(r.x2, r.y2); ctx.stroke();
       });
 
+      // 4. Heimatbasis (Pulsiert im Herzschlag-Takt!)
+      const currentBaseRadius = baseRadius + (heartBeatPulse * 4);
       ctx.beginPath();
-      ctx.arc(0, 0, baseRadius, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0, 243, 255, 0.22)';
+      ctx.arc(0, 0, currentBaseRadius, 0, Math.PI * 2);
+      ctx.fillStyle = isOverclockActive ? 'rgba(189, 0, 255, 0.3)' : 'rgba(0, 243, 255, 0.25)';
       ctx.fill();
       ctx.strokeStyle = playerCustomColor;
       ctx.lineWidth = 3;
       ctx.shadowColor = playerCustomColor;
-      ctx.shadowBlur = 25;
+      ctx.shadowBlur = 20 + (heartBeatPulse * 15);
       ctx.stroke();
       ctx.shadowBlur = 0;
 
+      // 5. Territorien
       territories.forEach(t => {
         if (t.points.length < 3) return;
         ctx.beginPath();
@@ -775,6 +789,7 @@
         ctx.shadowBlur = 0;
       });
 
+      // 6. Spieler Trail
       if (playerTrail.length > 1) {
         ctx.beginPath();
         ctx.moveTo(playerTrail[0].x, playerTrail[0].y);
@@ -787,6 +802,7 @@
         ctx.shadowBlur = 0;
       }
 
+      // 7. Monumente
       cityMonuments.forEach(m => {
         ctx.beginPath();
         ctx.arc(m.x, m.y, 18, 0, Math.PI * 2);
@@ -802,6 +818,7 @@
         ctx.fillText(m.name, m.x, m.y - 24);
       });
 
+      // 8. Partikel
       for (let i = particles.length - 1; i >= 0; i--) {
         let p = particles[i];
         p.x += p.vx * 0.016; p.y += p.vy * 0.016; p.alpha -= 0.016 / p.life;
@@ -812,10 +829,12 @@
         ctx.globalAlpha = 1.0;
       }
 
+      // 9. Spieler Avatar (Pulsiert im Herzschlag)
+      const avatarRadius = 16 + (heartBeatPulse * 3);
       ctx.beginPath();
-      ctx.arc(worldX, worldY, 16, 0, Math.PI * 2);
+      ctx.arc(worldX, worldY, avatarRadius, 0, Math.PI * 2);
       ctx.fillStyle = isOverclockActive ? '#bd00ff' : playerCustomColor;
-      ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 35;
+      ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 35 + (heartBeatPulse * 15);
       ctx.fill();
       ctx.shadowBlur = 0;
       ctx.lineWidth = 4;
@@ -824,6 +843,7 @@
 
       ctx.restore();
 
+      // 10. Vignette
       const grad = ctx.createRadialGradient(centerX, centerY, canvas.width * 0.25, centerX, centerY, canvas.width * 0.75);
       grad.addColorStop(0, 'rgba(2, 4, 8, 0)');
       grad.addColorStop(1, 'rgba(2, 4, 8, 0.9)');
@@ -908,17 +928,15 @@
     function joyRelease() { joyActive = false; joyX = 0; joyY = 0; joystickHandle.style.transform = 'translate(0px, 0px)'; }
     window.addEventListener('pointerup', joyRelease); window.addEventListener('pointercancel', joyRelease);
 
-    let lastTime = performance.now();
-    function loop(t) {
+    function loop(timestamp) {
       try {
-        const dt = (t - lastTime) / 1000;
-        lastTime = t;
         if (!isRealGpsActive && (joyX !== 0 || joyY !== 0)) {
           const moveSpeed = 50;
-          handlePlayerMovement(joyX * moveSpeed * dt, joyY * moveSpeed * dt);
+          // deltaTime Annahme ~ 16ms
+          handlePlayerMovement(joyX * moveSpeed * 0.016, joyY * moveSpeed * 0.016);
         }
-        updateBot(botCrimson, dt); updateBot(botVolt, dt);
-        renderWorld();
+        updateBot(botCrimson, 0.016); updateBot(botVolt, 0.016);
+        renderWorld(timestamp);
       } catch(e){}
       requestAnimationFrame(loop);
     }
