@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // WEATHER-ECHO ULTIMATE</title>
+  <title>PaperCity // GLOBAL MMO EDITION</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#020408" />
@@ -67,26 +67,20 @@
     }
 
     .weather-badge {
-      font-family: var(--font-tech); color: var(--cyber-cyan); font-size: 0.68rem; font-weight: 800; display: flex; align-items: center; gap: 5px; margin-top: 3px;
+      font-family: var(--font-tech); color: var(--cyber-cyan); font-size: 0.65rem; font-weight: 800; display: flex; align-items: center; gap: 5px; margin-top: 3px;
       text-shadow: 0 0 8px rgba(0, 243, 255, 0.5);
     }
 
+    .streak-display {
+      font-family: var(--font-tech); color: var(--cyber-green); font-size: 0.7rem; font-weight: 800; display: flex; align-items: center; gap: 5px; margin-top: 2px;
+    }
+
     .level-container { margin-top: 5px; width: 150px; }
-    .level-row { display: flex; justify-content: space-between; font-size: 0.72rem; font-weight: 700; font-family: var(--font-tech); margin-bottom: 3px; }
+    .level-row { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 700; font-family: var(--font-tech); margin-bottom: 3px; }
     .xp-bar-bg { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.08); clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px)); overflow: hidden; border: 1px solid rgba(0, 243, 255, 0.4); }
     .xp-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-green)); box-shadow: 0 0 12px var(--cyber-cyan); transition: width 0.3s ease; }
 
-    .status-badge {
-      display: inline-block; margin-top: 5px; padding: 3px 9px; font-family: var(--font-tech); font-size: 0.62rem; font-weight: 800; letter-spacing: 1.2px;
-      background: rgba(0, 243, 255, 0.12); color: var(--cyber-cyan); border: 1px solid var(--cyber-cyan); clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
-      box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
-    }
-    .status-badge.danger { background: rgba(255, 0, 85, 0.2); color: var(--cyber-crimson); border-color: var(--cyber-crimson); text-shadow: 0 0 10px var(--cyber-crimson); box-shadow: 0 0 10px rgba(255, 0, 85, 0.4); }
-    .status-badge.overclock { background: rgba(189, 0, 255, 0.3); color: var(--cyber-purple); border-color: var(--cyber-purple); text-shadow: 0 0 12px var(--cyber-purple); box-shadow: 0 0 15px var(--cyber-purple); animation: pulseGlow 1s infinite alternate; }
-
-    @keyframes pulseGlow { from { opacity: 0.7; } to { opacity: 1; transform: scale(1.03); } }
-
-    /* AUFKLAPPBARE LEISTEN */
+    /* DRAWER & MENÜS */
     .quest-drawer-container {
       position: absolute; top: 160px; right: 15px; z-index: 1500; display: flex; flex-direction: column; align-items: flex-end; pointer-events: auto;
     }
@@ -112,7 +106,33 @@
     .claim-quest-btn { background: rgba(0, 255, 102, 0.2); border: 1px solid var(--cyber-green); color: var(--cyber-green); padding: 3px 8px; font-family: var(--font-tech); font-size: 0.6rem; font-weight: 900; cursor: pointer; border-radius: 3px; }
     .claim-quest-btn.claimed { background: #333; color: #777; border-color: #555; cursor: default; }
 
-    /* Modals */
+    /* CHAT SYSTEM */
+    .chat-drawer-container {
+      position: absolute; bottom: 145px; left: 15px; z-index: 1500; display: flex; flex-direction: column; pointer-events: auto;
+    }
+    .chat-toggle-tab {
+      background: var(--cyber-dark); border: 1px solid var(--cyber-purple); color: var(--cyber-purple); padding: 8px 14px;
+      font-family: var(--font-tech); font-size: 0.72rem; font-weight: 900; letter-spacing: 1.5px; cursor: pointer;
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+      box-shadow: 0 0 15px rgba(189, 0, 255, 0.4); display: flex; align-items: center; gap: 8px;
+    }
+    .chat-content-box {
+      width: 310px; height: 240px; background: rgba(4, 9, 18, 0.96); border: 1px solid var(--cyber-purple);
+      backdrop-filter: blur(20px); margin-bottom: 6px; padding: 10px; display: none; flex-direction: column; justify-content: space-between;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+      box-shadow: 0 0 30px rgba(189, 0, 255, 0.3);
+    }
+    .chat-tabs { display: flex; gap: 4px; margin-bottom: 6px; border-bottom: 1px solid rgba(189,0,255,0.3); padding-bottom: 4px; }
+    .chat-tab-btn { background: none; border: 1px solid rgba(189,0,255,0.4); color: #8fa5ba; font-family: var(--font-tech); font-size: 0.6rem; padding: 3px 8px; cursor: pointer; }
+    .chat-tab-btn.active { background: rgba(189,0,255,0.2); color: var(--cyber-purple); border-color: var(--cyber-purple); font-weight: bold; }
+    .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; font-size: 0.75rem; padding-right: 4px; }
+    .chat-msg { font-family: var(--font-hud); line-height: 1.3; color: #bad3eb; }
+    .chat-msg span { font-family: var(--font-tech); font-weight: 700; font-size: 0.68rem; color: var(--cyber-cyan); }
+    .chat-input-row { display: flex; gap: 5px; margin-top: 6px; }
+    .chat-input { flex: 1; background: rgba(0,0,0,0.5); border: 1px solid var(--cyber-border); color: #fff; padding: 5px 8px; font-size: 0.75rem; outline: none; }
+    .chat-send-btn { background: var(--cyber-purple); border: none; color: #fff; padding: 5px 10px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 900; cursor: pointer; }
+
+    /* MODALS & AUTH INPUTS */
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(1, 3, 7, 0.95); backdrop-filter: blur(24px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px;
     }
@@ -123,6 +143,7 @@
     .modal-header { font-family: var(--font-tech); font-size: 1.2rem; color: var(--cyber-cyan); display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; text-shadow: 0 0 12px var(--cyber-cyan); }
     .close-modal-btn { background: none; border: none; color: var(--cyber-crimson); font-size: 1.4rem; cursor: pointer; text-shadow: 0 0 8px var(--cyber-crimson); }
     .save-profile-btn { width: 100%; background: var(--cyber-cyan); color: #020408; border: none; padding: 14px; font-family: var(--font-tech); font-size: 0.9rem; font-weight: 900; letter-spacing: 1.5px; cursor: pointer; margin-top: 12px; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 14px)); box-shadow: 0 0 25px rgba(0, 243, 255, 0.7); }
+    .cyber-input { width: 100%; background: rgba(0,0,0,0.6); border: 1px solid var(--cyber-border); color: #fff; padding: 12px; font-family: var(--font-tech); font-size: 0.9rem; margin-bottom: 12px; outline: none; text-align: center; }
 
     .top-right-col { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; pointer-events: auto; }
     .quick-toolbar { display: flex; gap: 6px; }
@@ -139,6 +160,9 @@
     .neon-btn { background: var(--cyber-dark); backdrop-filter: blur(14px); border: 1px solid var(--cyber-border); color: #fff; padding: 11px 15px; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); font-family: var(--font-tech); font-size: 0.72rem; font-weight: 800; letter-spacing: 1.2px; cursor: pointer; display: flex; align-items: center; gap: 7px; box-shadow: 0 4px 20px rgba(0,0,0,0.7); }
     .neon-btn.active { background: var(--cyber-cyan); color: #020408; box-shadow: 0 0 25px var(--cyber-cyan); }
 
+    .joystick-panel { pointer-events: auto; width: 115px; height: 115px; background: rgba(3, 7, 14, 0.82); backdrop-filter: blur(14px); border: 2px dashed var(--cyber-border); border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; touch-action: none; box-shadow: 0 0 30px rgba(0, 243, 255, 0.25); }
+    .joystick-stick { width: 46px; height: 46px; background: radial-gradient(circle at 35% 35%, #ffffff, var(--cyber-cyan)); border-radius: 50%; position: absolute; box-shadow: 0 0 30px var(--cyber-cyan); pointer-events: none; transform: translate(0px, 0px); }
+
     .banner-notification { position: absolute; top: 90px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(3, 7, 14, 0.97); backdrop-filter: blur(20px); border: 1px solid var(--cyber-cyan); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); padding: 11px 26px; font-family: var(--font-tech); font-size: 0.88rem; font-weight: 900; letter-spacing: 1.2px; color: #fff; z-index: 2000; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); box-shadow: 0 0 40px rgba(0, 243, 255, 0.7); white-space: nowrap; }
     .banner-notification.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
@@ -148,47 +172,73 @@
   <div class="cyber-overlay"></div>
   <canvas id="worldCanvas"></canvas>
 
-  <!-- QUEST & STORY LEISTE -->
-  <div class="quest-drawer-container">
-    <button class="quest-toggle-tab" id="questToggleBtn">
-      <i class="fa-solid fa-scroll"></i> 📋 STORY & MISSIONS <span id="questArrow">▼</span>
-    </button>
-    <div class="quest-content-box" id="questContentBox">
-      <div class="story-card" id="storyCardContainer">
-        <div class="story-title" id="storyChapterTitle">KAPITEL 1: ERWACHEN</div>
-        <div class="story-text" id="storyChapterText">ARES-9 infiziert die Frequenz. Durchbreche den Nebel und sichere deinen ersten Sektor.</div>
+  <!-- AGENT AUTH & IMPORT MODAL -->
+  <div class="modal-overlay" id="authModal">
+    <div class="cyber-modal-card" style="border-color:var(--cyber-cyan);">
+      <div class="modal-header">
+        <span><i class="fa-solid fa-globe"></i> GLOBAL MMO // NETZWERK ID</span>
+        <button class="close-modal-btn" id="closeAuthModal"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div style="font-family:var(--font-tech); font-size:0.75rem; color:var(--cyber-cyan); border-bottom:1px solid rgba(0,243,255,0.3); padding-bottom:4px; margin-top:4px;">
-        TÄGLICHE PROTOCOLS (10)
-      </div>
-      <div id="questListContainer" style="display:flex; flex-direction:column; gap:6px;"></div>
-    </div>
-  </div>
-
-  <!-- BIO-RESONANCE LINK MODAL -->
-  <div class="modal-overlay" id="bioModal">
-    <div class="cyber-modal-card">
-      <div class="modal-header" style="color:var(--cyber-purple);">
-        <span><i class="fa-solid fa-dna"></i> BIO-RESONANCE & WEATHER-ECHO</span>
-        <button class="close-modal-btn" id="closeBioModal"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <p style="font-size: 0.85rem; color: #bad3eb; margin-bottom: 16px;">
-        Verbinde deine Smartwatch für Live-Herzfrequenz. Bei Unwetter aktiviert sich der sichere Home-Gym-Overclock-Modus!
+      <p style="font-size: 0.82rem; color: #bad3eb; margin-bottom: 12px; text-align: left;">
+        Registriere deine Agenten-ID für den Live-Multiplayer.
       </p>
-      <div id="bioStatusTxt" style="font-family:var(--font-tech); font-size:1.05rem; color:var(--cyber-cyan); margin: 15px 0;">PULS: WARTING AUF SIGNAL...</div>
-      <button class="save-profile-btn" id="connectSmartwatchBtn" style="background:var(--cyber-cyan); color:#020408;">⌚ SMARTWATCH KOPPELN</button>
+      <input type="text" id="agentInputName" class="cyber-input" placeholder="AGENTEN-NAME" maxlength="16" />
+      <button class="save-profile-btn" id="saveAgentAccountBtn">ONLINE GEHEN & SYNC</button>
     </div>
   </div>
 
+  <!-- CHAT SYSTEM -->
+  <div class="chat-drawer-container">
+    <div class="chat-content-box" id="chatContentBox">
+      <div class="chat-tabs">
+        <button class="chat-tab-btn active" id="tabCityBtn" onclick="switchChatTab('city')">🏙️ LIVE CHAT</button>
+        <button class="chat-tab-btn" id="tabWorldBtn" onclick="switchChatTab('world')">🌍 GLOBAL</button>
+      </div>
+      <div class="chat-messages" id="chatMessagesContainer"></div>
+      <div class="chat-input-row">
+        <input type="text" id="chatInputText" class="chat-input" placeholder="Nachricht an alle..." maxlength="120" />
+        <button class="chat-send-btn" onclick="sendChatMessage()">SEND</button>
+      </div>
+    </div>
+    <button class="chat-toggle-tab" id="chatToggleBtn"><i class="fa-solid fa-comments"></i> 💬 LIVE CHAT <span id="chatArrow">▲</span></button>
+  </div>
+
+  <!-- ACHIEVEMENTS MODAL -->
+  <div class="modal-overlay" id="achievementsModal">
+    <div class="cyber-modal-card" style="border-color:var(--cyber-gold);">
+      <div class="modal-header" style="color:var(--cyber-gold);">
+        <span><i class="fa-solid fa-trophy"></i> TROPHÄEN-KABINETT</span>
+        <button class="close-modal-btn" id="closeAchievementsBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px; text-align:left;">
+        <div class="quest-item"><div class="quest-title">🏆 MMO Pioniere <span style="color:var(--cyber-gold);">[ AKTIV ]</span></div><div style="font-size:0.7rem; color:#8fa5ba;">Verbunden mit dem globalen Echtzeit-Grid.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CITY WARS MODAL -->
+  <div class="modal-overlay" id="cityWarsModal">
+    <div class="cyber-modal-card" style="border-color:var(--cyber-green);">
+      <div class="modal-header" style="color:var(--cyber-green);">
+        <span><i class="fa-solid fa-earth-europe"></i> LIVE STÄDTE-KRIEG</span>
+        <button class="close-modal-btn" id="closeCityWarsBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div style="font-size:0.85rem; color:#bad3eb; margin-bottom:12px; text-align:left;">Echtzeit-Flächenwertung aller verbundenen Spieler:</div>
+      <div style="display:flex; flex-direction:column; gap:8px; text-align:left;">
+        <div class="shop-row"><span>#1 Berlin</span><span style="color:var(--cyber-green);">142.500 m²</span></div>
+        <div class="shop-row" style="background:rgba(0,255,102,0.1); padding:6px;"><span>#2 Emsdetten (Live)</span><span style="color:var(--cyber-gold); font-weight:bold;" id="liveEmsdettenArea">98.400 m²</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAFETY PROTOCOL MODAL -->
   <div class="modal-overlay" id="safetyModal" style="display:flex;">
     <div class="cyber-modal-card">
-      <div class="modal-header">
-        <span><i class="fa-solid fa-shield-halved"></i> SAFETY PROTOCOL // WEATHER-ECHO</span>
-      </div>
+      <div class="modal-header"><span><i class="fa-solid fa-signal"></i> PROTOKOLL // GLOBAL MMO ONLINE</span></div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Weather-Echo Edition</b>. Integriert Live-Wetter-Sicherheit (Unwetter-Schutz & Home-Gym-Modus).
+        NETZWERK-INITIALISIERUNG: Verbinde mit dem globalen WebSocket-Relay für Echtzeit-Multiplayer.
       </div>
-      <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
+      <button class="save-profile-btn" id="acceptSafetyBtn">ONLINE GEHEN & GRID BETRETEN</button>
     </div>
   </div>
 
@@ -197,20 +247,27 @@
       <div class="hud-profile-row">
         <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
         <div>
-          <div class="agent-name-label">AGENT V</div>
-          <div class="weather-badge" id="weatherStatusBadge"><i class="fa-solid fa-cloud-sun"></i> KLARER HIMMEL (SICHER)</div>
+          <div class="agent-name-label" id="hudAgentName">AGENT V</div>
+          <div class="streak-display"><i class="fa-solid fa-wifi" style="color:var(--cyber-green);"></i> <span id="mmoStatusTxt">ONLINE (LIVE)</span></div>
+          <div class="weather-badge" id="weatherStatusBadge"><i class="fa-solid fa-cloud-sun"></i> KLARER HIMMEL</div>
         </div>
       </div>
       <div class="stat-title"><i class="fa-solid fa-crown"></i> SEKTOR // FLAECHE</div>
-      <div class="stat-value" id="playerAreaStat">0 m²</div>
+      <div class="stat-value" id="playerAreaStat">1.960 m²</div>
       <div class="credits-display"><i class="fa-solid fa-coins"></i> <span id="playerCreditsStat">250</span> $CYB</div>
-      <div class="status-badge" id="playerStatusBadge">IN BASIS</div>
+      
+      <div class="level-container">
+        <div class="level-row"><span style="color:var(--cyber-cyan);" id="rankTitle">LVL 1 ROOKIE</span><span id="xpStat" style="color:#799bbb;">0/600 XP</span></div>
+        <div class="xp-bar-bg"><div class="xp-bar-fill" id="xpFill" style="width: 25%;"></div></div>
+      </div>
     </div>
 
     <div class="top-right-col">
       <div class="quick-toolbar">
-        <button class="tool-btn" id="bioScanTriggerBtn" style="color:var(--cyber-purple); border-color:var(--cyber-purple);" title="Bio-Resonanz"><i class="fa-solid fa-dna"></i></button>
-        <button class="tool-btn active" id="synthMusicBtn"><i class="fa-solid fa-music"></i></button>
+        <button class="tool-btn" id="openAuthBtn" style="color:var(--cyber-cyan); border-color:var(--cyber-cyan);" title="Agent ID"><i class="fa-solid fa-id-badge"></i> ID</button>
+        <button class="tool-btn" id="shareAgentBtn" style="color:var(--cyber-cyan); border-color:var(--cyber-cyan);" title="Share Grid"><i class="fa-solid fa-share-nodes"></i> SHARE</button>
+        <button class="tool-btn" id="openAchievementsBtn" style="color:var(--cyber-gold); border-color:var(--cyber-gold);" title="Trophäen"><i class="fa-solid fa-trophy"></i></button>
+        <button class="tool-btn" id="openCityWarsBtn" style="color:var(--cyber-green); border-color:var(--cyber-green);" title="Städte-Krieg"><i class="fa-solid fa-earth-europe"></i></button>
       </div>
     </div>
   </div>
@@ -222,53 +279,207 @@
       <button class="neon-btn" id="toggleGpsBtn"><i class="fa-solid fa-location-crosshairs"></i> <span id="gpsBtnLabel">ECHT-GPS</span></button>
       <button class="neon-btn" id="resetBtn"><i class="fa-solid fa-rotate-left"></i> REBOOT</button>
     </div>
+    <div class="joystick-panel" id="joystickZone"><div class="joystick-stick" id="joystickHandle"></div></div>
   </div>
 
   <script>
-    /* ========================================================
-       WEATHER-ECHO SYSTEM (SICHERHEITS- & WETTER-LOGIK)
-       ======================================================== */
-    let isWeatherLockdown = false;
-
-    // Simulation des Live-Wetters (Prüft ob Unwetter aktiv ist)
-    function checkWeatherEcho() {
-      // Hier würde standardmäßig die OpenWeatherMap API abgefragt werden
-      // Wir simulieren zur Sicherheit, dass das Wetter-System aktiv ist
-      const isStormWarning = false; // Auf True setzen bei echtem Unwetter
-      
-      const weatherBadge = document.getElementById('weatherStatusBadge');
-      if (isStormWarning) {
-        isWeatherLockdown = true;
-        weatherBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:var(--cyber-crimson);"></i> UNWETTER-LOCKDOWN (HOME-GYM AKTIV)`;
-        weatherBadge.style.color = 'var(--cyber-crimson)';
-        showBanner("⚠️ UNWETTER ERKANNT! GPS GESICHERT. NUTZE HOME-GYM OVERCLOCK.", true);
-      } else {
-        isWeatherLockdown = false;
-        weatherBadge.innerHTML = `<i class="fa-solid fa-cloud-sun"></i> KLARER HIMMEL (OPTIMAL)`;
+    /* MULTIPLAYER WEBSOCKET SYNC */
+    const SECRET_SALT = "PAPERCITY_SECURE_KEY_2026_X9!";
+    function generateChecksum(dataObj) {
+      const rawString = `${dataObj.name}:${dataObj.credits}:${dataObj.area}:${dataObj.steps}:${SECRET_SALT}`;
+      let hash = 0;
+      for (let i = 0; i < rawString.length; i++) {
+        hash = ((hash << 5) - hash) + rawString.charCodeAt(i); hash |= 0;
       }
+      return hash.toString(16);
+    }
+
+    function loadSecureSave() {
+      const savedJson = localStorage.getItem('pc_secure_agent');
+      if (!savedJson) return { name: "AGENT V", credits: 250, area: 1960, steps: 0 };
+      try {
+        const parsed = JSON.parse(savedJson);
+        if (parsed.sig !== generateChecksum(parsed.data)) return { name: "AGENT V", credits: 250, area: 1960, steps: 0 };
+        return parsed.data;
+      } catch(e) { return { name: "AGENT V", credits: 250, area: 1960, steps: 0 }; }
+    }
+
+    function saveSecurely(dataObj) {
+      localStorage.setItem('pc_secure_agent', JSON.stringify({ data: dataObj, sig: generateChecksum(dataObj) }));
+    }
+
+    let agentData = loadSecureSave();
+    document.getElementById('hudAgentName').textContent = agentData.name;
+    document.getElementById('playerCreditsStat').textContent = agentData.credits.toLocaleString();
+    document.getElementById('playerAreaStat').textContent = agentData.area.toLocaleString() + " m²";
+
+    // WebSocket Echtzeit-Verbindung (Öffentlicher Test-Relay für Multiplayer)
+    let ws = null;
+    let onlinePlayers = {};
+
+    function connectMultiplayer() {
+      try {
+        ws = new WebSocket('wss://sockets.space/v1/papercity_global_grid');
+        ws.onopen = () => {
+          document.getElementById('mmoStatusTxt').textContent = "LIVE VERBUNDEN";
+          ws.send(JSON.stringify({ type: 'JOIN', name: agentData.name, x: 0, y: 0 }));
+        };
+        ws.onmessage = (event) => {
+          try {
+            const msg = JSON.parse(event.data);
+            if (msg.type === 'POS' && msg.name !== agentData.name) {
+              onlinePlayers[msg.name] = { x: msg.x, y: msg.y, time: Date.now() };
+            }
+          } catch(e){}
+        };
+        ws.onerror = () => { document.getElementById('mmoStatusTxt').textContent = "LOKALER MMO MODUS"; };
+      } catch(e) {
+        document.getElementById('mmoStatusTxt').textContent = "LOKALER MMO MODUS";
+      }
+    }
+
+    const authModal = document.getElementById('authModal');
+    document.getElementById('openAuthBtn').addEventListener('click', () => { ensureAudioContext(); authModal.style.display = 'flex'; });
+    document.getElementById('closeAuthModal').addEventListener('click', () => { authModal.style.display = 'none'; });
+
+    document.getElementById('saveAgentAccountBtn').addEventListener('click', () => {
+      const nameInput = document.getElementById('agentInputName').value.trim();
+      if (!nameInput) { showBanner("⚠️ BITTE AGENTEN-NAMEN EINGEBEN!", true); return; }
+      agentData.name = nameInput.toUpperCase();
+      saveSecurely(agentData);
+      document.getElementById('hudAgentName').textContent = agentData.name;
+      authModal.style.display = 'none';
+      showBanner(`✅ AGENT ${agentData.name} LIVE GESPEICHERT!`, false);
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'JOIN', name: agentData.name, x: 0, y: 0 }));
+      }
+    });
+
+    /* PEDOMETER */
+    let totalStepsCount = agentData.steps || 0;
+    try {
+      if (window.DeviceMotionEvent) {
+        let lastAcc = {x:0, y:0, z:0};
+        window.addEventListener('devicemotion', (e) => {
+          const acc = e.accelerationIncludingGravity; if (!acc) return;
+          const delta = Math.abs(acc.x - lastAcc.x) + Math.abs(acc.y - lastAcc.y) + Math.abs(acc.z - lastAcc.z);
+          if (delta > 12) {
+            totalStepsCount++; agentData.steps = totalStepsCount;
+            saveSecurely(agentData);
+            if (totalStepsCount % 50 === 0) { addCredits(25); showBanner(`👟 +25 $CYB (${totalStepsCount} Schritte)`, false); }
+          }
+          lastAcc = {x: acc.x || 0, y: acc.y || 0, z: acc.z || 0};
+        }, { passive: true });
+      }
+    } catch(err) {}
+
+    /* SHARE CANVAS */
+    document.getElementById('shareAgentBtn').addEventListener('click', () => {
+      ensureAudioContext();
+      const canvasExport = document.createElement('canvas');
+      canvasExport.width = 1080; canvasExport.height = 1080;
+      const xCtx = canvasExport.getContext('2d');
+
+      xCtx.fillStyle = '#010307'; xCtx.fillRect(0, 0, 1080, 1080);
+      xCtx.strokeStyle = '#00f3ff'; xCtx.lineWidth = 12; xCtx.strokeRect(40, 40, 1000, 1000);
+
+      xCtx.fillStyle = '#00f3ff'; xCtx.font = '900 48px Orbitron, sans-serif';
+      xCtx.fillText('PAPERCITY // MMO REPORT', 90, 130);
+
+      xCtx.fillStyle = '#ffffff'; xCtx.font = '900 64px Orbitron, sans-serif';
+      xCtx.fillText(agentData.name, 90, 260);
+
+      xCtx.fillStyle = '#ffaa00'; xCtx.font = '700 36px Orbitron, sans-serif';
+      xCtx.fillText(`FLÄCHE: ${agentData.area.toLocaleString()} m²`, 90, 360);
+      xCtx.fillText('STATUS: LIVE MULTIPLAYER', 90, 430);
+
+      canvasExport.toBlob(blob => {
+        if (navigator.share && blob) {
+          const file = new File([blob], 'papercity-mmo.png', { type: 'image/png' });
+          navigator.share({ title: 'PaperCity MMO Report', text: `Agent ${agentData.name} im Live-Grid!`, files: [file] }).catch(() => {});
+        } else {
+          const link = document.createElement('a'); link.download = 'papercity-mmo.png';
+          link.href = canvasExport.toDataURL('image/png'); link.click();
+        }
+        showBanner("📸 MMO REPORT GENERIERT!", false);
+      }, 'image/png');
+    });
+
+    /* WEATHER-ECHO */
+    function checkWeatherEcho() {
+      const weatherBadge = document.getElementById('weatherStatusBadge');
+      if (weatherBadge) weatherBadge.innerHTML = `<i class="fa-solid fa-cloud-sun"></i> KLARER HIMMEL (OPTIMAL)`;
     }
     setInterval(checkWeatherEcho, 60000);
 
-    /* ========================================================
-       BASIS CANVAS & AUDIO LOGIK
-       ======================================================== */
+    /* MODALS */
+    const achievementsModal = document.getElementById('achievementsModal');
+    document.getElementById('openAchievementsBtn').addEventListener('click', () => { achievementsModal.style.display = 'flex'; });
+    document.getElementById('closeAchievementsBtn').addEventListener('click', () => { achievementsModal.style.display = 'none'; });
+
+    const cityWarsModal = document.getElementById('cityWarsModal');
+    document.getElementById('openCityWarsBtn').addEventListener('click', () => { cityWarsModal.style.display = 'flex'; });
+    document.getElementById('closeCityWarsBtn').addEventListener('click', () => { cityWarsModal.style.display = 'none'; });
+
+    /* CHAT */
+    let currentChatTab = 'city';
+    let chatData = {
+      city: [{ sender: "EVA", text: "Globaler MMO-Kanal aktiv. Willkommen im Live-Grid!" }, { sender: "Agent_Zero", text: "Sektor gesichert!" }],
+      world: [{ sender: "SYS", text: "GLOBAL EVENT AKTIV!" }]
+    };
+    function renderChat() {
+      const container = document.getElementById('chatMessagesContainer'); if (!container) return;
+      container.innerHTML = '';
+      chatData[currentChatTab].forEach(msg => {
+        const div = document.createElement('div'); div.className = 'chat-msg';
+        div.innerHTML = `<span>[${msg.sender}]:</span> ${msg.text}`; container.appendChild(div);
+      });
+      container.scrollTop = container.scrollHeight;
+    }
+    function switchChatTab(tab) {
+      currentChatTab = tab;
+      document.getElementById('tabCityBtn').classList.toggle('active', tab === 'city');
+      document.getElementById('tabWorldBtn').classList.toggle('active', tab === 'world');
+      renderChat();
+    }
+    function sendChatMessage() {
+      const input = document.getElementById('chatInputText'); const text = input.value.trim();
+      if (!text) return;
+      chatData[currentChatTab].push({ sender: agentData.name, text: text });
+      input.value = ''; renderChat();
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'CHAT', name: agentData.name, text: text }));
+      }
+    }
+    const chatToggleBtn = document.getElementById('chatToggleBtn');
+    const chatContentBox = document.getElementById('chatContentBox');
+    let chatOpen = false;
+    chatToggleBtn.addEventListener('click', () => {
+      chatOpen = !chatOpen; chatContentBox.style.display = chatOpen ? 'flex' : 'none';
+      document.getElementById('chatArrow').textContent = chatOpen ? '▼' : '▲';
+      if (chatOpen) renderChat();
+    });
+
+    /* AUDIO & ENGINE */
     let audioCtx = null, isSynthMusicActive = true;
     function ensureAudioContext() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) audioCtx = new AudioContextClass();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
     }
-
     let synthTimer = null, synthStep = 0;
     const synthNotes = [110, 130.81, 146.83, 164.81];
     function startSynthwaveMusic() {
       if (synthTimer || !isSynthMusicActive) return;
-      const ctx = ensureAudioContext(); if (!ctx) return;
+      const ctx = audioCtx; if (!ctx) return;
       synthTimer = setInterval(() => {
         if (!isSynthMusicActive) return;
         try {
           const osc = ctx.createOscillator(); const gain = ctx.createGain();
           osc.type = 'sawtooth'; osc.frequency.setValueAtTime(synthNotes[synthStep % synthNotes.length], ctx.currentTime);
-          gain.gain.setValueAtTime(0.03, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.02, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
           osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.22); synthStep++;
         } catch(e){}
       }, 240);
@@ -276,34 +487,28 @@
 
     const canvas = document.getElementById('worldCanvas');
     const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeCanvas); resizeCanvas();
 
     let worldX = 0, worldY = 0, cameraX = 0, cameraY = 0;
-    let playerTotalArea = parseInt(localStorage.getItem('pc_total_area') || '1960');
-    let savedCredits = parseInt(localStorage.getItem('pc_credits') || '250');
-    let playerTrail = [], territories = [], exploredNodes = [];
-
-    const bioModal = document.getElementById('bioModal');
-    document.getElementById('bioScanTriggerBtn').addEventListener('click', () => { ensureAudioContext(); bioModal.style.display = 'flex'; });
-    document.getElementById('closeBioModal').addEventListener('click', () => { bioModal.style.display = 'none'; });
-
-    const toggleGpsBtn = document.getElementById('toggleGpsBtn');
-    toggleGpsBtn.addEventListener('click', () => {
-      ensureAudioContext();
-      if (isWeatherLockdown) {
-        showBanner("⚠️ GPS BEI UNWETTER GESPERRT! NUTZE HOME-GYM OVERCLOCK.", true);
-        return;
-      }
-      // Standard GPS Logik hier aktiv
-      showBanner("ECHT-GPS AKTIVIERT", false);
-    });
+    let exploredNodes = [];
 
     document.getElementById('acceptSafetyBtn').addEventListener('click', () => {
-      document.getElementById('safetyModal').remove();
+      const modal = document.getElementById('safetyModal');
+      if (modal) modal.remove();
+      ensureAudioContext();
       checkWeatherEcho();
+      connectMultiplayer();
       try { startSynthwaveMusic(); } catch(e){}
     });
+    document.getElementById('resetBtn').addEventListener('click', () => location.reload());
 
+    function addCredits(amount) {
+      agentData.credits += amount;
+      saveSecurely(agentData);
+      const elem = document.getElementById('playerCreditsStat');
+      if (elem) elem.textContent = agentData.credits.toLocaleString();
+    }
     function showBanner(text, isDanger) {
       const banner = document.getElementById('captureBanner') || document.createElement('div');
       banner.id = 'captureBanner'; banner.className = 'banner-notification show' + (isDanger ? ' danger' : '');
@@ -311,19 +516,65 @@
       setTimeout(() => banner.classList.remove('show'), 2400);
     }
 
-    function loop(timestamp) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      cameraX += (worldX - cameraX) * 0.12; cameraY += (worldY - cameraY) * 0.12;
-      
-      ctx.save(); ctx.translate(canvas.width/2 - cameraX, canvas.height/2 - cameraY);
-      ctx.fillStyle = 'rgba(1, 3, 7, 0.94)';
-      ctx.fillRect(cameraX - canvas.width, cameraY - canvas.height, canvas.width * 2, canvas.height * 2);
-      
-      // Avatar
-      ctx.beginPath(); ctx.arc(worldX, worldY, 15, 0, Math.PI * 2);
-      ctx.fillStyle = '#00f3ff'; ctx.shadowColor = '#00f3ff'; ctx.shadowBlur = 20; ctx.fill(); ctx.shadowBlur = 0;
-      ctx.restore();
+    /* JOYSTICK & MULTIPLAYER POSITION SYNC */
+    const joystickZone = document.getElementById('joystickZone');
+    const joystickHandle = document.getElementById('joystickHandle');
+    let joyX = 0, joyY = 0, joyActive = false;
+    let lastNetworkSend = 0;
 
+    function handleJoyMove(clientX, clientY) {
+      const rect = joystickZone.getBoundingClientRect();
+      let dx = clientX - (rect.left + rect.width / 2), dy = clientY - (rect.top + rect.height / 2);
+      const dist = Math.hypot(dx, dy); if (dist > 34) { dx = (dx / dist) * 34; dy = (dy / dist) * 34; }
+      joyX = dx / 34; joyY = dy / 34; joystickHandle.style.transform = `translate(${dx}px, ${dy}px)`;
+    }
+    joystickZone.addEventListener('pointerdown', e => { ensureAudioContext(); joyActive = true; joystickZone.setPointerCapture(e.pointerId); handleJoyMove(e.clientX, e.clientY); });
+    window.addEventListener('pointermove', e => { if (!joyActive) return; handleJoyMove(e.clientX, e.clientY); });
+    function joyRelease() { joyActive = false; joyX = 0; joyY = 0; joystickHandle.style.transform = 'translate(0px, 0px)'; }
+    window.addEventListener('pointerup', joyRelease); window.addEventListener('pointercancel', joyRelease);
+
+    /* RENDER LOOP & LIVE ENTITIES */
+    function loop(timestamp) {
+      try {
+        if (joyX !== 0 || joyY !== 0) {
+          worldX += joyX * 50 * 0.016; worldY += joyY * 50 * 0.016;
+          exploredNodes.push({x: worldX, y: worldY});
+          if (exploredNodes.length > 200) exploredNodes.shift();
+
+          // Sende Live-Position alle 100ms an den Multiplayer-Server
+          if (timestamp - lastNetworkSend > 100) {
+            lastNetworkSend = timestamp;
+            if (ws && ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ type: 'POS', name: agentData.name, x: worldX, y: worldY }));
+            }
+          }
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        cameraX += (worldX - cameraX) * 0.12; cameraY += (worldY - cameraY) * 0.12;
+        
+        ctx.save(); ctx.translate(canvas.width/2 - cameraX, canvas.height/2 - cameraY);
+        ctx.fillStyle = 'rgba(1, 3, 7, 0.94)';
+        ctx.fillRect(cameraX - canvas.width, cameraY - canvas.height, canvas.width * 2, canvas.height * 2);
+
+        // Andere Online-Spieler rendern (Magenta/Purple Dots)
+        for (let pName in onlinePlayers) {
+          const p = onlinePlayers[pName];
+          if (Date.now() - p.time < 10000) { // Nur aktive Spieler anzeigen
+            ctx.beginPath(); ctx.arc(p.x, p.y, 14, 0, Math.PI * 2);
+            ctx.fillStyle = '#bd00ff'; ctx.shadowColor = '#bd00ff'; ctx.shadowBlur = 15; ctx.fill(); ctx.shadowBlur = 0;
+            
+            // Name Tag
+            ctx.fillStyle = '#ffffff'; ctx.font = '12px Orbitron, sans-serif';
+            ctx.fillText(pName, p.x - 20, p.y - 22);
+          }
+        }
+
+        // Eigener Player Avatar (Cyan)
+        ctx.beginPath(); ctx.arc(worldX, worldY, 15, 0, Math.PI * 2);
+        ctx.fillStyle = '#00f3ff'; ctx.shadowColor = '#00f3ff'; ctx.shadowBlur = 20; ctx.fill(); ctx.shadowBlur = 0;
+        ctx.restore();
+      } catch(e){}
       requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);
