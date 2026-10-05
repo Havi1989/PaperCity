@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // AAA INGRESS-GRADE EDITION</title>
+  <title>PaperCity // AAA SMARTWATCH & GPS MASTER</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#020408" />
@@ -35,7 +35,6 @@
       position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; background: #020408; display: block;
     }
 
-    /* Holographisches Ingress-Style Overlay */
     .cyber-overlay {
       position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none !important; z-index: 400;
       background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%),
@@ -106,7 +105,6 @@
       gap: 6px; cursor: pointer; font-family: var(--font-tech); font-size: 0.72rem; font-weight: 700; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6); transition: all 0.2s ease;
     }
     .tool-btn.active { border-color: var(--cyber-cyan); color: var(--cyber-cyan); box-shadow: 0 0 18px var(--cyber-cyan); }
-    .tool-btn.bio-active { border-color: var(--cyber-purple); color: var(--cyber-purple); box-shadow: 0 0 18px var(--cyber-purple); }
 
     .radar-container {
       position: absolute; bottom: 20px; left: 15px; width: 100px; height: 100px; border-radius: 50%;
@@ -130,6 +128,7 @@
       font-size: 0.72rem; font-weight: 800; letter-spacing: 1.2px; cursor: pointer; display: flex; align-items: center; gap: 7px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.7);
     }
+    .neon-btn.active { background: var(--cyber-cyan); color: #020408; box-shadow: 0 0 25px var(--cyber-cyan); }
 
     .joystick-panel {
       pointer-events: auto; width: 115px; height: 115px; background: rgba(3, 7, 14, 0.82); backdrop-filter: blur(14px);
@@ -158,6 +157,7 @@
     </button>
   </div>
 
+  <!-- BIO-RESONANCE LINK MODAL (SMARTWATCH & CAMERA) -->
   <div class="modal-overlay" id="bioModal">
     <div class="cyber-modal-card">
       <div class="modal-header" style="color:var(--cyber-purple);">
@@ -165,10 +165,13 @@
         <button class="close-modal-btn" id="closeBioModal"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <p style="font-size: 0.85rem; color: #bad3eb; margin-bottom: 16px;">
-        Lege deinen Zeigefinger auf die Handykamera und halte ihn ruhig, um deinen Puls mit dem Cyber-Grid zu synchronisieren.
+        Verbinde deine Smartwatch via Bluetooth oder nutze den Kamera-Scan, um deinen Puls zu synchronisieren.
       </p>
-      <div id="bioStatusTxt" style="font-family:var(--font-tech); font-size:1.1rem; color:var(--cyber-cyan); margin: 20px 0;">BEREIT ZUR SYNCHRONISATION...</div>
-      <button class="save-profile-btn" id="startBioScanBtn" style="background:var(--cyber-purple); box-shadow:0 0 25px var(--cyber-purple);">BIOMETRISCHEN SCAN STARTEN</button>
+      <div id="bioStatusTxt" style="font-family:var(--font-tech); font-size:1.05rem; color:var(--cyber-cyan); margin: 15px 0;">BEREIT ZUR SYNCHRONISATION...</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <button class="save-profile-btn" id="connectSmartwatchBtn" style="background:var(--cyber-cyan); color:#020408; box-shadow:0 0 20px var(--cyber-cyan);">⌚ SMARTWATCH KOPPELN (BLUETOOTH)</button>
+        <button class="save-profile-btn" id="startBioScanBtn" style="background:var(--cyber-purple); box-shadow:0 0 20px var(--cyber-purple);">📸 KAMERA-PULS-SCAN</button>
+      </div>
     </div>
   </div>
 
@@ -178,11 +181,11 @@
         <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Ingress-Grade AAA Edition</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Smartwatch & GPS Master</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem; text-align:left;">
-        <li><i class="fa-solid fa-cube" style="color:var(--cyber-cyan);"></i> <b>Inception Renderer:</b> Volumetrische Gebäude-Silhouetten & Cyberpunk-Atmosphäre.</li>
-        <li><i class="fa-solid fa-dna" style="color:var(--cyber-purple);"></i> <b>Bio-Resonance:</b> Integrierter Herzschlag-Overclock.</li>
+        <li><i class="fa-solid fa-clock" style="color:var(--cyber-purple);"></i> <b>Smartwatch Link:</b> Bluetooth-Herzfrequenzmessung direkt vom Handgelenk.</li>
+        <li><i class="fa-solid fa-location-crosshairs" style="color:var(--cyber-cyan);"></i> <b>Echt-GPS Modus:</b> Erfasse reale Laufwege draußen.</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
     </div>
@@ -194,7 +197,7 @@
         <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
         <div>
           <div class="agent-name-label" id="hudAgentName">AGENT V</div>
-          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">INGRESS GRADE // 50 m/s</div>
+          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">SMARTWATCH LINK // 50 m/s</div>
         </div>
       </div>
 
@@ -361,7 +364,7 @@
     }
 
     /* ========================================================
-       2. INGRESS-GRADE AAA CANVAS ENGINE
+       2. SMARTWATCH BLUETOOTH & CANVAS ENGINE
        ======================================================== */
     const canvas = document.getElementById('worldCanvas');
     const ctx = canvas.getContext('2d');
@@ -387,17 +390,22 @@
     let playerTrail = [];
     let territories = [];
     let roadSegments = [];
-    let backgroundBuildings = []; // Volumetrische Cyberpunk-Gebäude
+    let backgroundBuildings = [];
     let cityMonuments = [];
     let baseRadius = 35;
     let justCapturedCooldown = false;
     let particles = [];
 
+    // GPS & Smartwatch Variablen
+    let isRealGpsActive = false;
+    let gpsWatchId = null;
+    let gpsOriginLat = null;
+    let gpsOriginLon = null;
+
     let botCrimson = { name: "Crimson", color: '#ff0055', x: 120, y: -90, trail: [], area: 1960, heading: 45, speed: 20 };
     let botVolt = { name: "Volt", color: '#ffee00', x: -130, y: 140, trail: [], area: 1960, heading: 210, speed: 18 };
 
-    async function loadRoadsAndMonuments() {
-      const lat = 52.1738, lon = 7.5312;
+    async function loadRoadsAndMonuments(lat = 52.1738, lon = 7.5312) {
       const query = `
         [out:json][timeout:6];
         (
@@ -420,7 +428,6 @@
                 const y2 = -(el.geometry[i+1].lat - lat) * 111320;
                 roadSegments.push({ x1, y1, x2, y2 });
 
-                // Generiere pro Straßenblock visuelle Cyber-Gebäude im Hintergrund
                 if (i % 3 === 0) {
                   backgroundBuildings.push({
                     x: (x1 + x2) / 2 + (Math.random() - 0.5) * 40,
@@ -488,16 +495,50 @@
     }
 
     /* ========================================================
-       3. BIO-SCANNER INTERAKTIONS-LOGIK
+       3. SMARTWATCH BLUETOOTH & CAMERA BIO-SCAN
        ======================================================== */
     const bioModal = document.getElementById('bioModal');
     document.getElementById('bioScanTriggerBtn').addEventListener('click', () => {
       ensureAudioContext();
       bioModal.style.display = 'flex';
-      document.getElementById('bioStatusTxt').textContent = "PLATZIERE FINGER AUF KAMERA...";
+      document.getElementById('bioStatusTxt').textContent = "WÄHLE SYNCHRONISATIONS-METHODE...";
     });
     document.getElementById('closeBioModal').addEventListener('click', () => { bioModal.style.display = 'none'; });
 
+    // Smartwatch Bluetooth Kopplung (Standard Heart Rate Profile 0x180D)
+    document.getElementById('connectSmartwatchBtn').addEventListener('click', async () => {
+      const statusTxt = document.getElementById('bioStatusTxt');
+      try {
+        if (!navigator.bluetooth) {
+          statusTxt.textContent = "BLUETOOTH WIRD NICHT UNTERSTÜTZT!";
+          return;
+        }
+        statusTxt.textContent = "SUCHE SMARTWATCH...";
+        const device = await navigator.bluetooth.requestDevice({
+          filters: [{ services: ['heart_rate'] }]
+        });
+        statusTxt.textContent = "VERBINDE MIT " + device.name + "...";
+        const server = await device.gatt.connect();
+        const service = await server.getPrimaryService('heart_rate');
+        const characteristic = await service.getCharacteristic('heart_rate_measurement');
+        
+        await characteristic.startNotifications();
+        characteristic.addEventListener('characteristicvaluechanged', (event) => {
+          const value = event.target.value;
+          const hr = value.getUint8(1); // Herzfrequenz BPM
+          statusTxt.textContent = `PULS ERKANNT: ${hr} BPM`;
+          if (hr > 105) { // Ab 105 BPM schaltet das Overclock ein
+            activateOverclock();
+          }
+        });
+        statusTxt.textContent = "SMARTWATCH GEKOPPELT!";
+        speakEva("Smartwatch erfolgreich synchronisiert.");
+      } catch (err) {
+        statusTxt.textContent = "KOPPLUNG ABGEBROCHEN ODER FEHLGESCHLAGEN.";
+      }
+    });
+
+    // Kamera-Scan Fallback
     document.getElementById('startBioScanBtn').addEventListener('click', () => {
       document.getElementById('bioStatusTxt').textContent = "SYNCHRONISIERE BIOMETRIE...";
       speakEva("Analysiere biometrische Resonanz.");
@@ -533,6 +574,49 @@
         showBanner("Overclock beendet.", true);
       }, 30000);
     }
+
+    // ECHT-GPS Integration
+    const toggleGpsBtn = document.getElementById('toggleGpsBtn');
+    toggleGpsBtn.addEventListener('click', () => {
+      ensureAudioContext();
+      if (!isRealGpsActive) {
+        if ('geolocation' in navigator) {
+          document.getElementById('gpsBtnLabel').textContent = 'GPS STOP';
+          toggleGpsBtn.classList.add('active');
+          isRealGpsActive = true;
+          showBanner("ECHT-GPS AKTIVIERT // SUCHE SIGNAL...", false);
+          speakEva("Echt G P S aktiv.");
+
+          gpsWatchId = navigator.geolocation.watchPosition(pos => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            if (gpsOriginLat === null) {
+              gpsOriginLat = lat; gpsOriginLon = lon;
+              loadRoadsAndMonuments(lat, lon);
+            }
+            const cosF = Math.cos(gpsOriginLat * Math.PI / 180);
+            const targetX = (lon - gpsOriginLon) * 111320 * cosF;
+            const targetY = -(lat - gpsOriginLat) * 111320;
+
+            const dx = targetX - worldX;
+            const dy = targetY - worldY;
+            if (Math.hypot(dx, dy) > 2) {
+              handlePlayerMovement(dx, dy);
+            }
+          }, err => {
+            showBanner("GPS FEHLER: KEIN SIGNAL", true);
+          }, { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 });
+        } else {
+          showBanner("GPS WIRD NICHT UNTERSTÜTZT", true);
+        }
+      } else {
+        if (gpsWatchId) navigator.geolocation.clearWatch(gpsWatchId);
+        isRealGpsActive = false;
+        toggleGpsBtn.classList.remove('active');
+        document.getElementById('gpsBtnLabel').textContent = 'ECHT-GPS';
+        showBanner("GPS GESTOPPT // JOYSTICK AKTIV", false);
+      }
+    });
 
     /* ========================================================
        4. RADAR MINIMAP
@@ -634,7 +718,6 @@
       ctx.save();
       ctx.translate(centerX - cameraX, centerY - cameraY);
 
-      // 1. Ingress-Style Holographisches Hintergrund-Koordinatennetz
       ctx.strokeStyle = 'rgba(0, 243, 255, 0.03)';
       ctx.lineWidth = 1;
       const gridStep = 100;
@@ -647,7 +730,6 @@
         ctx.beginPath(); ctx.moveTo(cameraX - centerX - 200, y); ctx.lineTo(cameraX + centerX + canvas.width, y); ctx.stroke();
       }
 
-      // 2. Volumetrische Cyberpunk-Gebäude (Ingress / Cyberpunk Look)
       backgroundBuildings.forEach(b => {
         ctx.fillStyle = 'rgba(5, 12, 24, 0.85)';
         ctx.fillRect(b.x, b.y, b.w, b.h);
@@ -656,7 +738,6 @@
         ctx.strokeRect(b.x, b.y, b.w, b.h);
       });
 
-      // 3. Organische Straßen (Multi-Pass Neon Glow)
       roadSegments.forEach(r => {
         ctx.strokeStyle = 'rgba(0, 243, 255, 0.06)';
         ctx.lineWidth = 22; ctx.lineCap = 'round';
@@ -667,7 +748,6 @@
         ctx.beginPath(); ctx.moveTo(r.x1, r.y1); ctx.lineTo(r.x2, r.y2); ctx.stroke();
       });
 
-      // 4. Heimatbasis (Outpost mit Quantum Aura)
       ctx.beginPath();
       ctx.arc(0, 0, baseRadius, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(0, 243, 255, 0.22)';
@@ -679,7 +759,6 @@
       ctx.stroke();
       ctx.shadowBlur = 0;
 
-      // 5. Eroberte Territorien (Holographische Füllung)
       territories.forEach(t => {
         if (t.points.length < 3) return;
         ctx.beginPath();
@@ -696,7 +775,6 @@
         ctx.shadowBlur = 0;
       });
 
-      // 6. Spieler Trail (Laser Core mit starkem Bloom)
       if (playerTrail.length > 1) {
         ctx.beginPath();
         ctx.moveTo(playerTrail[0].x, playerTrail[0].y);
@@ -709,13 +787,12 @@
         ctx.shadowBlur = 0;
       }
 
-      // 7. Monumente
       cityMonuments.forEach(m => {
         ctx.beginPath();
         ctx.arc(m.x, m.y, 18, 0, Math.PI * 2);
         ctx.fillStyle = '#ffaa00';
         ctx.shadowColor = '#ffaa00';
-        ctx.shadowBlur = 30;
+        ctx.shadowBlur = 25;
         ctx.fill();
         ctx.shadowBlur = 0;
 
@@ -725,7 +802,6 @@
         ctx.fillText(m.name, m.x, m.y - 24);
       });
 
-      // 8. Partikel-Effekte (AAA VFX)
       for (let i = particles.length - 1; i >= 0; i--) {
         let p = particles[i];
         p.x += p.vx * 0.016; p.y += p.vy * 0.016; p.alpha -= 0.016 / p.life;
@@ -736,7 +812,6 @@
         ctx.globalAlpha = 1.0;
       }
 
-      // 9. Spieler Avatar
       ctx.beginPath();
       ctx.arc(worldX, worldY, 16, 0, Math.PI * 2);
       ctx.fillStyle = isOverclockActive ? '#bd00ff' : playerCustomColor;
@@ -749,7 +824,6 @@
 
       ctx.restore();
 
-      // 10. Cinematic Radial Vignette & Depth of Field (AAA Look)
       const grad = ctx.createRadialGradient(centerX, centerY, canvas.width * 0.25, centerX, centerY, canvas.width * 0.75);
       grad.addColorStop(0, 'rgba(2, 4, 8, 0)');
       grad.addColorStop(1, 'rgba(2, 4, 8, 0.9)');
@@ -839,7 +913,7 @@
       try {
         const dt = (t - lastTime) / 1000;
         lastTime = t;
-        if (joyX !== 0 || joyY !== 0) {
+        if (!isRealGpsActive && (joyX !== 0 || joyY !== 0)) {
           const moveSpeed = 50;
           handlePlayerMovement(joyX * moveSpeed * dt, joyY * moveSpeed * dt);
         }
