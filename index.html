@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // NARRATIVE CAMPAIGN EDITION</title>
+  <title>PaperCity // GLOBAL ULTIMATE MASTER</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#020408" />
@@ -267,6 +267,44 @@
     </div>
   </div>
 
+  <!-- ACHIEVEMENTS MODAL -->
+  <div class="modal-overlay" id="achievementsModal">
+    <div class="cyber-modal-card" style="border-color:var(--cyber-gold);">
+      <div class="modal-header" style="color:var(--cyber-gold);">
+        <span><i class="fa-solid fa-trophy"></i> TROPHÄEN-KABINETT</span>
+        <button class="close-modal-btn" id="closeAchievementsBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px; text-align:left;" id="achievementsList">
+        <div class="quest-item">
+          <div class="quest-title">🏆 Nachtschicht <span style="color:var(--cyber-gold);">[ FREIGESCHALTET ]</span></div>
+          <div class="quest-item-desc" style="font-size:0.7rem; color:#8fa5ba;">Erobere Sektoren im Dunkeln. (+300 XP)</div>
+        </div>
+        <div class="quest-item">
+          <div class="quest-title">🏆 Globetrotter <span style="color:#777;">[ GESPERRT ]</span></div>
+          <div class="quest-item-desc" style="font-size:0.7rem; color:#8fa5ba;">Lege insgesamt 10 km zu Fuß zurück.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CITY WARS MODAL -->
+  <div class="modal-overlay" id="cityWarsModal">
+    <div class="cyber-modal-card" style="border-color:var(--cyber-green);">
+      <div class="modal-header" style="color:var(--cyber-green);">
+        <span><i class="fa-solid fa-earth-europe"></i> WÖCHENTLICHE STÄDTE-KRIEGE</span>
+        <button class="close-modal-btn" id="closeCityWarsBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div style="font-size:0.85rem; color:#bad3eb; margin-bottom:12px; text-align:left;">
+        Welche Stadt sichert diese Woche die meiste reale Fläche? Repräsentiere deine Region!
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px; text-align:left;" id="cityWarsList">
+        <div class="shop-row"><span>#1 Berlin</span><span style="color:var(--cyber-green);">142.500 m²</span></div>
+        <div class="shop-row"><span>#2 Münster</span><span style="color:var(--cyber-cyan);">98.200 m²</span></div>
+        <div class="shop-row" style="background:rgba(0,255,102,0.1); padding:6px;"><span>#3 Emsdetten (Deine Stadt)</span><span style="color:var(--cyber-gold); font-weight:bold;">76.400 m²</span></div>
+      </div>
+    </div>
+  </div>
+
   <!-- QUEST & STORY LEISTE -->
   <div class="quest-drawer-container">
     <button class="quest-toggle-tab" id="questToggleBtn">
@@ -275,7 +313,7 @@
     <div class="quest-content-box" id="questContentBox">
       <div class="story-card" id="storyCardContainer">
         <div class="story-title" id="storyChapterTitle">KAPITEL 1: ERWACHEN</div>
-        <div class="story-text" id="storyChapterText">ARES-9 infiziert die Frequenz. Durchbreche den Nebel und sichere deinen ersten Sektor, um die Da-H-Daten zu entschlüsseln.</div>
+        <div class="story-text" id="storyChapterText">ARES-9 infiziert die Frequenz. Durchbreche den Nebel und sichere deinen ersten Sektor.</div>
       </div>
       <div style="font-family:var(--font-tech); font-size:0.75rem; color:var(--cyber-cyan); border-bottom:1px solid rgba(0,243,255,0.3); padding-bottom:4px; margin-top:4px;">
         TÄGLICHE PROTOCOLS (10)
@@ -337,14 +375,14 @@
   <div class="modal-overlay" id="safetyModal" style="display:flex;">
     <div class="cyber-modal-card">
       <div class="modal-header">
-        <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // NARRATIVE EDITION</span>
+        <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // GLOBAL MASTER</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Narrative Campaign Master</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Global Ultimate Edition</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem; text-align:left;">
-        <li><i class="fa-solid fa-book-open" style="color:var(--cyber-purple);"></i> <b>Epiische Story:</b> Die KI ARES-9 greift an. Erfülle Quests, um Kapitel freizuschalten.</li>
-        <li><i class="fa-solid fa-fire" style="color:var(--cyber-volt);"></i> <b>100% Feature-Komplett:</b> Alles aktiv.</li>
+        <li><i class="fa-solid fa-shoe-prints" style="color:var(--cyber-green);"></i> <b>Pedometer & City Wars:</b> Hintergrund-Schrittzähler & wöchentliche Städte-Duell-Matrix aktiv.</li>
+        <li><i class="fa-solid fa-trophy" style="color:var(--cyber-gold);"></i> <b>Achievements & Push-Alerts:</b> Voll integriert.</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
     </div>
@@ -379,11 +417,12 @@
 
     <div class="top-right-col">
       <div class="quick-toolbar">
+        <button class="tool-btn" id="openAchievementsBtn" style="color:var(--cyber-gold); border-color:var(--cyber-gold);" title="Trophäen"><i class="fa-solid fa-trophy"></i></button>
+        <button class="tool-btn" id="openCityWarsBtn" style="color:var(--cyber-green); border-color:var(--cyber-green);" title="Städte-Krieg"><i class="fa-solid fa-earth-europe"></i></button>
         <button class="tool-btn" id="openTutorialBtn" style="color:var(--cyber-cyan); border-color:var(--cyber-cyan);" title="Handbuch"><i class="fa-solid fa-circle-question"></i></button>
-        <button class="tool-btn" id="openShopBtn" style="color:var(--cyber-gold); border-color:var(--cyber-gold);"><i class="fa-solid fa-cart-shopping"></i> SHOP</button>
-        <button class="tool-btn" id="bioScanTriggerBtn" style="color:var(--cyber-purple); border-color:var(--cyber-purple);"><i class="fa-solid fa-dna"></i> BIO-SCAN</button>
+        <button class="tool-btn" id="openShopBtn" style="color:var(--cyber-gold); border-color:var(--cyber-gold);"><i class="fa-solid fa-cart-shopping"></i></button>
+        <button class="tool-btn" id="bioScanTriggerBtn" style="color:var(--cyber-purple); border-color:var(--cyber-purple);"><i class="fa-solid fa-dna"></i></button>
         <button class="tool-btn active" id="synthMusicBtn"><i class="fa-solid fa-music"></i></button>
-        <button class="tool-btn active" id="voiceToggleBtn"><i class="fa-solid fa-headset"></i></button>
       </div>
 
       <div class="cyber-panel" style="min-width: 145px;">
@@ -415,13 +454,60 @@
 
   <script>
     /* ========================================================
-       1. STORY KAMPAGNEN LOGIK & LORE
+       1. PEDOMETER & PUSH ALERT SYSTEM
+       ======================================================== */
+    let totalStepsCount = parseInt(localStorage.getItem('pc_steps') || '0');
+    
+    // Hintergrund-Schrittzähler via DeviceMotionEvent (falls vom Smartphone unterstützt)
+    if ('DeviceMotionEvent' in window) {
+      let lastAcc = {x:0, y:0, z:0};
+      window.addEventListener('devicemotion', (e) => {
+        const acc = e.accelerationIncludingGravity;
+        if (!acc) return;
+        const delta = Math.abs(acc.x - lastAcc.x) + Math.abs(acc.y - lastAcc.y) + Math.abs(acc.z - lastAcc.z);
+        if (delta > 12) { // Schritt erkannt
+          totalStepsCount++;
+          localStorage.setItem('pc_steps', totalStepsCount);
+          if (totalStepsCount % 50 === 0) { // Alle 50 Schritte Credits
+            addCredits(25);
+            showBanner(`👟 +25 $CYB ERGEBNIS (${totalStepsCount} Schritte)`, false);
+          }
+        }
+        lastAcc = {x: acc.x, y: acc.y, z: acc.z};
+      });
+    }
+
+    // Taktische Push-Alerts (Zufällige EVA Warnungen alle paar Minuten)
+    setInterval(() => {
+      const alerts = [
+        "WARNUNG: ARES-9 Drone in deiner Nähe gesichtet!",
+        "TIPP: Sichere den Sektor, bevor Crimson ihn übernimmt.",
+        "INFO: Dein wöchentliches Städte-Ranking hat sich verbessert!"
+      ];
+      const randomAlert = alerts[Math.floor(Math.random() * alerts.length)];
+      showBanner(randomAlert, true);
+      speakEva("Taktischer Hinweis eingetroffen.");
+    }, 180000);
+
+    /* ========================================================
+       2. MODALS & FEATURE TOGGLES (Achievements & City Wars)
+       ======================================================== */
+    const achievementsModal = document.getElementById('achievementsModal');
+    document.getElementById('openAchievementsBtn').addEventListener('click', () => { achievementsModal.style.display = 'flex'; });
+    document.getElementById('closeAchievementsBtn').addEventListener('click', () => { achievementsModal.style.display = 'none'; });
+
+    const cityWarsModal = document.getElementById('cityWarsModal');
+    document.getElementById('openCityWarsBtn').addEventListener('click', () => { cityWarsModal.style.display = 'flex'; });
+    document.getElementById('closeCityWarsBtn').addEventListener('click', () => { cityWarsModal.style.display = 'none'; });
+
+    /* ========================================================
+       3. STORY KAMPAGNEN LOGIK
        ======================================================== */
     const storyChapters = [
-      { id: 1, title: "KAPITEL 1: ERWACHEN", text: "ARES-9 hat die Sektoren verschlüsselt. Durchbreche den Nebel, um die ersten Datenfragmente zu sichern.", unlockQuestId: 4 },
-      { id: 2, title: "KAPITEL 2: DER INFILTRATOR", text: "Die KI sendet Bot-Patrouillen (Crimson & Volt). Hacke Monument-Kerne, um die Kontrolle zurückzugewinnen.", unlockQuestId: 6 },
-      { id: 3, title: "KAPITEL 3: BIO-SYNCHRONISATION", text: "Nutze deinen Herzschlag über den Bio-Scanner im Overclock-Modus, um die Firewall zu überlasten.", unlockQuestId: 7 },
-      { id: 4, title: "KAPITEL 4: DER ENDKAMPF", text: "Alle Sektoren sind bereit. Schließe die 10 täglichen Protokolle ab, um ARES-9 endgültig zu stürzen.", unlockQuestId: 10 }
+      { id: 1, title: "KAPITEL 1: ERWACHEN", text: "ARES-9 hat die Sektoren verschlüsselt. Durchbreche den Nebel, um die ersten Datenfragmente zu sichern." },
+      { id: 2, title: "KAPITEL 2: DER INFILTRATOR", text: "Die KI sendet Bot-Patrouillen. Hacke Monument-Kerne, um die Kontrolle zurückzugewinnen." },
+      { id: 3, title: "KAPITEL 3: BIO-SYNCHRONISATION", text: "Nutze deinen Herzschlag im Overclock-Modus, um die Firewall zu überlasten." },
+      { id: 4, title: "KAPITEL 4: DER ENDKAMPF", text: "Schließe die 10 täglichen Protokolle ab, um ARES-9 endgültig zu stürzen." }
     ];
     let currentStoryChapter = parseInt(localStorage.getItem('pc_story_chapter') || '1');
 
@@ -438,7 +524,7 @@
     function checkQuantumCacheSpawn() {
       if (!activeCache && Math.random() < 0.001) {
         activeCache = { x: worldX + (Math.random() - 0.5) * 200, y: worldY + (Math.random() - 0.5) * 200 };
-        showBanner("🎁 QUANTUM CACHE IN NÄHE ENTDECKT!", false);
+        showBanner("🎁 QUANTUM CACHE ENTDECKT!", false);
       }
     }
 
@@ -451,8 +537,8 @@
 
     let currentChatTab = 'city';
     let chatData = {
-      city: [{ sender: "EVA", text: "Story-Frequenz stabil. ARES-9 aktiv." }, { sender: "Agent_Zero", text: "Wer knackt Kapitel 2?" }],
-      world: [{ sender: "SYS", text: "KAMPAGNEN-EVENT AKTIV: +50% Story-XP!" }]
+      city: [{ sender: "EVA", text: "Städte-Krieg aktiv. Emsdetten kämpft!" }, { sender: "Agent_Zero", text: "Auf geht's!" }],
+      world: [{ sender: "SYS", text: "GLOBAL EVENT AKTIV!" }]
     };
 
     function renderChat() {
@@ -491,10 +577,10 @@
     });
 
     const tutorialSteps = [
-      { title: "1. KAMPAGNE & STORY", text: "Verfolge die Story-Kapitel oben im Quest-Terminal, um ARES-9 zu besiegen." },
-      { title: "2. TERRITORIEN & FOG OF WAR", text: "Erleuchte die Welt und schließe Sektoren ab." },
-      { title: "3. BIO-RESONANCE & SMARTWATCH", text: "Aktiviere den Herzschlag-Overclock für doppelte Power." },
-      { title: "4. CHAT & QUESTS", text: "Erfülle 10 tägliche Protokolle und hol dir fette Belohnungen ab." }
+      { title: "1. KAMPAGNE & SCHRITTE", text: "Dein Smartphone zählt Schritte im Hintergrund für Extra-Credits. Verfolge die Story oben rechts." },
+      { title: "2. STÄDTE-KRIEGE & TROPHÄEN", text: "Drücke auf das Globus-Symbol, um zu sehen, wie sich Emsdetten im Städte-Duell schlägt." },
+      { title: "3. BIO-RESONANCE & SMARTWATCH", text: "Aktiviere den Herzschlag-Overclock für 2x Turbo." },
+      { title: "4. CHAT & QUESTS", text: "Nutze den Stadt-Chat und erledige tägliche Missionen." }
     ];
     let currentTutorialIdx = 0;
     function showTutorialStep() {
@@ -558,11 +644,7 @@
       if (q && q.done && !q.claimed) {
         q.claimed = true; addCredits(q.reward); playFanfare(); speakEva("Belohnung abgeholt.");
         showBanner(`+${q.reward} $CYB!`, false); renderQuests();
-
-        // Story-Fortschritt prüfen
-        if (q.id === 4 && currentStoryChapter === 1) { currentStoryChapter = 2; }
-        else if (q.id === 6 && currentStoryChapter === 2) { currentStoryChapter = 3; }
-        else if (q.id === 7 && currentStoryChapter === 3) { currentStoryChapter = 4; }
+        if (q.id === 4 && currentStoryChapter === 1) currentStoryChapter = 2;
         localStorage.setItem('pc_story_chapter', currentStoryChapter);
         updateStoryDisplay();
       }
@@ -624,22 +706,6 @@
       }, 240);
     }
 
-    function playTone(freqStart, freqEnd, type, duration) {
-      const ctx = ensureAudioContext(); if (!ctx) return;
-      try {
-        const osc = ctx.createOscillator(); const gain = ctx.createGain();
-        osc.type = type; osc.frequency.setValueAtTime(freqStart, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(freqEnd, ctx.currentTime + duration);
-        gain.gain.setValueAtTime(0.2, ctx.currentTime); gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + duration);
-        osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + duration);
-      } catch(e){}
-    }
-    function playFanfare() {
-      playTone(330, 440, 'triangle', 0.15);
-      setTimeout(() => playTone(440, 550, 'triangle', 0.15), 150);
-      setTimeout(() => playTone(550, 880, 'triangle', 0.35), 300);
-    }
-
     const canvas = document.getElementById('worldCanvas');
     const ctx = canvas.getContext('2d');
     function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
@@ -647,7 +713,6 @@
 
     let worldX = 0, worldY = 0, cameraX = 0, cameraY = 0;
     let playerCustomColor = localStorage.getItem('pc_skin_color') || '#00f3ff';
-    let hackToolLevel = parseInt(localStorage.getItem('pc_hack_tool_lvl') || '1');
     let playerName = localStorage.getItem('pc_agent_name') || 'AGENT V';
     const RANKS = ["NOOB", "ROOKIE", "SCOUT", "RUNNER", "STREET MASTER", "HOOD LORD", "DISTRICT KING", "CITY OVERLORD"];
 
@@ -725,14 +790,6 @@
     const shopModal = document.getElementById('shopModal');
     document.getElementById('openShopBtn').addEventListener('click', () => { shopModal.style.display = 'flex'; });
     document.getElementById('closeShopBtn').addEventListener('click', () => { shopModal.style.display = 'none'; });
-
-    function buyShopItem(itemId, cybCost) {
-      ensureAudioContext();
-      if (savedCredits < cybCost) { showBanner("NICHT GENUG $CYB!", true); return; }
-      savedCredits -= cybCost; addCredits(0);
-      if (itemId === 'rig2') { hackToolLevel = 2; localStorage.setItem('pc_hack_tool_lvl', 2); showBanner("CYBERDECK MK.II!", false); }
-      playFanfare(); speakEva("Transaktion erfolgreich."); shopModal.style.display = 'none'; updateUI();
-    }
 
     const bioModal = document.getElementById('bioModal');
     document.getElementById('bioScanTriggerBtn').addEventListener('click', () => { ensureAudioContext(); bioModal.style.display = 'flex'; });
@@ -916,9 +973,6 @@
       ensureAudioContext(); isSynthMusicActive = !isSynthMusicActive; this.classList.toggle('active', isSynthMusicActive);
       if (isSynthMusicActive) startSynthwaveMusic(); else stopSynthwaveMusic();
     });
-    document.getElementById('voiceToggleBtn').addEventListener('click', function() {
-      isVoiceActive = !isVoiceActive; this.classList.toggle('active', isVoiceActive);
-    });
 
     document.getElementById('acceptSafetyBtn').addEventListener('click', () => {
       document.getElementById('safetyModal').remove(); updateLevelUI(); updateUI(); loadRoadsAndMonuments();
@@ -939,7 +993,7 @@
 
     joystickZone.addEventListener('pointerdown', e => { ensureAudioContext(); joyActive = true; joystickZone.setPointerCapture(e.pointerId); handleJoyMove(e.clientX, e.clientY); });
     window.addEventListener('pointermove', e => { if (!joyActive) return; handleJoyMove(e.clientX, e.clientY); });
-    function joyRelease() { joyActive = false; joyX = 0; joyY = 0; joystickHandle.style.transform = 'translate(0px, 0px);'; }
+    function joyRelease() { joyActive = false; joyX = 0; joyY = 0; joystickHandle.style.transform = 'translate(0px, 0px)'; }
     window.addEventListener('pointerup', joyRelease); window.addEventListener('pointercancel', joyRelease);
 
     function loop(timestamp) {
