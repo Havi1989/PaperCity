@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // HEARTBEAT DYNAMIC CANVAS</title>
+  <title>PaperCity // PRODUCTION MASTER + FULL SHOP</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#020408" />
@@ -21,7 +21,7 @@
       --cyber-gold: #ffaa00;
       --cyber-green: #00ff66;
       --cyber-purple: #bd00ff;
-      --cyber-dark: rgba(3, 7, 14, 0.90);
+      --cyber-dark: rgba(3, 7, 14, 0.92);
       --cyber-border: rgba(0, 243, 255, 0.6);
       --cyber-glow: 0 0 25px rgba(0, 243, 255, 0.75);
       --font-tech: 'Orbitron', monospace, sans-serif;
@@ -29,16 +29,16 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
-    body, html { width: 100%; height: 100%; overflow: hidden; background: #020408; font-family: var(--font-hud); color: #fff; }
+    body, html { width: 100%; height: 100%; overflow: hidden; background: #010307; font-family: var(--font-hud); color: #fff; }
 
     #worldCanvas {
-      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; background: #020408; display: block;
+      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; background: #010307; display: block;
     }
 
     .cyber-overlay {
       position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none !important; z-index: 400;
       background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%),
-                  radial-gradient(circle at center, transparent 40%, rgba(0, 243, 255, 0.05) 100%);
+                  radial-gradient(circle at center, transparent 35%, rgba(0, 243, 255, 0.04) 100%);
       background-size: 100% 3px, 100% 100%; opacity: 0.65;
     }
 
@@ -81,6 +81,7 @@
 
     @keyframes pulseGlow { from { opacity: 0.7; } to { opacity: 1; transform: scale(1.03); } }
 
+    /* Modals & In-Game Shop */
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(1, 3, 7, 0.95); backdrop-filter: blur(24px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px;
     }
@@ -96,6 +97,14 @@
       letter-spacing: 1.5px; cursor: pointer; margin-top: 12px; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
       box-shadow: 0 0 25px rgba(0, 243, 255, 0.7);
     }
+
+    .shop-section-title { font-family: var(--font-tech); font-size: 0.75rem; color: var(--cyber-gold); letter-spacing: 1.5px; margin: 16px 0 8px 0; border-bottom: 1px solid rgba(255, 170, 0, 0.4); padding-bottom: 5px; display: flex; justify-content: space-between; text-shadow: 0 0 8px rgba(255, 170, 0, 0.5); }
+    .shop-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.08); text-align: left; }
+    .shop-row:last-child { border-bottom: none; }
+    .shop-item-desc { font-size: 0.72rem; color: #8fa5ba; }
+    .shop-action-box { display: flex; gap: 6px; }
+    .buy-btn-cyb { background: rgba(255, 170, 0, 0.18); border: 1px solid var(--cyber-gold); color: var(--cyber-gold); padding: 6px 10px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 800; cursor: pointer; border-radius: 4px; box-shadow: 0 0 10px rgba(255, 170, 0, 0.3); }
+    .buy-btn-eur { background: rgba(0, 255, 102, 0.18); border: 1px solid var(--cyber-green); color: var(--cyber-green); padding: 6px 10px; font-family: var(--font-tech); font-size: 0.65rem; font-weight: 800; cursor: pointer; border-radius: 4px; box-shadow: 0 0 10px rgba(0, 255, 102, 0.3); }
 
     .top-right-col { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; pointer-events: auto; }
     .quick-toolbar { display: flex; gap: 6px; }
@@ -157,6 +166,60 @@
     </button>
   </div>
 
+  <!-- IN-GAME SHOP MODAL -->
+  <div class="modal-overlay" id="shopModal">
+    <div class="cyber-modal-card">
+      <div class="modal-header" style="color:var(--cyber-gold);">
+        <span><i class="fa-solid fa-cart-shopping"></i> CYBER-STORE // $CYB</span>
+        <button class="close-modal-btn" id="closeShopBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      
+      <div class="shop-section-title"><span>HACK-TOOL UPGRADES</span><span>CORE OVERRIDE</span></div>
+      <div class="shop-row">
+        <div>
+          <div style="font-family:var(--font-tech); font-weight:700;">CYBERDECK MK.II</div>
+          <div class="shop-item-desc">Reduziert Hack-Zeit auf 6 Sekunden</div>
+        </div>
+        <div class="shop-action-box">
+          <button class="buy-btn-cyb" onclick="buyShopItem('rig2', 1800, 0)">1.800 $CYB</button>
+          <button class="buy-btn-eur" onclick="buyShopItem('rig2', 0, 1.49)">1,49 €</button>
+        </div>
+      </div>
+      <div class="shop-row">
+        <div>
+          <div style="font-family:var(--font-tech); font-weight:700;">QUANTUM RIG MK.III</div>
+          <div class="shop-item-desc">High-End Rig: Hackt in 3 Sekunden</div>
+        </div>
+        <div class="shop-action-box">
+          <button class="buy-btn-cyb" onclick="buyShopItem('rig3', 4000, 0)">4.000 $CYB</button>
+          <button class="buy-btn-eur" onclick="buyShopItem('rig3', 0, 2.99)">2,99 €</button>
+        </div>
+      </div>
+
+      <div class="shop-section-title"><span>KOSMETIK & AUREN</span><span>AGENTEN-STYLE</span></div>
+      <div class="shop-row">
+        <div>
+          <div style="font-family:var(--font-tech); font-weight:700;">CYBER PURPLE AURA</div>
+          <div class="shop-item-desc">Exklusive violette Avatar-Leuchte</div>
+        </div>
+        <div class="shop-action-box">
+          <button class="buy-btn-cyb" onclick="buyShopItem('aura_purple', 1200, 0)">1.200 $CYB</button>
+          <button class="buy-btn-eur" onclick="buyShopItem('aura_purple', 0, 0.99)">0,99 €</button>
+        </div>
+      </div>
+      <div class="shop-row">
+        <div>
+          <div style="font-family:var(--font-tech); font-weight:700;">QUANTUM TRAIL EFFEKT</div>
+          <div class="shop-item-desc">Verleiht deinen Laser-Spuren einen Glitch-Glow</div>
+        </div>
+        <div class="shop-action-box">
+          <button class="buy-btn-cyb" onclick="buyShopItem('trail_quantum', 2500, 0)">2.500 $CYB</button>
+          <button class="buy-btn-eur" onclick="buyShopItem('trail_quantum', 0, 1.99)">1,99 €</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- BIO-RESONANCE LINK MODAL -->
   <div class="modal-overlay" id="bioModal">
     <div class="cyber-modal-card">
@@ -165,12 +228,12 @@
         <button class="close-modal-btn" id="closeBioModal"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <p style="font-size: 0.85rem; color: #bad3eb; margin-bottom: 16px;">
-        Verbinde deine Smartwatch via Bluetooth für den Live-Herzfrequenz-Hintergrund und automatisches Overclocking.
+        Verbinde deine Smartwatch via Bluetooth oder nutze den Kamera-Scan für Live-Herzfrequenz und Overclocking.
       </p>
       <div id="bioStatusTxt" style="font-family:var(--font-tech); font-size:1.05rem; color:var(--cyber-cyan); margin: 15px 0;">PULS: WARTING AUF SIGNAL...</div>
       <div style="display:flex; flex-direction:column; gap:10px;">
         <button class="save-profile-btn" id="connectSmartwatchBtn" style="background:var(--cyber-cyan); color:#020408; box-shadow:0 0 20px var(--cyber-cyan);">⌚ SMARTWATCH KOPPELN (BLUETOOTH)</button>
-        <button class="save-profile-btn" id="startBioScanBtn" style="background:var(--cyber-purple); box-shadow:0 0 20px var(--cyber-purple);">📸 KAMERA-PULS-SCAN</button>
+        <button class="save-profile-btn" id="startBioScanBtn" style="background:var(--cyber-purple); box-shadow:0 0 25px var(--cyber-purple);">📸 KAMERA-PULS-SCAN</button>
       </div>
     </div>
   </div>
@@ -181,11 +244,11 @@
         <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Heartbeat Dynamic Canvas</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Production Master + Shop</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem; text-align:left;">
-        <li><i class="fa-solid fa-heart-pulse" style="color:var(--cyber-crimson);"></i> <b>Heartbeat Canvas:</b> Der Hintergrund pulsiert im echten Takt deines Herzschlags!</li>
-        <li><i class="fa-solid fa-location-crosshairs" style="color:var(--cyber-cyan);"></i> <b>Echt-GPS & Joystick:</b> Volle Bewegungsfreiheit.</li>
+        <li><i class="fa-solid fa-cart-shopping" style="color:var(--cyber-gold);"></i> <b>In-Game Shop:</b> Upgrades, Rigs & Auren freigeschaltet.</li>
+        <li><i class="fa-solid fa-cloud-moon" style="color:var(--cyber-cyan);"></i> <b>Fog of War & Anti-Cheat:</b> Voll aktiv.</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
     </div>
@@ -197,7 +260,7 @@
         <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
         <div>
           <div class="agent-name-label" id="hudAgentName">AGENT V</div>
-          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">HEARTBEAT LINK // 50 m/s</div>
+          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">SHOP READY // 50 m/s</div>
         </div>
       </div>
 
@@ -220,6 +283,7 @@
 
     <div class="top-right-col">
       <div class="quick-toolbar">
+        <button class="tool-btn" id="openShopBtn" style="color:var(--cyber-gold); border-color:var(--cyber-gold);"><i class="fa-solid fa-cart-shopping"></i> SHOP</button>
         <button class="tool-btn" id="bioScanTriggerBtn" style="color:var(--cyber-purple); border-color:var(--cyber-purple);"><i class="fa-solid fa-dna"></i> BIO-SCAN</button>
         <button class="tool-btn active" id="synthMusicBtn"><i class="fa-solid fa-music"></i> SYNTH</button>
         <button class="tool-btn active" id="voiceToggleBtn"><i class="fa-solid fa-headset"></i> EVA</button>
@@ -263,7 +327,7 @@
     let isSfxActive = true;
     let cachedGermanVoice = null;
     let isOverclockActive = false;
-    let currentHeartRate = 72; // Standard Ruheherzfrequenz
+    let currentHeartRate = 72;
     let heartBeatPulse = 0;
 
     function ensureAudioContext() {
@@ -366,7 +430,7 @@
     }
 
     /* ========================================================
-       2. HEARTBEAT DYNAMIC CANVAS ENGINE
+       2. FOG OF WAR & AAA CANVAS ENGINE
        ======================================================== */
     const canvas = document.getElementById('worldCanvas');
     const ctx = canvas.getContext('2d');
@@ -381,6 +445,7 @@
     let worldX = 0, worldY = 0;
     let cameraX = 0, cameraY = 0;
     let playerCustomColor = localStorage.getItem('pc_skin_color') || '#00f3ff';
+    let hackToolLevel = parseInt(localStorage.getItem('pc_hack_tool_lvl') || '1');
     let playerName = localStorage.getItem('pc_agent_name') || 'AGENT V';
     const RANKS = ["NOOB", "ROOKIE", "SCOUT", "RUNNER", "STREET MASTER", "HOOD LORD", "DISTRICT KING", "CITY OVERLORD"];
 
@@ -394,6 +459,7 @@
     let roadSegments = [];
     let backgroundBuildings = [];
     let cityMonuments = [];
+    let exploredNodes = [];
     let baseRadius = 35;
     let justCapturedCooldown = false;
     let particles = [];
@@ -402,6 +468,8 @@
     let gpsWatchId = null;
     let gpsOriginLat = null;
     let gpsOriginLon = null;
+    let lastGpsTimestamp = 0;
+    let lastGpsPos = null;
 
     let botCrimson = { name: "Crimson", color: '#ff0055', x: 120, y: -90, trail: [], area: 1960, heading: 45, speed: 20 };
     let botVolt = { name: "Volt", color: '#ffee00', x: -130, y: 140, trail: [], area: 1960, heading: 210, speed: 18 };
@@ -496,7 +564,50 @@
     }
 
     /* ========================================================
-       3. SMARTWATCH BLUETOOTH & PULS-INTEGRATION
+       3. SHOP LOGIK & MODALS
+       ======================================================== */
+    const shopModal = document.getElementById('shopModal');
+    document.getElementById('openShopBtn').addEventListener('click', () => { shopModal.style.display = 'flex'; });
+    document.getElementById('closeShopBtn').addEventListener('click', () => { shopModal.style.display = 'none'; });
+
+    function buyShopItem(itemId, cybCost, eurCost) {
+      ensureAudioContext();
+      if (cybCost > 0) {
+        if (savedCredits < cybCost) {
+          showBanner("NICHT GENUG $CYB CREDITS!", true);
+          speakEva("Guthaben unzureichend.");
+          return;
+        }
+        savedCredits -= cybCost;
+        addCredits(0); // UI Refresh
+      }
+
+      if (itemId === 'rig2') {
+        hackToolLevel = 2;
+        localStorage.setItem('pc_hack_tool_lvl', 2);
+        showBanner("CYBERDECK MK.II INSTALLIERT!", false);
+      } else if (itemId === 'rig3') {
+        hackToolLevel = 3;
+        localStorage.setItem('pc_hack_tool_lvl', 3);
+        showBanner("QUANTUM RIG MK.III INSTALLIERT!", false);
+      } else if (itemId === 'aura_purple') {
+        playerCustomColor = '#bd00ff';
+        localStorage.setItem('pc_skin_color', '#bd00ff');
+        showBanner("CYBER PURPLE AURA AKTIVIERT!", false);
+      } else if (itemId === 'trail_quantum') {
+        playerCustomColor = '#00ff66';
+        localStorage.setItem('pc_skin_color', '#00ff66');
+        showBanner("QUANTUM TRAIL FREIGESCHALTET!", false);
+      }
+
+      playFanfare();
+      speakEva("Transaktion erfolgreich.");
+      shopModal.style.display = 'none';
+      updateUI();
+    }
+
+    /* ========================================================
+       4. SMARTWATCH & ECHT-GPS MODUS
        ======================================================== */
     const bioModal = document.getElementById('bioModal');
     document.getElementById('bioScanTriggerBtn').addEventListener('click', () => {
@@ -509,14 +620,9 @@
     document.getElementById('connectSmartwatchBtn').addEventListener('click', async () => {
       const statusTxt = document.getElementById('bioStatusTxt');
       try {
-        if (!navigator.bluetooth) {
-          statusTxt.textContent = "BLUETOOTH WIRD NICHT UNTERSTÜTZT!";
-          return;
-        }
+        if (!navigator.bluetooth) { statusTxt.textContent = "BLUETOOTH NICHT UNTERSTÜTZT!"; return; }
         statusTxt.textContent = "SUCHE SMARTWATCH...";
-        const device = await navigator.bluetooth.requestDevice({
-          filters: [{ services: ['heart_rate'] }]
-        });
+        const device = await navigator.bluetooth.requestDevice({ filters: [{ services: ['heart_rate'] }] });
         statusTxt.textContent = "VERBINDE MIT " + device.name + "...";
         const server = await device.gatt.connect();
         const service = await server.getPrimaryService('heart_rate');
@@ -524,37 +630,23 @@
         
         await characteristic.startNotifications();
         characteristic.addEventListener('characteristicvaluechanged', (event) => {
-          const value = event.target.value;
-          currentHeartRate = value.getUint8(1); // Live BPM von der Uhr
+          currentHeartRate = event.target.value.getUint8(1);
           statusTxt.textContent = `PULS SYNC: ${currentHeartRate} BPM`;
-          if (currentHeartRate > 105 && !isOverclockActive) {
-            activateOverclock();
-          }
+          if (currentHeartRate > 105 && !isOverclockActive) activateOverclock();
         });
         statusTxt.textContent = "SMARTWATCH GEKOPPELT!";
-        speakEva("Smartwatch erfolgreich synchronisiert.");
-      } catch (err) {
-        statusTxt.textContent = "KOPPLUNG ABGEBROCHEN.";
-      }
+        speakEva("Smartwatch synchronisiert.");
+      } catch (err) { statusTxt.textContent = "KOPPLUNG ABGEBROCHEN."; }
     });
 
     document.getElementById('startBioScanBtn').addEventListener('click', () => {
       document.getElementById('bioStatusTxt').textContent = "SYNCHRONISIERE PULS...";
       speakEva("Analysiere biometrische Resonanz.");
-
       navigator.mediaDevices?.getUserMedia({ video: { facingMode: "environment" } }).then(stream => {
         const track = stream.getVideoTracks()[0];
-        if (track && track.applyConstraints) {
-          track.applyConstraints({ advanced: [{ torch: true }] }).catch(()=>{});
-        }
-        setTimeout(() => {
-          stream.getTracks().forEach(t => t.stop());
-          currentHeartRate = 115; // Simulierter erhöhter Puls
-          activateOverclock();
-        }, 3500);
-      }).catch(() => {
-        setTimeout(() => { currentHeartRate = 115; activateOverclock(); }, 3000);
-      });
+        if (track && track.applyConstraints) track.applyConstraints({ advanced: [{ torch: true }] }).catch(()=>{});
+        setTimeout(() => { stream.getTracks().forEach(t => t.stop()); currentHeartRate = 115; activateOverclock(); }, 3500);
+      }).catch(() => { setTimeout(() => { currentHeartRate = 115; activateOverclock(); }, 3000); });
     });
 
     function activateOverclock() {
@@ -564,14 +656,11 @@
       badge.textContent = '⚡ OVERCLOCK AKTIV (2X)';
       badge.className = 'status-badge overclock';
       showBanner("⚡ PULS-OVERCLOCK AKTIV!", false);
-      speakEva("Herzfrequenz-Schwellenwert erreicht. Overclock aktiviert.");
+      speakEva("Overclock aktiviert.");
       playFanfare();
-
       setTimeout(() => {
-        isOverclockActive = false;
-        currentHeartRate = 72;
-        badge.textContent = 'IN BASIS (GESICHERT)';
-        badge.className = 'status-badge';
+        isOverclockActive = false; currentHeartRate = 72;
+        badge.textContent = 'IN BASIS (GESICHERT)'; badge.className = 'status-badge';
         showBanner("Overclock beendet.", true);
       }, 30000);
     }
@@ -590,24 +679,32 @@
           gpsWatchId = navigator.geolocation.watchPosition(pos => {
             const lat = pos.coords.latitude;
             const lon = pos.coords.longitude;
+            const now = Date.now();
+
             if (gpsOriginLat === null) {
               gpsOriginLat = lat; gpsOriginLon = lon;
               loadRoadsAndMonuments(lat, lon);
             }
+
+            if (lastGpsPos && lastGpsTimestamp) {
+              const distMeters = getDistance({x: lon*111320, y: lat*111320}, {x: lastGpsPos.lon*111320, y: lastGpsPos.lat*111320});
+              const timeSec = (now - lastGpsTimestamp) / 1000;
+              const speedKmh = (distMeters / timeSec) * 3.6;
+              if (speedKmh > 25) {
+                showBanner("⚠️ GESCHWINDIGKEIT ZU HOCH (ANTI-CHEAT)", true);
+                return;
+              }
+            }
+            lastGpsPos = { lat, lon }; lastGpsTimestamp = now;
+
             const cosF = Math.cos(gpsOriginLat * Math.PI / 180);
             const targetX = (lon - gpsOriginLon) * 111320 * cosF;
             const targetY = -(lat - gpsOriginLat) * 111320;
-
             const dx = targetX - worldX;
             const dy = targetY - worldY;
-            if (Math.hypot(dx, dy) > 2) {
-              handlePlayerMovement(dx, dy);
-            }
-          }, err => {
-            showBanner("GPS FEHLER: KEIN SIGNAL", true);
-          }, { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 });
-        } else {
-          showBanner("GPS WIRD NICHT UNTERSTÜTZT", true);
+
+            if (Math.hypot(dx, dy) > 2) handlePlayerMovement(dx, dy);
+          }, err => { showBanner("GPS FEHLER", true); }, { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 });
         }
       } else {
         if (gpsWatchId) navigator.geolocation.clearWatch(gpsWatchId);
@@ -619,7 +716,7 @@
     });
 
     /* ========================================================
-       4. RADAR MINIMAP
+       5. RADAR & GAME LOOP
        ======================================================== */
     const radarCanvas = document.getElementById('radarCanvas');
     const rCtx = radarCanvas.getContext('2d');
@@ -643,14 +740,14 @@
       rCtx.beginPath(); rCtx.arc(center, center, 4, 0, Math.PI * 2); rCtx.fill();
     }
 
-    /* ========================================================
-       5. GAME LOOP & HEARTBEAT BACKGROUND RENDER
-       ======================================================== */
     function handlePlayerMovement(dx, dy) {
       try {
         const speedMultiplier = isOverclockActive ? 2.0 : 1.0;
         worldX += dx * speedMultiplier;
         worldY += dy * speedMultiplier;
+
+        exploredNodes.push({ x: worldX, y: worldY });
+        if (exploredNodes.length > 500) exploredNodes.shift();
 
         const currentPt = { x: worldX, y: worldY };
         const inTerritory = isPointInPlayerTerritory(currentPt);
@@ -686,6 +783,7 @@
       const bonusArea = isOverclockActive ? Math.round(area * 1.25) : area;
       playerTotalArea += bonusArea;
       territories.push({ points: coords });
+      localStorage.setItem('pc_total_area', playerTotalArea);
 
       spawnParticles(worldX, worldY, playerCustomColor, 60);
       playerTrail = [{ x: worldX, y: worldY }];
@@ -715,16 +813,25 @@
       cameraX += (worldX - cameraX) * 0.12;
       cameraY += (worldY - cameraY) * 0.12;
 
-      // Herzschlag-Puls-Berechnung für den Hintergrund
-      // Frequenz basiert auf echten BPM (Schläge pro Sekunde = BPM / 60)
       const bps = currentHeartRate / 60;
-      heartBeatPulse = Math.sin(timestamp * 0.001 * bps * Math.PI * 2) * 0.5 + 0.5; // Wert zwischen 0 und 1 im Takt
+      heartBeatPulse = Math.sin(timestamp * 0.001 * bps * Math.PI * 2) * 0.5 + 0.5;
 
       ctx.save();
       ctx.translate(centerX - cameraX, centerY - cameraY);
 
-      // 1. Herzschlag-Pulsiendes Hintergrund-Grid
-      const gridBaseAlpha = 0.02;
+      ctx.fillStyle = 'rgba(1, 3, 7, 0.94)';
+      ctx.fillRect(cameraX - centerX - 500, cameraY - centerY - 500, canvas.width + 1000, canvas.height + 1000);
+
+      ctx.save();
+      ctx.globalCompositeOperation = 'destination-out';
+      exploredNodes.forEach(node => {
+        const grad = ctx.createRadialGradient(node.x, node.y, 10, node.x, node.y, 180);
+        grad.addColorStop(0, 'rgba(0,0,0,1)'); grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(node.x, node.y, 180, 0, Math.PI * 2); ctx.fill();
+      });
+      ctx.restore();
+
+      const gridBaseAlpha = 0.03;
       const gridPulseAlpha = gridBaseAlpha + (heartBeatPulse * 0.04);
       ctx.strokeStyle = isOverclockActive ? `rgba(189, 0, 255, ${gridPulseAlpha * 1.8})` : `rgba(0, 243, 255, ${gridPulseAlpha})`;
       ctx.lineWidth = 1 + (heartBeatPulse * 0.8);
@@ -739,117 +846,54 @@
         ctx.beginPath(); ctx.moveTo(cameraX - centerX - 200, y); ctx.lineTo(cameraX + centerX + canvas.width, y); ctx.stroke();
       }
 
-      // 2. Volumetrische Gebäude
-      backgroundBuildings.forEach(b => {
-        ctx.fillStyle = 'rgba(5, 12, 24, 0.85)';
-        ctx.fillRect(b.x, b.y, b.w, b.h);
-        ctx.strokeStyle = 'rgba(0, 243, 255, 0.12)';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(b.x, b.y, b.w, b.h);
-      });
-
-      // 3. Organische Straßen
       roadSegments.forEach(r => {
-        ctx.strokeStyle = 'rgba(0, 243, 255, 0.06)';
-        ctx.lineWidth = 22; ctx.lineCap = 'round';
-        ctx.beginPath(); ctx.moveTo(r.x1, r.y1); ctx.lineTo(r.x2, r.y2); ctx.stroke();
-
-        ctx.strokeStyle = 'rgba(0, 243, 255, 0.25)';
-        ctx.lineWidth = 10;
+        ctx.strokeStyle = 'rgba(0, 243, 255, 0.28)';
+        ctx.lineWidth = 10; ctx.lineCap = 'round';
         ctx.beginPath(); ctx.moveTo(r.x1, r.y1); ctx.lineTo(r.x2, r.y2); ctx.stroke();
       });
 
-      // 4. Heimatbasis (Pulsiert im Herzschlag-Takt!)
       const currentBaseRadius = baseRadius + (heartBeatPulse * 4);
-      ctx.beginPath();
-      ctx.arc(0, 0, currentBaseRadius, 0, Math.PI * 2);
-      ctx.fillStyle = isOverclockActive ? 'rgba(189, 0, 255, 0.3)' : 'rgba(0, 243, 255, 0.25)';
-      ctx.fill();
-      ctx.strokeStyle = playerCustomColor;
-      ctx.lineWidth = 3;
-      ctx.shadowColor = playerCustomColor;
-      ctx.shadowBlur = 20 + (heartBeatPulse * 15);
-      ctx.stroke();
-      ctx.shadowBlur = 0;
+      ctx.beginPath(); ctx.arc(0, 0, currentBaseRadius, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 243, 255, 0.25)'; ctx.fill();
+      ctx.strokeStyle = playerCustomColor; ctx.lineWidth = 3;
+      ctx.shadowColor = playerCustomColor; ctx.shadowBlur = 20 + (heartBeatPulse * 15); ctx.stroke(); ctx.shadowBlur = 0;
 
-      // 5. Territorien
       territories.forEach(t => {
         if (t.points.length < 3) return;
-        ctx.beginPath();
-        ctx.moveTo(t.points[0].x, t.points[0].y);
+        ctx.beginPath(); ctx.moveTo(t.points[0].x, t.points[0].y);
         for (let i = 1; i < t.points.length; i++) ctx.lineTo(t.points[i].x, t.points[i].y);
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(0, 243, 255, 0.42)';
-        ctx.fill();
-        ctx.strokeStyle = playerCustomColor;
-        ctx.lineWidth = 3;
-        ctx.shadowColor = playerCustomColor;
-        ctx.shadowBlur = 18;
-        ctx.stroke();
-        ctx.shadowBlur = 0;
+        ctx.closePath(); ctx.fillStyle = 'rgba(0, 243, 255, 0.42)'; ctx.fill();
+        ctx.strokeStyle = playerCustomColor; ctx.lineWidth = 3; ctx.stroke();
       });
 
-      // 6. Spieler Trail
       if (playerTrail.length > 1) {
-        ctx.beginPath();
-        ctx.moveTo(playerTrail[0].x, playerTrail[0].y);
+        ctx.beginPath(); ctx.moveTo(playerTrail[0].x, playerTrail[0].y);
         for (let i = 1; i < playerTrail.length; i++) ctx.lineTo(playerTrail[i].x, playerTrail[i].y);
         ctx.strokeStyle = isOverclockActive ? '#bd00ff' : playerCustomColor;
-        ctx.lineWidth = 7;
-        ctx.shadowColor = ctx.strokeStyle;
-        ctx.shadowBlur = 30;
-        ctx.stroke();
-        ctx.shadowBlur = 0;
+        ctx.lineWidth = 7; ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 30; ctx.stroke(); ctx.shadowBlur = 0;
       }
 
-      // 7. Monumente
       cityMonuments.forEach(m => {
-        ctx.beginPath();
-        ctx.arc(m.x, m.y, 18, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffaa00';
-        ctx.shadowColor = '#ffaa00';
-        ctx.shadowBlur = 25;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 11px Orbitron';
-        ctx.textAlign = 'center';
-        ctx.fillText(m.name, m.x, m.y - 24);
+        ctx.beginPath(); ctx.arc(m.x, m.y, 18, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffaa00'; ctx.shadowColor = '#ffaa00'; ctx.shadowBlur = 25; ctx.fill(); ctx.shadowBlur = 0;
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Orbitron'; ctx.textAlign = 'center'; ctx.fillText(m.name, m.x, m.y - 24);
       });
 
-      // 8. Partikel
       for (let i = particles.length - 1; i >= 0; i--) {
         let p = particles[i];
         p.x += p.vx * 0.016; p.y += p.vy * 0.016; p.alpha -= 0.016 / p.life;
         if (p.alpha <= 0) { particles.splice(i, 1); continue; }
         ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = p.color; ctx.globalAlpha = p.alpha;
-        ctx.shadowColor = p.color; ctx.shadowBlur = 12; ctx.fill(); ctx.shadowBlur = 0;
-        ctx.globalAlpha = 1.0;
+        ctx.fillStyle = p.color; ctx.globalAlpha = p.alpha; ctx.fill(); ctx.globalAlpha = 1.0;
       }
 
-      // 9. Spieler Avatar (Pulsiert im Herzschlag)
       const avatarRadius = 16 + (heartBeatPulse * 3);
-      ctx.beginPath();
-      ctx.arc(worldX, worldY, avatarRadius, 0, Math.PI * 2);
+      ctx.beginPath(); ctx.arc(worldX, worldY, avatarRadius, 0, Math.PI * 2);
       ctx.fillStyle = isOverclockActive ? '#bd00ff' : playerCustomColor;
-      ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 35 + (heartBeatPulse * 15);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = '#ffffff';
-      ctx.stroke();
+      ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 35 + (heartBeatPulse * 15); ctx.fill(); ctx.shadowBlur = 0;
+      ctx.lineWidth = 4; ctx.strokeStyle = '#ffffff'; ctx.stroke();
 
       ctx.restore();
-
-      // 10. Vignette
-      const grad = ctx.createRadialGradient(centerX, centerY, canvas.width * 0.25, centerX, centerY, canvas.width * 0.75);
-      grad.addColorStop(0, 'rgba(2, 4, 8, 0)');
-      grad.addColorStop(1, 'rgba(2, 4, 8, 0.9)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
       updateRadar();
     }
 
@@ -877,6 +921,7 @@
     }
     function updateUI() {
       document.getElementById('playerAreaStat').textContent = `${playerTotalArea.toLocaleString()} m²`;
+      document.getElementById('playerCreditsStat').textContent = savedCredits.toLocaleString();
       const listEl = document.getElementById('leaderboardList');
       if (listEl) {
         listEl.innerHTML = `<div class="leaderboard-item"><span style="color:${playerCustomColor};">#1 ${playerName}</span><span>${playerTotalArea.toLocaleString()} m²</span></div>`;
@@ -932,7 +977,6 @@
       try {
         if (!isRealGpsActive && (joyX !== 0 || joyY !== 0)) {
           const moveSpeed = 50;
-          // deltaTime Annahme ~ 16ms
           handlePlayerMovement(joyX * moveSpeed * 0.016, joyY * moveSpeed * 0.016);
         }
         updateBot(botCrimson, 0.016); updateBot(botVolt, 0.016);
