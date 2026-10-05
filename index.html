@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // PRODUCTION MASTER (100% COMPLETE & OPTIMIZED)</title>
+  <title>PaperCity // NARRATIVE CAMPAIGN EDITION</title>
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#020408" />
@@ -86,7 +86,7 @@
 
     @keyframes pulseGlow { from { opacity: 0.7; } to { opacity: 1; transform: scale(1.03); } }
 
-    /* AUFKLAPPBARE QUEST-LEISTE */
+    /* AUFKLAPPBARE QUEST- & STORY-LEISTE */
     .quest-drawer-container {
       position: absolute; top: 160px; right: 15px; z-index: 1500; display: flex; flex-direction: column; align-items: flex-end; pointer-events: auto;
     }
@@ -97,11 +97,17 @@
       box-shadow: 0 0 15px rgba(0, 243, 255, 0.4); display: flex; align-items: center; gap: 8px;
     }
     .quest-content-box {
-      width: 290px; max-height: 380px; overflow-y: auto; background: rgba(4, 9, 18, 0.96); border: 1px solid var(--cyber-cyan);
-      backdrop-filter: blur(20px); margin-top: 6px; padding: 12px; display: none; flex-direction: column; gap: 8px;
+      width: 310px; max-height: 420px; overflow-y: auto; background: rgba(4, 9, 18, 0.96); border: 1px solid var(--cyber-cyan);
+      backdrop-filter: blur(20px); margin-top: 6px; padding: 12px; display: none; flex-direction: column; gap: 10px;
       clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
       box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
     }
+    .story-card {
+      background: rgba(189, 0, 255, 0.12); border: 1px solid var(--cyber-purple); padding: 10px; border-radius: 4px;
+    }
+    .story-title { font-family: var(--font-tech); font-size: 0.72rem; color: var(--cyber-purple); font-weight: 900; margin-bottom: 4px; }
+    .story-text { font-size: 0.75rem; color: #bad3eb; line-height: 1.4; }
+
     .quest-item {
       background: rgba(8, 16, 28, 0.9); border: 1px solid rgba(0, 243, 255, 0.25); padding: 8px; border-radius: 4px; display: flex; flex-direction: column; gap: 4px;
     }
@@ -261,14 +267,18 @@
     </div>
   </div>
 
-  <!-- QUEST LEISTE -->
+  <!-- QUEST & STORY LEISTE -->
   <div class="quest-drawer-container">
     <button class="quest-toggle-tab" id="questToggleBtn">
-      <i class="fa-solid fa-scroll"></i> 📋 MISSIONS <span id="questArrow">▼</span>
+      <i class="fa-solid fa-scroll"></i> 📋 STORY & MISSIONS <span id="questArrow">▼</span>
     </button>
     <div class="quest-content-box" id="questContentBox">
-      <div style="font-family:var(--font-tech); font-size:0.75rem; color:var(--cyber-cyan); border-bottom:1px solid rgba(0,243,255,0.3); padding-bottom:4px; margin-bottom:6px;">
-        DAILY PROTOCOLS (10)
+      <div class="story-card" id="storyCardContainer">
+        <div class="story-title" id="storyChapterTitle">KAPITEL 1: ERWACHEN</div>
+        <div class="story-text" id="storyChapterText">ARES-9 infiziert die Frequenz. Durchbreche den Nebel und sichere deinen ersten Sektor, um die Da-H-Daten zu entschlüsseln.</div>
+      </div>
+      <div style="font-family:var(--font-tech); font-size:0.75rem; color:var(--cyber-cyan); border-bottom:1px solid rgba(0,243,255,0.3); padding-bottom:4px; margin-top:4px;">
+        TÄGLICHE PROTOCOLS (10)
       </div>
       <div id="questListContainer" style="display:flex; flex-direction:column; gap:6px;"></div>
     </div>
@@ -327,14 +337,14 @@
   <div class="modal-overlay" id="safetyModal" style="display:flex;">
     <div class="cyber-modal-card">
       <div class="modal-header">
-        <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // 100% MASTER</span>
+        <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // NARRATIVE EDITION</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Complete Production Master</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Narrative Campaign Master</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem; text-align:left;">
-        <li><i class="fa-solid fa-battery-full" style="color:var(--cyber-green);"></i> <b>Akku-Optimiert:</b> Hocheffiziente Render-Schleife für mobile Endgeräte.</li>
-        <li><i class="fa-solid fa-fire" style="color:var(--cyber-volt);"></i> <b>100% Feature-Komplett:</b> GPS, Smartwatch, Chat, Quests, Streaks & Caches.</li>
+        <li><i class="fa-solid fa-book-open" style="color:var(--cyber-purple);"></i> <b>Epiische Story:</b> Die KI ARES-9 greift an. Erfülle Quests, um Kapitel freizuschalten.</li>
+        <li><i class="fa-solid fa-fire" style="color:var(--cyber-volt);"></i> <b>100% Feature-Komplett:</b> Alles aktiv.</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
     </div>
@@ -404,6 +414,23 @@
   </div>
 
   <script>
+    /* ========================================================
+       1. STORY KAMPAGNEN LOGIK & LORE
+       ======================================================== */
+    const storyChapters = [
+      { id: 1, title: "KAPITEL 1: ERWACHEN", text: "ARES-9 hat die Sektoren verschlüsselt. Durchbreche den Nebel, um die ersten Datenfragmente zu sichern.", unlockQuestId: 4 },
+      { id: 2, title: "KAPITEL 2: DER INFILTRATOR", text: "Die KI sendet Bot-Patrouillen (Crimson & Volt). Hacke Monument-Kerne, um die Kontrolle zurückzugewinnen.", unlockQuestId: 6 },
+      { id: 3, title: "KAPITEL 3: BIO-SYNCHRONISATION", text: "Nutze deinen Herzschlag über den Bio-Scanner im Overclock-Modus, um die Firewall zu überlasten.", unlockQuestId: 7 },
+      { id: 4, title: "KAPITEL 4: DER ENDKAMPF", text: "Alle Sektoren sind bereit. Schließe die 10 täglichen Protokolle ab, um ARES-9 endgültig zu stürzen.", unlockQuestId: 10 }
+    ];
+    let currentStoryChapter = parseInt(localStorage.getItem('pc_story_chapter') || '1');
+
+    function updateStoryDisplay() {
+      const chapter = storyChapters.find(c => c.id === currentStoryChapter) || storyChapters[storyChapters.length - 1];
+      document.getElementById('storyChapterTitle').textContent = chapter.title;
+      document.getElementById('storyChapterText').textContent = chapter.text;
+    }
+
     let playerStreak = parseInt(localStorage.getItem('pc_streak') || '1');
     document.getElementById('streakCountVal').textContent = `STREAK: TAG ${playerStreak}`;
 
@@ -424,8 +451,8 @@
 
     let currentChatTab = 'city';
     let chatData = {
-      city: [{ sender: "EVA", text: "Frequenz aktiv." }, { sender: "Agent_Zero", text: "Bereit für den Lauf?" }],
-      world: [{ sender: "SYS", text: "EVENT AKTIV: +50% Sektor-Bonus!" }]
+      city: [{ sender: "EVA", text: "Story-Frequenz stabil. ARES-9 aktiv." }, { sender: "Agent_Zero", text: "Wer knackt Kapitel 2?" }],
+      world: [{ sender: "SYS", text: "KAMPAGNEN-EVENT AKTIV: +50% Story-XP!" }]
     };
 
     function renderChat() {
@@ -464,10 +491,10 @@
     });
 
     const tutorialSteps = [
-      { title: "1. BEWEGUNG & FOG OF WAR", text: "Erleuchte die dunkle Welt durch echte GPS-Schritte oder den Joystick." },
-      { title: "2. TERRITORIEN & GHOST-RIDER", text: "Schließe Schleifen ab und achte auf die Hologramm-Spuren der Rivalen." },
-      { title: "3. STREAKS & CACHES", text: "Halte deinen Streak am Leben und sammle Quantum Caches ein." },
-      { title: "4. CHAT & QUESTS", text: "Nutze den Stadt- & World-Chat und erledige tägliche Missionen." }
+      { title: "1. KAMPAGNE & STORY", text: "Verfolge die Story-Kapitel oben im Quest-Terminal, um ARES-9 zu besiegen." },
+      { title: "2. TERRITORIEN & FOG OF WAR", text: "Erleuchte die Welt und schließe Sektoren ab." },
+      { title: "3. BIO-RESONANCE & SMARTWATCH", text: "Aktiviere den Herzschlag-Overclock für doppelte Power." },
+      { title: "4. CHAT & QUESTS", text: "Erfülle 10 tägliche Protokolle und hol dir fette Belohnungen ab." }
     ];
     let currentTutorialIdx = 0;
     function showTutorialStep() {
@@ -487,6 +514,7 @@
     });
 
     window.addEventListener('DOMContentLoaded', () => {
+      updateStoryDisplay();
       if (!localStorage.getItem('pc_tutorial_seen')) {
         setTimeout(() => { showTutorialStep(); tutorialModal.style.display = 'flex'; }, 1000);
       }
@@ -530,6 +558,13 @@
       if (q && q.done && !q.claimed) {
         q.claimed = true; addCredits(q.reward); playFanfare(); speakEva("Belohnung abgeholt.");
         showBanner(`+${q.reward} $CYB!`, false); renderQuests();
+
+        // Story-Fortschritt prüfen
+        if (q.id === 4 && currentStoryChapter === 1) { currentStoryChapter = 2; }
+        else if (q.id === 6 && currentStoryChapter === 2) { currentStoryChapter = 3; }
+        else if (q.id === 7 && currentStoryChapter === 3) { currentStoryChapter = 4; }
+        localStorage.setItem('pc_story_chapter', currentStoryChapter);
+        updateStoryDisplay();
       }
     }
 
@@ -798,7 +833,6 @@
 
       ctx.save(); ctx.translate(centerX - cameraX, centerY - cameraY);
 
-      // Hocheffizienter Fog of War
       ctx.fillStyle = 'rgba(1, 3, 7, 0.94)';
       ctx.fillRect(cameraX - centerX - 400, cameraY - centerY - 400, canvas.width + 800, canvas.height + 800);
       ctx.save(); ctx.globalCompositeOperation = 'destination-out';
@@ -905,7 +939,7 @@
 
     joystickZone.addEventListener('pointerdown', e => { ensureAudioContext(); joyActive = true; joystickZone.setPointerCapture(e.pointerId); handleJoyMove(e.clientX, e.clientY); });
     window.addEventListener('pointermove', e => { if (!joyActive) return; handleJoyMove(e.clientX, e.clientY); });
-    function joyRelease() { joyActive = false; joyX = 0; joyY = 0; joystickHandle.style.transform = 'translate(0px, 0px)'; }
+    function joyRelease() { joyActive = false; joyX = 0; joyY = 0; joystickHandle.style.transform = 'translate(0px, 0px);'; }
     window.addEventListener('pointerup', joyRelease); window.addEventListener('pointercancel', joyRelease);
 
     function loop(timestamp) {
