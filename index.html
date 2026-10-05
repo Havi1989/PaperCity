@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>PaperCity // BIO-RESONANCE EDITION</title>
+  <title>PaperCity // AAA INGRESS-GRADE EDITION</title>
 
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#03060a" />
+  <meta name="theme-color" content="#020408" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -21,25 +21,26 @@
       --cyber-gold: #ffaa00;
       --cyber-green: #00ff66;
       --cyber-purple: #bd00ff;
-      --cyber-dark: rgba(4, 8, 15, 0.88);
-      --cyber-border: rgba(0, 243, 255, 0.55);
-      --cyber-glow: 0 0 20px rgba(0, 243, 255, 0.65);
+      --cyber-dark: rgba(3, 7, 14, 0.90);
+      --cyber-border: rgba(0, 243, 255, 0.6);
+      --cyber-glow: 0 0 25px rgba(0, 243, 255, 0.75);
       --font-tech: 'Orbitron', monospace, sans-serif;
       --font-hud: 'Rajdhani', sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
-    body, html { width: 100%; height: 100%; overflow: hidden; background: #010307; font-family: var(--font-hud); color: #fff; }
+    body, html { width: 100%; height: 100%; overflow: hidden; background: #020408; font-family: var(--font-hud); color: #fff; }
 
     #worldCanvas {
-      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; background: #010307; display: block;
+      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; background: #020408; display: block;
     }
 
+    /* Holographisches Ingress-Style Overlay */
     .cyber-overlay {
       position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none !important; z-index: 400;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%),
-                  linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.03));
-      background-size: 100% 2px, 4px 100%; opacity: 0.6;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%),
+                  radial-gradient(circle at center, transparent 40%, rgba(0, 243, 255, 0.05) 100%);
+      background-size: 100% 3px, 100% 100%; opacity: 0.65;
     }
 
     .hud-top {
@@ -47,15 +48,15 @@
     }
 
     .cyber-panel {
-      background: var(--cyber-dark); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      background: var(--cyber-dark); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
       border: 1px solid var(--cyber-border); padding: 10px 16px;
       clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
-      box-shadow: var(--cyber-glow), inset 0 0 20px rgba(0, 243, 255, 0.15); pointer-events: auto; position: relative;
+      box-shadow: var(--cyber-glow), inset 0 0 25px rgba(0, 243, 255, 0.18); pointer-events: auto; position: relative;
     }
-    .cyber-panel::before { content: ''; position: absolute; top: 0; left: 0; width: 8px; height: 8px; background: var(--cyber-cyan); box-shadow: 0 0 10px var(--cyber-cyan); }
+    .cyber-panel::before { content: ''; position: absolute; top: 0; left: 0; width: 8px; height: 8px; background: var(--cyber-cyan); box-shadow: 0 0 12px var(--cyber-cyan); }
 
     .hud-profile-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-    .hud-avatar { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--cyber-cyan); box-shadow: 0 0 12px var(--cyber-cyan); object-fit: cover; background: #09121f; }
+    .hud-avatar { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--cyber-cyan); box-shadow: 0 0 14px var(--cyber-cyan); object-fit: cover; background: #09121f; }
     .agent-name-label { font-family: var(--font-tech); font-size: 0.78rem; font-weight: 900; color: #fff; letter-spacing: 1px; }
 
     .stat-title { font-family: var(--font-tech); font-size: 0.58rem; letter-spacing: 2.5px; text-transform: uppercase; color: #8fb1d1; }
@@ -82,19 +83,19 @@
     @keyframes pulseGlow { from { opacity: 0.7; } to { opacity: 1; transform: scale(1.03); } }
 
     .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(1, 3, 7, 0.94); backdrop-filter: blur(20px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(1, 3, 7, 0.95); backdrop-filter: blur(24px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px;
     }
     .cyber-modal-card {
-      background: rgba(6, 12, 22, 0.98); border: 1px solid var(--cyber-cyan); clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
-      max-width: 480px; width: 100%; padding: 26px; box-shadow: 0 0 50px rgba(0, 243, 255, 0.5); max-height: 90vh; overflow-y: auto; text-align: center;
+      background: rgba(4, 9, 18, 0.98); border: 1px solid var(--cyber-cyan); clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+      max-width: 480px; width: 100%; padding: 26px; box-shadow: 0 0 60px rgba(0, 243, 255, 0.6); max-height: 90vh; overflow-y: auto; text-align: center;
     }
-    .modal-header { font-family: var(--font-tech); font-size: 1.2rem; color: var(--cyber-cyan); display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; text-shadow: 0 0 10px var(--cyber-cyan); }
+    .modal-header { font-family: var(--font-tech); font-size: 1.2rem; color: var(--cyber-cyan); display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; text-shadow: 0 0 12px var(--cyber-cyan); }
     .close-modal-btn { background: none; border: none; color: var(--cyber-crimson); font-size: 1.4rem; cursor: pointer; text-shadow: 0 0 8px var(--cyber-crimson); }
 
     .save-profile-btn {
-      width: 100%; background: var(--cyber-cyan); color: #010307; border: none; padding: 14px; font-family: var(--font-tech); font-size: 0.9rem; font-weight: 900;
+      width: 100%; background: var(--cyber-cyan); color: #020408; border: none; padding: 14px; font-family: var(--font-tech); font-size: 0.9rem; font-weight: 900;
       letter-spacing: 1.5px; cursor: pointer; margin-top: 12px; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
-      box-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
+      box-shadow: 0 0 25px rgba(0, 243, 255, 0.7);
     }
 
     .top-right-col { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; pointer-events: auto; }
@@ -109,13 +110,13 @@
 
     .radar-container {
       position: absolute; bottom: 20px; left: 15px; width: 100px; height: 100px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(0, 243, 255, 0.18) 0%, rgba(4, 8, 15, 0.95) 85%); border: 2px solid var(--cyber-cyan);
-      box-shadow: 0 0 30px rgba(0, 243, 255, 0.45); z-index: 1000; overflow: hidden; pointer-events: auto;
+      background: radial-gradient(circle, rgba(0, 243, 255, 0.2) 0%, rgba(2, 4, 8, 0.95) 85%); border: 2px solid var(--cyber-cyan);
+      box-shadow: 0 0 35px rgba(0, 243, 255, 0.6); z-index: 1000; overflow: hidden; pointer-events: auto;
     }
     .radar-canvas { width: 100%; height: 100%; display: block; }
     .radar-sweep {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%;
-      background: conic-gradient(from 0deg, rgba(0, 243, 255, 0.5) 0deg, transparent 65deg, transparent 360deg);
+      background: conic-gradient(from 0deg, rgba(0, 243, 255, 0.55) 0deg, transparent 65deg, transparent 360deg);
       animation: radarScan 2.4s linear infinite; pointer-events: none;
     }
     @keyframes radarScan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -131,17 +132,17 @@
     }
 
     .joystick-panel {
-      pointer-events: auto; width: 115px; height: 115px; background: rgba(4, 8, 15, 0.78); backdrop-filter: blur(14px);
+      pointer-events: auto; width: 115px; height: 115px; background: rgba(3, 7, 14, 0.82); backdrop-filter: blur(14px);
       border: 2px dashed var(--cyber-border); border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; touch-action: none;
-      box-shadow: 0 0 25px rgba(0, 243, 255, 0.2);
+      box-shadow: 0 0 30px rgba(0, 243, 255, 0.25);
     }
-    .joystick-stick { width: 46px; height: 46px; background: radial-gradient(circle at 35% 35%, #ffffff, var(--cyber-cyan)); border-radius: 50%; position: absolute; box-shadow: 0 0 25px var(--cyber-cyan); pointer-events: none; transform: translate(0px, 0px); }
+    .joystick-stick { width: 46px; height: 46px; background: radial-gradient(circle at 35% 35%, #ffffff, var(--cyber-cyan)); border-radius: 50%; position: absolute; box-shadow: 0 0 30px var(--cyber-cyan); pointer-events: none; transform: translate(0px, 0px); }
 
     .banner-notification {
-      position: absolute; top: 90px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(4, 8, 15, 0.96); backdrop-filter: blur(18px);
+      position: absolute; top: 90px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(3, 7, 14, 0.97); backdrop-filter: blur(20px);
       border: 1px solid var(--cyber-cyan); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
       padding: 11px 26px; font-family: var(--font-tech); font-size: 0.88rem; font-weight: 900; letter-spacing: 1.2px; color: #fff; z-index: 2000;
-      opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); box-shadow: 0 0 35px rgba(0, 243, 255, 0.6); white-space: nowrap;
+      opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); box-shadow: 0 0 40px rgba(0, 243, 255, 0.7); white-space: nowrap;
     }
     .banner-notification.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
@@ -157,7 +158,6 @@
     </button>
   </div>
 
-  <!-- BIO-RESONANCE SCANNER MODAL -->
   <div class="modal-overlay" id="bioModal">
     <div class="cyber-modal-card">
       <div class="modal-header" style="color:var(--cyber-purple);">
@@ -168,7 +168,7 @@
         Lege deinen Zeigefinger auf die Handykamera und halte ihn ruhig, um deinen Puls mit dem Cyber-Grid zu synchronisieren.
       </p>
       <div id="bioStatusTxt" style="font-family:var(--font-tech); font-size:1.1rem; color:var(--cyber-cyan); margin: 20px 0;">BEREIT ZUR SYNCHRONISATION...</div>
-      <button class="save-profile-btn" id="startBioScanBtn" style="background:var(--cyber-purple); box-shadow:0 0 20px var(--cyber-purple);">BIOMETRISCHEN SCAN STARTEN</button>
+      <button class="save-profile-btn" id="startBioScanBtn" style="background:var(--cyber-purple); box-shadow:0 0 25px var(--cyber-purple);">BIOMETRISCHEN SCAN STARTEN</button>
     </div>
   </div>
 
@@ -178,11 +178,11 @@
         <span><i class="fa-solid fa-shield-halved"></i> PROTOKOLL // SICHERHEIT</span>
       </div>
       <div style="font-size: 0.95rem; line-height: 1.5; color: #bad3eb; margin-bottom: 16px;">
-        SYSTEM-INITIALISIERUNG: <b>PaperCity // Bio-Resonance Edition</b>.
+        SYSTEM-INITIALISIERUNG: <b>PaperCity // Ingress-Grade AAA Edition</b>.
       </div>
       <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px; font-size:0.88rem; text-align:left;">
-        <li><i class="fa-solid fa-dna" style="color:var(--cyber-purple);"></i> <b>Weltweit neu:</b> Verbinde deine Herzfrequenz mit dem Spiel!</li>
-        <li><i class="fa-solid fa-bolt" style="color:var(--cyber-cyan);"></i> <b>Overclock-Modus:</b> Erhalte Geschwindigkeits-Boosts durch biometrische Resonanz.</li>
+        <li><i class="fa-solid fa-cube" style="color:var(--cyber-cyan);"></i> <b>Inception Renderer:</b> Volumetrische Gebäude-Silhouetten & Cyberpunk-Atmosphäre.</li>
+        <li><i class="fa-solid fa-dna" style="color:var(--cyber-purple);"></i> <b>Bio-Resonance:</b> Integrierter Herzschlag-Overclock.</li>
       </ul>
       <button class="save-profile-btn" id="acceptSafetyBtn">SYSTEM STARTEN & GRID BETRETEN</button>
     </div>
@@ -194,7 +194,7 @@
         <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2308111e' stroke='%2300f3ff' stroke-width='4'/><circle cx='50' cy='40' r='18' fill='%2300f3ff'/><path d='M20 85 C20 62 80 62 80 85' fill='%2300f3ff'/></svg>" class="hud-avatar" alt="Avatar" />
         <div>
           <div class="agent-name-label" id="hudAgentName">AGENT V</div>
-          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">BIO-LINK // 50 m/s</div>
+          <div style="font-size:0.62rem; color:var(--cyber-gold);" id="hudAgentTag">INGRESS GRADE // 50 m/s</div>
         </div>
       </div>
 
@@ -361,7 +361,7 @@
     }
 
     /* ========================================================
-       2. BIO-RESONANCE & CANVAS ENGINE
+       2. INGRESS-GRADE AAA CANVAS ENGINE
        ======================================================== */
     const canvas = document.getElementById('worldCanvas');
     const ctx = canvas.getContext('2d');
@@ -387,6 +387,7 @@
     let playerTrail = [];
     let territories = [];
     let roadSegments = [];
+    let backgroundBuildings = []; // Volumetrische Cyberpunk-Gebäude
     let cityMonuments = [];
     let baseRadius = 35;
     let justCapturedCooldown = false;
@@ -418,6 +419,16 @@
                 const x2 = (el.geometry[i+1].lon - lon) * 111320 * cosFactor;
                 const y2 = -(el.geometry[i+1].lat - lat) * 111320;
                 roadSegments.push({ x1, y1, x2, y2 });
+
+                // Generiere pro Straßenblock visuelle Cyber-Gebäude im Hintergrund
+                if (i % 3 === 0) {
+                  backgroundBuildings.push({
+                    x: (x1 + x2) / 2 + (Math.random() - 0.5) * 40,
+                    y: (y1 + y2) / 2 + (Math.random() - 0.5) * 40,
+                    w: Math.random() * 30 + 20,
+                    h: Math.random() * 30 + 20
+                  });
+                }
               }
             }
           });
@@ -430,6 +441,7 @@
             let x1 = Math.cos(angle) * r, y1 = Math.sin(angle) * r;
             let x2 = Math.cos(angle + 0.3) * (r + 150), y2 = Math.sin(angle + 0.3) * (r + 150);
             roadSegments.push({ x1, y1, x2, y2 });
+            backgroundBuildings.push({ x: x1 + 25, y: y1 + 25, w: 25, h: 25 });
           }
         }
       }
@@ -439,11 +451,11 @@
       ];
     }
 
-    function spawnParticles(x, y, color, count = 25) {
+    function spawnParticles(x, y, color, count = 30) {
       for (let i = 0; i < count; i++) {
         const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 80 + 30;
-        particles.push({ x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, color, alpha: 1.0, life: Math.random() * 0.6 + 0.4 });
+        const speed = Math.random() * 100 + 40;
+        particles.push({ x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, color, alpha: 1.0, life: Math.random() * 0.7 + 0.3 });
       }
     }
 
@@ -479,7 +491,6 @@
        3. BIO-SCANNER INTERAKTIONS-LOGIK
        ======================================================== */
     const bioModal = document.getElementById('bioModal');
-    document.getElementById('openProfileBtn')?.addEventListener('click', () => {});
     document.getElementById('bioScanTriggerBtn').addEventListener('click', () => {
       ensureAudioContext();
       bioModal.style.display = 'flex';
@@ -491,7 +502,6 @@
       document.getElementById('bioStatusTxt').textContent = "SYNCHRONISIERE BIOMETRIE...";
       speakEva("Analysiere biometrische Resonanz.");
 
-      // Versuche Kamera für echten Puls (Flashlight) zu aktivieren, falls unterstützt
       navigator.mediaDevices?.getUserMedia({ video: { facingMode: "environment" } }).then(stream => {
         const track = stream.getVideoTracks()[0];
         if (track && track.applyConstraints) {
@@ -502,10 +512,7 @@
           activateOverclock();
         }, 3500);
       }).catch(() => {
-        // Fallback Simulation ohne Hardware-Fehler
-        setTimeout(() => {
-          activateOverclock();
-        }, 3000);
+        setTimeout(() => { activateOverclock(); }, 3000);
       });
     });
 
@@ -524,11 +531,11 @@
         badge.textContent = 'IN BASIS (GESICHERT)';
         badge.className = 'status-badge';
         showBanner("Overclock beendet.", true);
-      }, 30000); // 30 Sekunden Turbo
+      }, 30000);
     }
 
     /* ========================================================
-       4. RADAR & HACKING
+       4. RADAR MINIMAP
        ======================================================== */
     const radarCanvas = document.getElementById('radarCanvas');
     const rCtx = radarCanvas.getContext('2d');
@@ -553,7 +560,7 @@
     }
 
     /* ========================================================
-       5. GAME LOOP & RENDER
+       5. GAME LOOP & AAA RENDER ENGINE
        ======================================================== */
     function handlePlayerMovement(dx, dy) {
       try {
@@ -596,7 +603,7 @@
       playerTotalArea += bonusArea;
       territories.push({ points: coords });
 
-      spawnParticles(worldX, worldY, playerCustomColor, 50);
+      spawnParticles(worldX, worldY, playerCustomColor, 60);
       playerTrail = [{ x: worldX, y: worldY }];
       justCapturedCooldown = true;
       setTimeout(() => { justCapturedCooldown = false; }, 1200);
@@ -627,56 +634,127 @@
       ctx.save();
       ctx.translate(centerX - cameraX, centerY - cameraY);
 
-      roadSegments.forEach(r => {
-        ctx.strokeStyle = 'rgba(0, 243, 255, 0.08)'; ctx.lineWidth = 18; ctx.lineCap = 'round';
-        ctx.beginPath(); ctx.moveTo(r.x1, r.y1); ctx.lineTo(r.x2, r.y2); ctx.stroke();
-        ctx.strokeStyle = 'rgba(0, 243, 255, 0.28)'; ctx.lineWidth = 10;
-        ctx.beginPath(); ctx.moveTo(r.x1, r.y1); ctx.lineTo(r.x2, r.y2); ctx.stroke();
-      });
-
-      ctx.beginPath(); ctx.arc(0, 0, baseRadius, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0, 243, 255, 0.22)'; ctx.fill();
-      ctx.strokeStyle = playerCustomColor; ctx.lineWidth = 3; ctx.shadowColor = playerCustomColor; ctx.shadowBlur = 20; ctx.stroke(); ctx.shadowBlur = 0;
-
-      territories.forEach(t => {
-        if (t.points.length < 3) return;
-        ctx.beginPath(); ctx.moveTo(t.points[0].x, t.points[0].y);
-        for (let i = 1; i < t.points.length; i++) ctx.lineTo(t.points[i].x, t.points[i].y);
-        ctx.closePath(); ctx.fillStyle = 'rgba(0, 243, 255, 0.38)'; ctx.fill();
-        ctx.strokeStyle = playerCustomColor; ctx.lineWidth = 2.5; ctx.stroke();
-      });
-
-      if (playerTrail.length > 1) {
-        ctx.beginPath(); ctx.moveTo(playerTrail[0].x, playerTrail[0].y);
-        for (let i = 1; i < playerTrail.length; i++) ctx.lineTo(playerTrail[i].x, playerTrail[i].y);
-        ctx.strokeStyle = isOverclockActive ? '#bd00ff' : playerCustomColor;
-        ctx.lineWidth = 6; ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 25; ctx.stroke(); ctx.shadowBlur = 0;
+      // 1. Ingress-Style Holographisches Hintergrund-Koordinatennetz
+      ctx.strokeStyle = 'rgba(0, 243, 255, 0.03)';
+      ctx.lineWidth = 1;
+      const gridStep = 100;
+      let startX = Math.floor((cameraX - centerX) / gridStep) * gridStep;
+      let startY = Math.floor((cameraY - centerY) / gridStep) * gridStep;
+      for (let x = startX; x < startX + canvas.width + gridStep * 2; x += gridStep) {
+        ctx.beginPath(); ctx.moveTo(x, cameraY - centerY - 200); ctx.lineTo(x, cameraY + centerY + canvas.height); ctx.stroke();
+      }
+      for (let y = startY; y < startY + canvas.height + gridStep * 2; y += gridStep) {
+        ctx.beginPath(); ctx.moveTo(cameraX - centerX - 200, y); ctx.lineTo(cameraX + centerX + canvas.width, y); ctx.stroke();
       }
 
-      cityMonuments.forEach(m => {
-        ctx.beginPath(); ctx.arc(m.x, m.y, 16, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffaa00'; ctx.shadowColor = '#ffaa00'; ctx.shadowBlur = 25; ctx.fill(); ctx.shadowBlur = 0;
-        ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Orbitron'; ctx.textAlign = 'center'; ctx.fillText(m.name, m.x, m.y - 22);
+      // 2. Volumetrische Cyberpunk-Gebäude (Ingress / Cyberpunk Look)
+      backgroundBuildings.forEach(b => {
+        ctx.fillStyle = 'rgba(5, 12, 24, 0.85)';
+        ctx.fillRect(b.x, b.y, b.w, b.h);
+        ctx.strokeStyle = 'rgba(0, 243, 255, 0.12)';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(b.x, b.y, b.w, b.h);
       });
 
+      // 3. Organische Straßen (Multi-Pass Neon Glow)
+      roadSegments.forEach(r => {
+        ctx.strokeStyle = 'rgba(0, 243, 255, 0.06)';
+        ctx.lineWidth = 22; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(r.x1, r.y1); ctx.lineTo(r.x2, r.y2); ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(0, 243, 255, 0.25)';
+        ctx.lineWidth = 10;
+        ctx.beginPath(); ctx.moveTo(r.x1, r.y1); ctx.lineTo(r.x2, r.y2); ctx.stroke();
+      });
+
+      // 4. Heimatbasis (Outpost mit Quantum Aura)
+      ctx.beginPath();
+      ctx.arc(0, 0, baseRadius, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 243, 255, 0.22)';
+      ctx.fill();
+      ctx.strokeStyle = playerCustomColor;
+      ctx.lineWidth = 3;
+      ctx.shadowColor = playerCustomColor;
+      ctx.shadowBlur = 25;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // 5. Eroberte Territorien (Holographische Füllung)
+      territories.forEach(t => {
+        if (t.points.length < 3) return;
+        ctx.beginPath();
+        ctx.moveTo(t.points[0].x, t.points[0].y);
+        for (let i = 1; i < t.points.length; i++) ctx.lineTo(t.points[i].x, t.points[i].y);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(0, 243, 255, 0.42)';
+        ctx.fill();
+        ctx.strokeStyle = playerCustomColor;
+        ctx.lineWidth = 3;
+        ctx.shadowColor = playerCustomColor;
+        ctx.shadowBlur = 18;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      });
+
+      // 6. Spieler Trail (Laser Core mit starkem Bloom)
+      if (playerTrail.length > 1) {
+        ctx.beginPath();
+        ctx.moveTo(playerTrail[0].x, playerTrail[0].y);
+        for (let i = 1; i < playerTrail.length; i++) ctx.lineTo(playerTrail[i].x, playerTrail[i].y);
+        ctx.strokeStyle = isOverclockActive ? '#bd00ff' : playerCustomColor;
+        ctx.lineWidth = 7;
+        ctx.shadowColor = ctx.strokeStyle;
+        ctx.shadowBlur = 30;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
+
+      // 7. Monumente
+      cityMonuments.forEach(m => {
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, 18, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffaa00';
+        ctx.shadowColor = '#ffaa00';
+        ctx.shadowBlur = 30;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 11px Orbitron';
+        ctx.textAlign = 'center';
+        ctx.fillText(m.name, m.x, m.y - 24);
+      });
+
+      // 8. Partikel-Effekte (AAA VFX)
       for (let i = particles.length - 1; i >= 0; i--) {
         let p = particles[i];
         p.x += p.vx * 0.016; p.y += p.vy * 0.016; p.alpha -= 0.016 / p.life;
         if (p.alpha <= 0) { particles.splice(i, 1); continue; }
-        ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-        ctx.fillStyle = p.color; ctx.globalAlpha = p.alpha; ctx.fill(); ctx.globalAlpha = 1.0;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = p.color; ctx.globalAlpha = p.alpha;
+        ctx.shadowColor = p.color; ctx.shadowBlur = 12; ctx.fill(); ctx.shadowBlur = 0;
+        ctx.globalAlpha = 1.0;
       }
 
-      ctx.beginPath(); ctx.arc(worldX, worldY, 15, 0, Math.PI * 2);
+      // 9. Spieler Avatar
+      ctx.beginPath();
+      ctx.arc(worldX, worldY, 16, 0, Math.PI * 2);
       ctx.fillStyle = isOverclockActive ? '#bd00ff' : playerCustomColor;
-      ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 30; ctx.fill(); ctx.shadowBlur = 0;
-      ctx.lineWidth = 3.5; ctx.strokeStyle = '#ffffff'; ctx.stroke();
+      ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 35;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#ffffff';
+      ctx.stroke();
 
       ctx.restore();
 
-      const grad = ctx.createRadialGradient(centerX, centerY, canvas.width * 0.3, centerX, centerY, canvas.width * 0.75);
-      grad.addColorStop(0, 'rgba(1, 3, 7, 0)'); grad.addColorStop(1, 'rgba(1, 3, 7, 0.85)');
-      ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // 10. Cinematic Radial Vignette & Depth of Field (AAA Look)
+      const grad = ctx.createRadialGradient(centerX, centerY, canvas.width * 0.25, centerX, centerY, canvas.width * 0.75);
+      grad.addColorStop(0, 'rgba(2, 4, 8, 0)');
+      grad.addColorStop(1, 'rgba(2, 4, 8, 0.9)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       updateRadar();
     }
@@ -753,7 +831,7 @@
 
     joystickZone.addEventListener('pointerdown', e => { ensureAudioContext(); joyActive = true; joystickZone.setPointerCapture(e.pointerId); handleJoyMove(e.clientX, e.clientY); });
     window.addEventListener('pointermove', e => { if (!joyActive) return; handleJoyMove(e.clientX, e.clientY); });
-    function joyRelease() { joyActive = false; joyX = 0; joyY = 0; joystickHandle.style.transform = 'translate(0px, 0px);'; }
+    function joyRelease() { joyActive = false; joyX = 0; joyY = 0; joystickHandle.style.transform = 'translate(0px, 0px)'; }
     window.addEventListener('pointerup', joyRelease); window.addEventListener('pointercancel', joyRelease);
 
     let lastTime = performance.now();
